@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nalanda-advance-healthcare.github.io/Hospital-/sitemap.xml
