@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="application-name" content="Nalanda Advance Healthcare Hospital" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17206582195"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-7H65MJN7P3');
+  </script>
+
+  <title>Nalanda Advance Healthcare Hospital.Pvt Ltd</title>
+
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f4f8fc;
+      --text: #000000;
+      --header-bg: #007bff;
+      --nav-bg: #0056b3;
+      --nav-hover: #00d09c;
+      --card-bg: white;
+      --contact-bg: #007bff;
+      --footer-bg: #0056b3;
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #ffffff;
+      --header-bg: #1f1f1f;
+      --nav-bg: #2a2a2a;
+      --nav-hover: #00d09c;
+      --card-bg: #1e1e1e;
+      --contact-bg: #2a2a2a;
+      --footer-bg: #1f1f1f;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: var(--header-bg);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      position: relative;
+    }
+
+    .toggle-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .toggle-container input[type="checkbox"] {
+      display: none;
+    }
+
+    .toggle-container label {
+      cursor: pointer;
+      background: #ffffff33;
+      padding: 8px 14px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      background-color: var(--nav-bg);
+      padding: 10px;
+      gap: 20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--nav-hover);
+    }
+
+    .hero {
+      background: url('IMG_20250615_114632.jpg') no-repeat center center/cover;
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .hero button {
+      background-color: #00d09c;
+      border: none;
+      padding: 12px 24px;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero button:hover {
+      background-color: #00b58a;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      margin-bottom: 50px;
+    }
+
+    .section h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    details {
+      background: var(--card-bg);
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: #0056b3;
+    }
+
+    details[open] summary {
+      margin-bottom: 10px;
+    }
+
+    .contact-info p {
+      margin: 10px 0;
+      font-size: 1rem;
+    }
+
+    .contact-info a {
+      display: inline-block;
+      margin-top: 10px;
+      background: var(--contact-bg);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .contact-info a:hover {
+      background-color: #004080;
+    }
+
+    location {
+      display: block;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    location a {
+      color: #ffffff;
+      background: #28a745;
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    location a:hover {
+      background-color: #218838;
+    }
+
+    footer {
+      background-color: var(--footer-bg);
+      color: white;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.95rem;
+      border-top: 4px solid #007bff;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Nalanda Advance Healthcare Hospital.Pvt Ltd</h1>
+    <p>Comprehensive Healthcare You Can Trust</p>
+    <div class="toggle-container">
+      <input type="checkbox" id="darkToggle" />
+      <label for="darkToggle">🌙 Dark Mode</label>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#services">Services</a>
+    <a href="doctors.html">Doctors</a>
+    <a href="testimonials.html">Testimonials</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="hero">
+    <h1>Welcome to Nalanda Advance Healthcare Hospital</h1>
+    <p>Your health is our priority. Experience advanced medical care with compassion and expertise.</p>
+    <button onclick="window.location.href='appointment.html'">Book Appointment</button>
+  </div>
+
+  <div class="container">
+    <!-- Services -->
+    <div class="section" id="services">
+      <h2>Our Services</h2>
+      <div class="cards">
+        <div class="card">
+          <img src="IMG_20250615_114936.jpg" alt="General Medicine" />
+          <h3>General Medicine</h3>
+          <p>Expert diagnosis and treatment for common illnesses.</p>
+        </div>
+        <div class="card">
+          <img src="ppt.jpg" alt="Pediatrics" />
+          <h3>Pediatrics</h3>
+          <p>Specialized care for children and infants.</p>
+        </div>
+        <div class="card">
+          <img src="IMG_20250615_115528.jpg" alt="Emergency Care" />
+          <h3>Emergency Care</h3>
+          <p>24/7 emergency services for critical conditions.</p>
+        </div>
+        <div class="card">
+          <img src="IMG_20250615_114959.jpg" alt="Surgery" />
+          <h3>Surgery</h3>
+          <p>Advanced surgical procedures with skilled surgeons.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section" id="faq">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What are your working hours?</summary>
+        <p>We are open 24/7 for emergencies, and OPD services are available from 9 AM to 6 PM.</p>
+      </details>
+      <details>
+        <summary>How do I book an appointment?</summary>
+        <p>You can book online from our website, call us directly, or visit our hospital during working hours.</p>
+      </details>
+    </div>
+
+    <!-- Contact -->
+    <div class="section" id="contact">
+      <h2>Contact Us</h2>
+      <div class="contact-info">
+        <p>Email: nalanda-advance-healthcare@hotmail.com</p>
+        <p>Phone: +91 91557 64409</p>
+        <p>Address: Bihar Sharif police line nearest flyover ke opposite, Nalanda, Bihar</p>
+        <location>
+          <a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">📍 View Location on Map</a>
+        </location>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Nalanda Advance Healthcare Hospital.Pvt Ltd. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+  const toggle = document.getElementById('darkToggle');
+
+  // Apply saved theme on load
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    toggle.checked = true;
+  }
+
+  // Toggle and save theme
+  toggle.addEventListener('change', () => {
+    const isDark = toggle.checked;
+    document.body.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+</body>
+</html>
