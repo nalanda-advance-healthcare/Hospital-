@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Book an appointment at Nalanda Advance Healthcare Hospital – Fast, easy, and convenient." />
+  <title>Book Appointment · Nalanda Advance Healthcare Hospital</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --navy:    #0a1628;
+      --navy2:   #0f1f3d;
+      --navy3:   #162447;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --white:   #ffffff;
+      --muted:   #8a99b3;
+      --card-bg: rgba(255,255,255,0.04);
+      --border:  rgba(201,168,76,0.18);
+      --text:    #e8edf5;
+      --text2:   #8a99b3;
+      --section-bg: #0d1a30;
+      --input-bg: rgba(255,255,255,0.05);
+      --input-border: rgba(201,168,76,0.2);
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --shadow-gold: 0 8px 40px rgba(201,168,76,0.18);
+      --r: 14px;
+    }
+
+    body.light {
+      --navy:    #f0f4fc;
+      --navy2:   #e4ebf8;
+      --navy3:   #d6e0f5;
+      --white:   #0a1628;
+      --text:    #0d1a30;
+      --text2:   #4a5a7a;
+      --card-bg: rgba(10,22,40,0.04);
+      --border:  rgba(201,168,76,0.3);
+      --section-bg: #e8eef9;
+      --muted:   #5a6e8a;
+      --input-bg: rgba(10,22,40,0.04);
+      --input-border: rgba(201,168,76,0.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.45s var(--ease-out-expo), color 0.45s var(--ease-out-expo);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 72px;
+      background: rgba(10,22,40,0.75);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.4s;
+    }
+
+    body.light #navbar { background: rgba(240,244,252,0.85); }
+    #navbar.scrolled { background: rgba(10,22,40,0.97); box-shadow: 0 4px 30px rgba(0,0,0,0.4); }
+    body.light #navbar.scrolled { background: rgba(240,244,252,0.99); }
+
+    .nav-brand { display: flex; align-items: center; gap: 12px; }
+    .nav-logo {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+
+    .nav-brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600; font-size: 1.1rem; line-height: 1.2; color: var(--text);
+    }
+    .nav-brand-name span {
+      display: block; font-size: 0.65rem; font-family: 'Outfit', sans-serif;
+      font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold); margin-top: 1px;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 0.88rem; font-weight: 500; letter-spacing: 0.04em;
+      color: var(--text2); transition: color 0.25s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1.5px; background: var(--gold);
+      transition: width 0.3s var(--ease-out-expo);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .btn-appt {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--navy); font-weight: 700; font-size: 0.82rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap;
+    }
+    .btn-appt:hover { transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+
+    .theme-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--card-bg);
+      color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; transition: background 0.3s, transform 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    .theme-btn:hover { transform: rotate(20deg) scale(1.1); }
+
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text); border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .mobile-nav {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(10,22,40,0.97); backdrop-filter: blur(20px);
+      padding: 24px 32px; z-index: 899;
+      border-bottom: 1px solid var(--border);
+      transform: translateY(-10px); opacity: 0; pointer-events: none;
+      transition: transform 0.35s var(--ease-out-expo), opacity 0.35s;
+    }
+    body.light .mobile-nav { background: rgba(240,244,252,0.98); }
+    .mobile-nav.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+    .mobile-nav a {
+      display: block; padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.05rem; font-weight: 500; color: var(--text); transition: color 0.2s;
+    }
+    .mobile-nav a:hover { color: var(--gold); }
+
+    /* ─── PAGE HERO ──────────────────────────────────────── */
+    .page-hero {
+      padding: 140px 40px 70px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(201,168,76,0.1) 0%, transparent 65%),
+        linear-gradient(180deg, var(--navy2) 0%, var(--navy) 100%);
+      z-index: 0;
+    }
+
+    body.light .page-hero-bg {
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 65%),
+        linear-gradient(180deg, var(--navy3) 0%, var(--navy) 100%);
+    }
+
+    /* decorative rings */
+    .page-hero-bg::before {
+      content: '';
+      position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 500px; border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.1);
+    }
+    .page-hero-bg::after {
+      content: '';
+      position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+      width: 340px; height: 340px; border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.08);
+    }
+
+    .page-hero-content {
+      position: relative; z-index: 1;
+    }
+
+    .page-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.28);
+      color: var(--gold2); font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 7px 18px; border-radius: 100px; margin-bottom: 20px;
+      animation: fadeUp 0.7s 0.1s var(--ease-out-expo) both;
+    }
+
+    .page-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+      font-weight: 600; line-height: 1.1;
+      color: var(--text); margin-bottom: 16px;
+      animation: fadeUp 0.7s 0.2s var(--ease-out-expo) both;
+    }
+
+    .page-hero h1 em { font-style: italic; color: var(--gold2); }
+
+    .page-hero p {
+      font-size: 1rem; font-weight: 300; color: var(--text2);
+      max-width: 480px; margin: 0 auto;
+      line-height: 1.75;
+      animation: fadeUp 0.7s 0.3s var(--ease-out-expo) both;
+    }
+
+    /* ─── STEPS ──────────────────────────────────────────── */
+    .steps-row {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 700px;
+      margin: 0 auto 0;
+      padding: 0 40px 60px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.7s 0.4s var(--ease-out-expo) both;
+    }
+
+    .step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 18px; left: 55%;
+      right: -45%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), rgba(201,168,76,0.1));
+    }
+
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--navy);
+      font-weight: 700; font-size: 0.85rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+    }
+
+    .step-label {
+      font-size: 0.75rem; font-weight: 500;
+      color: var(--text2); letter-spacing: 0.04em;
+    }
+
+    /* ─── FORM LAYOUT ────────────────────────────────────── */
+    .form-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 100px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ─── FORM CARD ──────────────────────────────────────── */
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 44px 40px;
+      backdrop-filter: blur(10px);
+      animation: fadeUp 0.8s 0.3s var(--ease-out-expo) both;
+    }
+
+    .form-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+
+    .form-card .sub {
+      font-size: 0.85rem; color: var(--text2); margin-bottom: 36px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    label .req { color: var(--gold); }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.93rem;
+      color: var(--text);
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); font-weight: 300; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+      background: rgba(201,168,76,0.04);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.7) sepia(1) saturate(2) hue-rotate(5deg);
+      cursor: pointer;
+    }
+
+    textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+    /* Department selector pills */
+    .dept-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .dept-pill {
+      padding: 8px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text2);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.22s;
+      user-select: none;
+    }
+
+    .dept-pill:hover {
+      border-color: rgba(201,168,76,0.5);
+      color: var(--text);
+    }
+
+    .dept-pill.active {
+      background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(232,201,122,0.12));
+      border-color: var(--gold);
+      color: var(--gold2);
+    }
+
+    /* Hidden select keeps value in sync */
+    #department { display: none; }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+      color: #0a1628;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px;
+      transition: transform 0.25s, box-shadow 0.25s, opacity 0.25s;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(201,168,76,0.38);
+    }
+
+    .btn-submit:active { transform: translateY(-1px); }
+
+    .btn-submit .arrow { font-size: 1.1rem; transition: transform 0.25s; }
+    .btn-submit:hover .arrow { transform: translateX(4px); }
+
+    /* ─── SIDEBAR ────────────────────────────────────────── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeUp 0.8s 0.5s var(--ease-out-expo) both;
+    }
+
+    .sidebar-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: border-color 0.3s;
+    }
+
+    .sidebar-card:hover { border-color: rgba(201,168,76,0.35); }
+
+    .sidebar-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 600;
+      color: var(--text); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .sidebar-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+    .si-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.14), rgba(232,201,122,0.07));
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    .si-text span {
+      display: block; font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 3px;
+    }
+
+    .si-text p, .si-text a {
+      font-size: 0.88rem; color: var(--text); line-height: 1.4;
+    }
+
+    .si-text a { transition: color 0.2s; }
+    .si-text a:hover { color: var(--gold2); }
+
+    /* Emergency card */
+    .emergency-card {
+      background: linear-gradient(135deg, rgba(220,38,38,0.12), rgba(185,28,28,0.08));
+      border: 1px solid rgba(220,38,38,0.3);
+    }
+
+    .emergency-card h3 { color: #f87171; }
+
+    .emergency-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem; font-weight: 700;
+      color: #fca5a5;
+      text-align: center;
+      padding: 16px 0 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .emergency-note {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #f87171;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-call {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(220,38,38,0.15);
+      border: 1px solid rgba(220,38,38,0.35);
+      border-radius: 10px;
+      color: #fca5a5;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: background 0.25s, transform 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-call:hover {
+      background: rgba(220,38,38,0.25);
+      transform: scale(1.02);
+    }
+
+    /* WhatsApp card */
+    .wa-card {
+      background: linear-gradient(135deg, rgba(37,211,102,0.1), rgba(21,128,61,0.06));
+      border: 1px solid rgba(37,211,102,0.25);
+    }
+
+    .wa-card h3 { color: #4ade80; }
+
+    .btn-wa {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 4px;
+      padding: 13px;
+      background: #25D366;
+      border-radius: 10px;
+      color: white;
+      font-weight: 700; font-size: 0.9rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-wa:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 32px rgba(37,211,102,0.35);
+    }
+
+    /* ─── SUCCESS OVERLAY ────────────────────────────────── */
+    .success-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,22,40,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-overlay.show { display: flex; }
+
+    .success-box {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 52px 44px;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      animation: popIn 0.5s var(--ease-out-expo) both;
+    }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(232,201,122,0.1));
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+    }
+
+    .success-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 600;
+      color: var(--text); margin-bottom: 10px;
+    }
+
+    .success-box p {
+      font-size: 0.9rem; color: var(--text2); line-height: 1.7; margin-bottom: 28px;
+    }
+
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--navy); font-weight: 700; font-size: 0.88rem;
+      border-radius: 10px; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-back:hover { transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      background: var(--navy2);
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+    }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-bottom p { font-size: 0.82rem; color: var(--text2); }
+    .footer-bottom a { color: var(--gold2); }
+
+    /* Float WA */
+    .float-wa {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 56px; height: 56px;
+      background: #25D366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 8px 32px rgba(37,211,102,0.4);
+      z-index: 800;
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: popIn 0.6s 1.5s var(--ease-out-expo) both;
+    }
+    .float-wa:hover { transform: scale(1.12) rotate(-5deg); box-shadow: 0 12px 48px rgba(37,211,102,0.55); }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .form-wrapper { grid-template-columns: 1fr; max-width: 680px; }
+      .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    }
+
+    @media (max-width: 768px) {
+      #navbar { padding: 0 20px; }
+      .nav-links, .btn-appt { display: none; }
+      .nav-hamburger { display: flex; }
+      .mobile-nav { display: block; }
+      .page-hero { padding: 110px 24px 50px; }
+      .steps-row { padding: 0 24px 40px; }
+      .form-wrapper { padding: 0 24px 70px; }
+      .form-card { padding: 32px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+      .sidebar { grid-template-columns: 1fr; }
+      footer { padding: 24px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .steps-row { gap: 0; }
+      .step-label { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ─────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="nav-brand">
+      <div class="nav-logo">🏥</div>
+      <div class="nav-brand-name">
+        Nalanda Healthcare
+        <span>Advance Hospital · Pvt Ltd</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="doctors.html">Doctors</a></li>
+      <li><a href="testimonials.html">Testimonials</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">☀️</button>
+      <a href="appointment.html" class="btn-appt">Book Appointment</a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html#services">Services</a>
+    <a href="doctors.html">Doctors</a>
+    <a href="testimonials.html">Testimonials</a>
+    <a href="index.html#faq">FAQ</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="appointment.html" style="color:var(--gold2); margin-top:8px; border-bottom:none;">📅 Book Appointment →</a>
+  </div>
+
+  <!-- ─── PAGE HERO ──────────────────────────────── -->
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <div class="page-badge">✦ Schedule a Visit</div>
+      <h1>Book Your <em>Appointment</em></h1>
+      <p>Fill in the form below and our team will confirm your appointment within a few hours. Walk-ins are also welcome.</p>
+    </div>
+  </section>
+
+  <!-- Steps -->
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-label">Fill Form</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-label">Confirmation</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-label">Visit Us</div>
+    </div>
+  </div>
+
+  <!-- ─── MAIN CONTENT ───────────────────────────── -->
+  <div class="form-wrapper">
+
+    <!-- FORM -->
+    <div class="form-card">
+      <h2>Patient Details</h2>
+      <p class="sub">All fields marked <span style="color:var(--gold)">*</span> are required.</p>
+
+      <form id="appointmentForm" onsubmit="submitForm(event)" novalidate>
+
+        <!-- Department pills -->
+        <div class="form-group full" style="margin-bottom:28px">
+          <label>Department <span class="req">*</span></label>
+          <div class="dept-pills" id="deptPills">
+            <div class="dept-pill active" data-val="General Medicine" onclick="selectDept(this)">🩺 General Medicine</div>
+            <div class="dept-pill" data-val="Pediatrics" onclick="selectDept(this)">👶 Pediatrics</div>
+            <div class="dept-pill" data-val="Emergency" onclick="selectDept(this)">🚨 Emergency</div>
+            <div class="dept-pill" data-val="Surgery" onclick="selectDept(this)">⚕️ Surgery</div>
+            <div class="dept-pill" data-val="Other" onclick="selectDept(this)">＋ Other</div>
+          </div>
+          <input type="hidden" id="department" name="department" value="General Medicine">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" placeholder="e.g. Rahul Kumar" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="+91 00000 00000" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="optional" />
+          </div>
+          <div class="form-group">
+            <label for="dob">Date of Birth <span class="req">*</span></label>
+            <input type="date" id="dob" name="dob" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date">Preferred Visit Date <span class="req">*</span></label>
+            <input type="date" id="date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label for="time">Preferred Time Slot <span class="req">*</span></label>
+            <input type="time" id="time" name="time" required />
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="address">Patient Address <span class="req">*</span></label>
+          <input type="text" id="address" name="address" placeholder="Village / Town, District, Bihar" required />
+        </div>
+
+        <div class="form-group full">
+          <label for="description">Describe Your Concern <span class="req">*</span></label>
+          <textarea id="description" name="description" placeholder="Please briefly describe your symptoms or reason for visit..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          Send Appointment Request
+          <span class="arrow">→</span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- Contact Info -->
+      <div class="sidebar-card">
+        <h3>📋 Visit Information</h3>
+        <div class="sidebar-item">
+          <div class="si-icon">🕐</div>
+          <div class="si-text">
+            <span>OPD Hours</span>
+            <p>Monday – Saturday<br>9:00 AM – 6:00 PM</p>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="si-icon">📍</div>
+          <div class="si-text">
+            <span>Location</span>
+            <a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">Bihar Sharif Police Line,<br>Near Flyover, Nalanda, Bihar</a>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="si-icon">📋</div>
+          <div class="si-text">
+            <span>Please Bring</span>
+            <p>ID proof, previous prescriptions, insurance card (if any)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency -->
+      <div class="sidebar-card emergency-card">
+        <h3>🚨 Emergency?</h3>
+        <div class="emergency-num">+91 91557 64409</div>
+        <div class="emergency-note">Available 24 hours · 7 days a week</div>
+        <a href="tel:+919155764409" class="btn-call">📞 Call Now</a>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="sidebar-card wa-card">
+        <h3>💬 Quick Booking</h3>
+        <p style="font-size:0.85rem; color:var(--text2); margin-bottom:14px; line-height:1.6">Prefer to book via WhatsApp? Message us directly — we reply fast.</p>
+        <a href="https://wa.me/919155764409?text=Hello%2C%20I%20would%20like%20to%20book%20an%20appointment." target="_blank" class="btn-wa">
+          💬 Book on WhatsApp
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── SUCCESS OVERLAY ────────────────────────── -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-box">
+      <div class="success-icon">✓</div>
+      <h3>Request Sent!</h3>
+      <p>Your appointment request has been submitted. Our team will contact you at the number provided to confirm your slot.</p>
+      <a href="index.html" class="btn-back">← Back to Home</a>
+    </div>
+  </div>
+
+  <!-- ─── FOOTER ────────────────────────────────── -->
+  <footer>
+    <div class="footer-bottom">
+      <p>© 2025 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.</p>
+      <p>Questions? Call <a href="tel:+919155764409">+91 91557 64409</a></p>
+    </div>
+  </footer>
+
+  <!-- Float WhatsApp -->
+  <a class="float-wa" href="https://wa.me/919155764409" target="_blank" rel="noopener" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">💬</a>
+
+  <!-- ─── SCRIPTS ──────────────────────────────── -->
+  <script>
+    // ── Theme ──────────────────────────────────────────────
+    const themeBtn = document.getElementById('themeBtn');
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light');
+      themeBtn.textContent = '🌙';
+    }
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      const isLight = document.body.classList.contains('light');
+      themeBtn.textContent = isLight ? '🌙' : '☀️';
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+
+    // ── Navbar scroll ──────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── Mobile nav ─────────────────────────────────────────
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav  = document.getElementById('mobileNav');
+    hamburger.addEventListener('click', () => mobileNav.classList.toggle('open'));
+
+    // ── Department pills ───────────────────────────────────
+    function selectDept(el) {
+      document.querySelectorAll('.dept-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('department').value = el.dataset.val;
+    }
+
+    // ── Set min date to today ──────────────────────────────
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').min = today;
+
+    // ── Form submit ────────────────────────────────────────
+    function submitForm(event) {
+      event.preventDefault();
+
+      const name        = document.getElementById('name').value.trim();
+      const email       = document.getElementById('email').value.trim();
+      const phone       = document.getElementById('phone').value.trim();
+      const dob         = document.getElementById('dob').value;
+      const dateVisit   = document.getElementById('date').value;
+      const time        = document.getElementById('time').value;
+      const address     = document.getElementById('address').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const dept        = document.getElementById('department').value;
+
+      const subject = encodeURIComponent(`Appointment Request – ${name} (${dept})`);
+      const body = encodeURIComponent(
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `APPOINTMENT REQUEST\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `Name          : ${name}\n` +
+        `Phone         : ${phone}\n` +
+        `Email         : ${email || 'Not provided'}\n` +
+        `Date of Birth : ${dob}\n\n` +
+        `Department    : ${dept}\n` +
+        `Visit Date    : ${dateVisit}\n` +
+        `Time Slot     : ${time}\n` +
+        `Address       : ${address}\n\n` +
+        `Problem / Concern:\n${description}\n\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━`
+      );
+
+      window.location.href = `mailto:nalanda-advance-healthcare@hotmail.com?subject=${subject}&body=${body}`;
+
+      // Show success overlay after slight delay
+      setTimeout(() => {
+        document.getElementById('successOverlay').classList.add('show');
+      }, 800);
+    }
+  </script>
+
+</body>
+</html>
