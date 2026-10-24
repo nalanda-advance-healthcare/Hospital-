@@ -3,1510 +3,663 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a1628" />
-  <meta name="description" content="Nalanda Advance Healthcare Hospital – Advanced medical care with compassion and expertise in Bihar Sharif, Nalanda." />
-  <meta name="application-name" content="Nalanda Advance Healthcare Hospital" />
+  <title>Nalanda Advance Healthcare Hospital · Multispecialty & Surgical Care</title>
+  <meta name="description" content="Nalanda Advance Healthcare Hospital Pvt Ltd – Advanced Daycare Laparoscopy, 24/7 Trauma Emergency, Pediatrics & Cashless Mediclaims in Bihar Sharif, Nalanda." />
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17206582195"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-7H65MJN7P3');
-  </script>
-
-  <title>Nalanda Advance Healthcare Hospital · Pvt Ltd</title>
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="manifest" href="/site.webmanifest">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    /* ─── TOKENS ─────────────────────────────────────────── */
-    :root {
-      --navy:    #0a1628;
-      --navy2:   #0f1f3d;
-      --navy3:   #162447;
-      --gold:    #c9a84c;
-      --gold2:   #e8c97a;
-      --cream:   #f8f4ee;
-      --white:   #ffffff;
-      --muted:   #8a99b3;
-      --card-bg: rgba(255,255,255,0.04);
-      --border:  rgba(201,168,76,0.18);
-      --text:    #e8edf5;
-      --text2:   #8a99b3;
-      --section-bg: #0d1a30;
-
-      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-      --shadow-gold: 0 8px 40px rgba(201,168,76,0.18);
-      --shadow-card: 0 20px 60px rgba(0,0,0,0.35);
-      --r: 16px;
-    }
-
-    /* Light Mode */
-    body.light {
-      --navy:    #f0f4fc;
-      --navy2:   #e4ebf8;
-      --navy3:   #d6e0f5;
-      --cream:   #1a2a4a;
-      --white:   #0a1628;
-      --text:    #0d1a30;
-      --text2:   #4a5a7a;
-      --card-bg: rgba(10,22,40,0.04);
-      --border:  rgba(201,168,76,0.3);
-      --section-bg: #e8eef9;
-      --muted:   #5a6e8a;
-    }
-
-    /* ─── RESET ──────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--navy);
-      color: var(--text);
-      transition: background 0.45s var(--ease-out-expo), color 0.45s var(--ease-out-expo);
-      overflow-x: hidden;
-    }
-
-    img { display: block; max-width: 100%; }
-    a { color: inherit; text-decoration: none; }
-
-    /* ─── NOISE TEXTURE OVERLAY ──────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
-    }
-
-    /* ─── NAVBAR ─────────────────────────────────────────── */
-    #navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 900;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      height: 72px;
-      background: rgba(10,22,40,0.7);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.4s, border-color 0.4s;
-    }
-
-    body.light #navbar {
-      background: rgba(240,244,252,0.8);
-    }
-
-    #navbar.scrolled {
-      background: rgba(10,22,40,0.95);
-      box-shadow: 0 4px 30px rgba(0,0,0,0.4);
-    }
-
-    body.light #navbar.scrolled {
-      background: rgba(240,244,252,0.98);
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-logo {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-
-    .nav-brand-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.1rem;
-      line-height: 1.2;
-      color: var(--text);
-    }
-
-    .nav-brand-name span {
-      display: block;
-      font-size: 0.65rem;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-top: 1px;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 0.88rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--text2);
-      transition: color 0.25s;
-      position: relative;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px; left: 0;
-      width: 0; height: 1.5px;
-      background: var(--gold);
-      transition: width 0.3s var(--ease-out-expo);
-    }
-
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a:hover::after { width: 100%; }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .btn-appt {
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      color: var(--navy);
-      font-weight: 700;
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      white-space: nowrap;
-    }
-
-    .btn-appt:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-gold);
-    }
-
-    /* Dark/Light toggle */
-    .theme-btn {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--text);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      transition: background 0.3s, transform 0.2s;
-      backdrop-filter: blur(10px);
-    }
-
-    .theme-btn:hover { transform: rotate(20deg) scale(1.1); }
-
-    /* Hamburger */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-    }
-
-    .nav-hamburger span {
-      display: block;
-      width: 24px; height: 2px;
-      background: var(--text);
-      border-radius: 2px;
-      transition: transform 0.3s, opacity 0.3s;
-    }
-
-    /* Mobile nav */
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      top: 72px; left: 0; right: 0;
-      background: rgba(10,22,40,0.97);
-      backdrop-filter: blur(20px);
-      padding: 24px 32px;
-      z-index: 899;
-      border-bottom: 1px solid var(--border);
-      transform: translateY(-10px);
-      opacity: 0;
-      pointer-events: none;
-      transition: transform 0.35s var(--ease-out-expo), opacity 0.35s;
-    }
-
-    body.light .mobile-nav { background: rgba(240,244,252,0.98); }
-
-    .mobile-nav.open {
-      transform: translateY(0);
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .mobile-nav a {
-      display: block;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: var(--text);
-      transition: color 0.2s;
-    }
-
-    .mobile-nav a:hover { color: var(--gold); }
-
-    /* ─── HERO ───────────────────────────────────────────── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      padding: 120px 40px 80px;
-    }
-
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(201,168,76,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 80% at 10% 70%, rgba(22,36,71,0.8) 0%, transparent 60%),
-        linear-gradient(160deg, #0a1628 0%, #0f1f3d 40%, #0a1628 100%);
-      z-index: 0;
-    }
-
-    body.light .hero-bg {
-      background:
-        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(201,168,76,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 80% at 10% 70%, rgba(200,215,240,0.9) 0%, transparent 60%),
-        linear-gradient(160deg, #e8eef9 0%, #d6e0f5 40%, #e8eef9 100%);
-    }
-
-    /* Geometric accent */
-    .hero-bg::after {
-      content: '';
-      position: absolute;
-      right: -80px; top: 50%;
-      transform: translateY(-50%);
-      width: min(600px, 55vw);
-      height: min(600px, 55vw);
-      border-radius: 50%;
-      border: 1px solid rgba(201,168,76,0.15);
-      box-shadow:
-        inset 0 0 60px rgba(201,168,76,0.05),
-        0 0 120px rgba(201,168,76,0.08);
-    }
-
-    .hero-bg::before {
-      content: '';
-      position: absolute;
-      right: 40px; top: 50%;
-      transform: translateY(-50%);
-      width: min(450px, 40vw);
-      height: min(450px, 40vw);
-      border-radius: 50%;
-      border: 1px solid rgba(201,168,76,0.1);
-    }
-
-    /* Hospital image circle */
-    .hero-image-wrap {
-      position: absolute;
-      right: 5%;
-      top: 50%;
-      transform: translateY(-50%);
-      width: min(480px, 42vw);
-      height: min(480px, 42vw);
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid rgba(201,168,76,0.25);
-      box-shadow: 0 30px 100px rgba(0,0,0,0.5);
-      opacity: 0.85;
-      z-index: 1;
-      animation: floatUp 1.2s var(--ease-out-expo) both;
-    }
-
-    .hero-image-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(0.9) saturate(1.1);
-    }
-
-    @keyframes floatUp {
-      from { opacity: 0; transform: translateY(calc(-50% + 40px)); }
-      to   { opacity: 0.85; transform: translateY(-50%); }
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 600px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(201,168,76,0.12);
-      border: 1px solid rgba(201,168,76,0.3);
-      color: var(--gold2);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 7px 16px;
-      border-radius: 100px;
-      margin-bottom: 28px;
-      animation: fadeUp 0.8s 0.1s var(--ease-out-expo) both;
-    }
-
-    .hero-badge::before { content: '✦'; font-size: 0.6rem; }
-
-    .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: clamp(2.8rem, 5vw, 4.2rem);
-      line-height: 1.08;
-      letter-spacing: -0.01em;
-      color: var(--text);
-      margin-bottom: 24px;
-      animation: fadeUp 0.8s 0.2s var(--ease-out-expo) both;
-    }
-
-    .hero h1 em {
-      font-style: italic;
-      color: var(--gold2);
-    }
-
-    .hero p {
-      font-size: 1.05rem;
-      font-weight: 300;
-      line-height: 1.75;
-      color: var(--text2);
-      margin-bottom: 40px;
-      max-width: 460px;
-      animation: fadeUp 0.8s 0.3s var(--ease-out-expo) both;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      animation: fadeUp 0.8s 0.4s var(--ease-out-expo) both;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
-      color: #0a1628;
-      font-weight: 700;
-      font-size: 0.9rem;
-      letter-spacing: 0.04em;
-      padding: 15px 30px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.25s, box-shadow 0.25s;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(201,168,76,0.35);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: transparent;
-      color: var(--text);
-      font-weight: 500;
-      font-size: 0.9rem;
-      padding: 15px 28px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.25s, border-color 0.25s;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(201,168,76,0.07);
-      border-color: rgba(201,168,76,0.4);
-    }
-
-    /* ─── STATS BAR ──────────────────────────────────────── */
-    .stats-bar {
-      background: var(--navy2);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 0;
-    }
-
-    body.light .stats-bar { background: var(--navy3); }
-
-    .stats-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      divide-x: 1px solid var(--border);
-    }
-
-    .stat-item {
-      padding: 32px 20px;
-      text-align: center;
-      border-right: 1px solid var(--border);
-      position: relative;
-    }
-
-    .stat-item:last-child { border-right: none; }
-
-    .stat-number {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.8rem;
-      font-weight: 600;
-      line-height: 1;
-      color: var(--gold2);
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-
-    .stat-label {
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text2);
-    }
-
-    /* ─── SECTION BASE ───────────────────────────────────── */
-    .section {
-      padding: 100px 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .section-alt {
-      background: var(--section-bg);
-    }
-
-    .section-alt > .section { /* no extra padding needed */ }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-
-    .section-tag {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 14px;
-    }
-
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 3.5vw, 3rem);
-      font-weight: 600;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .section-sub {
-      font-size: 1rem;
-      font-weight: 300;
-      color: var(--text2);
-      max-width: 520px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* ─── SERVICES ───────────────────────────────────────── */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
-    }
-
-    .service-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s, border-color 0.4s;
-      opacity: 0;
-      transform: translateY(30px);
-    }
-
-    .service-card.visible {
-      animation: cardIn 0.7s var(--ease-out-expo) forwards;
-    }
-
-    @keyframes cardIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .service-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-card);
-      border-color: rgba(201,168,76,0.4);
-    }
-
-    .service-img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      transition: transform 0.5s var(--ease-out-expo);
-      background: linear-gradient(135deg, var(--navy2), var(--navy3));
-    }
-
-    .service-card:hover .service-img { transform: scale(1.06); }
-
-    .service-body {
-      padding: 24px;
-    }
-
-    .service-icon {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(232,201,122,0.1));
-      border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 14px;
-    }
-
-    .service-body h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .service-body p {
-      font-size: 0.88rem;
-      color: var(--text2);
-      line-height: 1.65;
-    }
-
-    .service-arrow {
-      position: absolute;
-      bottom: 24px; right: 24px;
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: rgba(201,168,76,0.1);
-      border: 1px solid rgba(201,168,76,0.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-      color: var(--gold2);
-      transition: background 0.3s, transform 0.3s;
-    }
-
-    .service-card:hover .service-arrow {
-      background: var(--gold);
-      color: var(--navy);
-      transform: translate(2px, -2px);
-    }
-
-    /* ─── WHY US ─────────────────────────────────────────── */
-    .why-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .why-visual {
-      position: relative;
-    }
-
-    .why-img-main {
-      width: 100%;
-      border-radius: 20px;
-      height: 420px;
-      object-fit: cover;
-      background: linear-gradient(135deg, var(--navy2), var(--navy3));
-      box-shadow: var(--shadow-card);
-    }
-
-    .why-img-badge {
-      position: absolute;
-      bottom: -24px; right: -24px;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      border-radius: 16px;
-      padding: 20px 24px;
-      color: var(--navy);
-      text-align: center;
-      box-shadow: 0 12px 40px rgba(201,168,76,0.4);
-    }
-
-    .why-img-badge strong {
-      display: block;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .why-img-badge span {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .why-features {
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
-    .why-feature {
-      display: flex;
-      gap: 18px;
-      align-items: flex-start;
-      padding: 22px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: border-color 0.3s, transform 0.3s;
-    }
-
-    .why-feature:hover {
-      border-color: rgba(201,168,76,0.4);
-      transform: translateX(4px);
-    }
-
-    .why-feature-icon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .why-feature h4 {
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-
-    .why-feature p {
-      font-size: 0.85rem;
-      color: var(--text2);
-      line-height: 1.6;
-    }
-
-    /* ─── FAQ ────────────────────────────────────────────── */
-    .faq-list {
-      max-width: 760px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .faq-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: border-color 0.3s;
-    }
-
-    .faq-item:hover { border-color: rgba(201,168,76,0.35); }
-
-    .faq-q {
-      width: 100%;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      text-align: left;
-      padding: 22px 24px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      transition: color 0.2s;
-    }
-
-    .faq-q:hover { color: var(--gold2); }
-
-    .faq-icon {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: rgba(201,168,76,0.1);
-      border: 1px solid rgba(201,168,76,0.2);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 1rem;
-      color: var(--gold2);
-      transition: transform 0.35s var(--ease-out-expo), background 0.3s;
-    }
-
-    .faq-item.open .faq-icon {
-      transform: rotate(45deg);
-      background: rgba(201,168,76,0.2);
-    }
-
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.45s var(--ease-out-expo), padding 0.35s;
-      padding: 0 24px;
-    }
-
-    .faq-item.open .faq-a {
-      max-height: 200px;
-      padding: 0 24px 22px;
-    }
-
-    .faq-a p {
-      font-size: 0.9rem;
-      color: var(--text2);
-      line-height: 1.7;
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-    }
-
-    /* ─── CONTACT ────────────────────────────────────────── */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: start;
-    }
-
-    .contact-info-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px;
-    }
-
-    .contact-item {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 28px;
-      padding-bottom: 28px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .contact-item:last-of-type {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-
-    .contact-icon {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(232,201,122,0.08));
-      border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.15rem;
-      flex-shrink: 0;
-    }
-
-    .contact-detail span {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 4px;
-    }
-
-    .contact-detail p, .contact-detail a {
-      font-size: 0.95rem;
-      color: var(--text);
-      line-height: 1.5;
-      transition: color 0.2s;
-    }
-
-    .contact-detail a:hover { color: var(--gold2); }
-
-    .map-card {
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      height: 100%;
-      min-height: 360px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .map-card iframe {
-      width: 100%;
-      flex: 1;
-      border: none;
-      filter: grayscale(20%) invert(0);
-    }
-
-    body:not(.light) .map-card iframe {
-      filter: grayscale(30%) invert(1) hue-rotate(180deg) brightness(0.85);
-    }
-
-    .map-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      color: var(--navy);
-      font-weight: 700;
-      font-size: 0.88rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      transition: opacity 0.25s;
-      text-decoration: none;
-    }
-
-    .map-btn:hover { opacity: 0.9; }
-
-    /* ─── FOOTER ─────────────────────────────────────────── */
-    footer {
-      background: var(--navy2);
-      border-top: 1px solid var(--border);
-      padding: 48px 40px 28px;
-    }
-
-    .footer-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .footer-top {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 48px;
-      margin-bottom: 40px;
-    }
-
-    .footer-brand p {
-      font-size: 0.88rem;
-      color: var(--text2);
-      line-height: 1.7;
-      margin-top: 14px;
-      max-width: 280px;
-    }
-
-    .footer-col h4 {
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 16px;
-    }
-
-    .footer-col a {
-      display: block;
-      font-size: 0.88rem;
-      color: var(--text2);
-      margin-bottom: 10px;
-      transition: color 0.2s;
-    }
-
-    .footer-col a:hover { color: var(--text); }
-
-    .footer-bottom {
-      border-top: 1px solid var(--border);
-      padding-top: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .footer-bottom p {
-      font-size: 0.82rem;
-      color: var(--text2);
-    }
-
-    .footer-bottom a { color: var(--gold2); }
-
-    /* ─── FLOATING CTA ───────────────────────────────────── */
-    .float-wa {
-      position: fixed;
-      bottom: 28px; right: 28px;
-      width: 56px; height: 56px;
-      background: #25D366;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem;
-      box-shadow: 0 8px 32px rgba(37,211,102,0.4);
-      z-index: 800;
-      transition: transform 0.3s, box-shadow 0.3s;
-      animation: popIn 0.6s 1.5s var(--ease-out-expo) both;
-    }
-
-    .float-wa:hover {
-      transform: scale(1.12) rotate(-5deg);
-      box-shadow: 0 12px 48px rgba(37,211,102,0.55);
-    }
-
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.5); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    /* ─── SCROLL ANIMATIONS ──────────────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ─── DIVIDER ─────────────────────────────────────────── */
-    .gold-line {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 0;
-      opacity: 0.4;
-    }
-
-    /* ─── RESPONSIVE ─────────────────────────────────────── */
-    @media (max-width: 1024px) {
-      .why-grid { grid-template-columns: 1fr; }
-      .why-visual { display: none; }
-      .contact-grid { grid-template-columns: 1fr; }
-      .footer-top { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media (max-width: 768px) {
-      #navbar { padding: 0 20px; }
-      .nav-links, .btn-appt { display: none; }
-      .nav-hamburger { display: flex; }
-      .mobile-nav { display: block; }
-
-      .hero { padding: 100px 24px 60px; min-height: auto; }
-      .hero-image-wrap { display: none; }
-      .hero h1 { font-size: 2.4rem; }
-
-      .stats-inner { grid-template-columns: repeat(2, 1fr); }
-      .stat-item:nth-child(2) { border-right: none; }
-      .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
-
-      .section { padding: 70px 24px; }
-      .services-grid { grid-template-columns: 1fr; }
-
-      .footer-top { grid-template-columns: 1fr; gap: 32px; }
-      .footer-bottom { flex-direction: column; text-align: center; }
-    }
-
-    @media (max-width: 480px) {
-      .stat-item { padding: 24px 12px; }
-      .stat-number { font-size: 2.2rem; }
-    }
-  </style>
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/print.css" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <!-- Hospital Ecosystem Engine -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/hospitalStore.js"></script>
+  <script src="js/main.js"></script>
 </head>
 <body>
 
-  <!-- ─── NAVBAR ─────────────────────────────────── -->
-  <nav id="navbar">
-    <div class="nav-brand">
-      <div class="nav-logo">🏥</div>
-      <div class="nav-brand-name">
-        Nalanda Healthcare
-        <span>Advance Hospital · Pvt Ltd</span>
+  <!-- ========================================================================
+       TOP EMERGENCY & UTILITY BAR (DEEP NAVY)
+       ======================================================================== -->
+  <div class="top-bar no-print">
+    <div class="container top-bar-inner">
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <a href="tel:+919155764409" class="emergency-badge" data-bind="settings.emergencyPhone">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          24/7 Emergency: +91 91557 64409
+        </a>
+        <div class="top-bar-meta-item">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span data-bind="settings.address">Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar</span>
+        </div>
+      </div>
+
+      <div class="top-bar-links">
+        <a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank" rel="noopener">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+          Directions
+        </a>
+        <a href="booking.html#reportsTab">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          My Reports & Rx
+        </a>
+        <button type="button" class="btn btn-secondary btn-sm" id="patientTopAuthBtn" onclick="openPatientAuthModal()" style="padding:3px 10px; font-size:0.75rem; background:rgba(255,255,255,0.12); color:#ffffff; border-color:rgba(255,255,255,0.25);">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Patient Portal
+        </button>
       </div>
     </div>
-
-    <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="doctors.html">Doctors</a></li>
-      <li><a href="testimonials.html">Testimonials</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-
-    <div class="nav-right">
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">☀️</button>
-      <a href="appointment.html" class="btn-appt">Book Appointment</a>
-      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Mobile Nav -->
-  <div class="mobile-nav" id="mobileNav">
-    <a href="#services" onclick="closeMobile()">Services</a>
-    <a href="doctors.html">Doctors</a>
-    <a href="testimonials.html">Testimonials</a>
-    <a href="#faq" onclick="closeMobile()">FAQ</a>
-    <a href="#contact" onclick="closeMobile()">Contact</a>
-    <a href="appointment.html" style="color:var(--gold2); margin-top:8px; border-bottom:none;">📅 Book Appointment →</a>
   </div>
 
-  <!-- ─── HERO ───────────────────────────────────── -->
+  <!-- Announcement Ticker -->
+  <div class="announcement-bar no-print">
+    <div class="container inner">
+      <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      <span data-bind="settings.announcement">24/7 Trauma Emergency & Critical Care · Ayushman Bharat (PM-JAY) & Cashless TPA Empanelled</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       STICKY PRIMARY NAVBAR
+       ======================================================================== -->
+  <header class="site-header no-print">
+    <div class="container site-nav">
+      <a href="index.html" class="brand-identity">
+        <div class="brand-emblem">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <h1 data-bind="settings.hospitalName">Nalanda Advance Healthcare</h1>
+          <span>Hospital & Research Centre · Pvt Ltd</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="#doctorsSection">Doctors</a>
+        <a href="#proceduresSection">Treatments</a>
+        <a href="#facilitiesSection">Facilities</a>
+        <a href="#tpaSection">Cashless TPA</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="#contactSection">Contact</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="nav-actions">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="openPatientAuthModal()" id="patientNavAuthBtn">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Patient Sign In
+        </button>
+        <a href="booking.html" class="btn btn-teal btn-sm">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Book Appointment
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       HERO CLINICAL SECTION
+       ======================================================================== -->
   <section class="hero">
-    <div class="hero-bg"></div>
-
-    <div class="hero-image-wrap">
-      <img src="IMG_20250615_114632.jpg" alt="Nalanda Advance Healthcare Hospital" onerror="this.style.display='none'" />
-    </div>
-
-    <div class="hero-content">
-      <div class="hero-badge">Bihar's Trusted Healthcare Partner</div>
-      <h1>Advanced Care,<br><em>Compassionate</em><br>Healing</h1>
-      <p>Experience world-class medical expertise at the heart of Nalanda. We combine cutting-edge technology with human-centred care — because your health deserves nothing less.</p>
-      <div class="hero-actions">
-        <a href="appointment.html" class="btn-primary">
-          📅 Book Appointment
-        </a>
-        <a href="#services" class="btn-secondary">
-          Explore Services →
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── STATS ──────────────────────────────────── -->
-  <div class="stats-bar">
-    <div class="stats-inner">
-      <div class="stat-item">
-        <div class="stat-number" data-target="500">0</div>
-        <div class="stat-label">Patients Treated</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-target="15">0</div>
-        <div class="stat-label">Specialist Doctors</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-target="24">0</div>
-        <div class="stat-label">Hours Emergency</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-target="2">0</div>
-        <div class="stat-label">Years of Service</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="gold-line"></div>
-
-  <!-- ─── SERVICES ──────────────────────────────── -->
-  <section id="services">
-    <div class="section">
-      <div class="section-header reveal">
-        <div class="section-tag">What We Offer</div>
-        <h2 class="section-title">Our Medical Services</h2>
-        <p class="section-sub">Comprehensive healthcare solutions delivered by experienced specialists across multiple disciplines.</p>
-      </div>
-
-      <div class="services-grid">
-        <div class="service-card">
-          <img class="service-img" src="IMG_20250615_114936.jpg" alt="General Medicine" onerror="this.style.display='none'" />
-          <div class="service-body">
-            <div class="service-icon">🩺</div>
-            <h3>General Medicine</h3>
-            <p>Expert diagnosis and personalised treatment for everyday illnesses and chronic conditions by experienced physicians.</p>
-          </div>
-          <div class="service-arrow">→</div>
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-badge">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+          Nalanda's Premier Multispecialty Healthcare Institution
         </div>
 
-        <div class="service-card">
-          <img class="service-img" src="ppt.jpg" alt="Pediatrics" onerror="this.style.display='none'" />
-          <div class="service-body">
-            <div class="service-icon">👶</div>
-            <h3>Pediatrics</h3>
-            <p>Gentle, specialised care for your children's health — from newborns to adolescents — by compassionate paediatricians.</p>
-          </div>
-          <div class="service-arrow">→</div>
+        <h1 class="hero-title">
+          Advanced Medical Care, <span>Compassionate</span> Healing
+        </h1>
+
+        <p class="hero-desc" data-bind="settings.heroSub">
+          Combining cutting-edge laparoscopic technology with human-centered care at the heart of Nalanda, Bihar. Transparent clinical treatment, modular operation theatres, and 24/7 critical trauma life support.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="booking.html" class="btn btn-teal btn-lg">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Book OPD Consultation
+          </a>
+          <button type="button" class="btn btn-secondary btn-lg" onclick="openPatientAuthModal()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Patient Login / Register
+          </button>
         </div>
 
-        <div class="service-card">
-          <img class="service-img" src="IMG_20250615_115528.jpg" alt="Emergency Care" onerror="this.style.display='none'" />
-          <div class="service-body">
-            <div class="service-icon">🚨</div>
-            <h3>Emergency Care</h3>
-            <p>Round-the-clock emergency services equipped with advanced life-support systems and trauma response teams.</p>
+        <!-- Clinical Trust Highlights -->
+        <div class="hero-features-row">
+          <div class="hero-feature-item">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+            24/7 Critical Trauma
           </div>
-          <div class="service-arrow">→</div>
+          <div class="hero-feature-item">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Cashless TPA Approved
+          </div>
+          <div class="hero-feature-item">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Daycare Discharge
+          </div>
         </div>
+      </div>
 
-        <div class="service-card">
-          <img class="service-img" src="IMG_20250615_114959.jpg" alt="Surgery" onerror="this.style.display='none'" />
-          <div class="service-body">
-            <div class="service-icon">⚕️</div>
-            <h3>Surgery</h3>
-            <p>Advanced surgical procedures performed by skilled surgeons with modern operation theatres and post-operative care.</p>
+      <!-- Image Column -->
+      <div class="hero-image-frame">
+        <img src="IMG_20250615_114632.jpg" alt="Hospital Building Entrance" onerror="this.src='ppt.jpg'">
+        <div class="hero-overlay-card">
+          <div class="hero-overlay-icon">
+            <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
           </div>
-          <div class="service-arrow">→</div>
+          <div>
+            <h4 style="font-family:var(--font-heading); font-size:1rem; font-weight:700; color:var(--primary); margin:0;">24/7 Trauma Emergency</h4>
+            <p style="font-size:0.8125rem; color:var(--text-secondary); margin:2px 0 0 0;">Immediate resuscitation, ICU support & surgical triage</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="gold-line"></div>
+  <!-- ========================================================================
+       DOCTORS SHOWCASE SECTION
+       ======================================================================== -->
+  <section class="section" id="doctorsSection">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+          Medical Faculty
+        </span>
+        <h2 class="section-title">Consulting Specialist Doctors</h2>
+        <p class="section-desc">Senior surgeons and physicians available for outpatient evaluation and daycare surgery.</p>
+      </div>
 
-  <!-- ─── WHY NALANDA ────────────────────────────── -->
-  <div class="section-alt">
-    <div class="section" id="about">
-      <div class="why-grid">
-        <div class="why-visual reveal">
-          <img class="why-img-main" src="IMG_20250615_114632.jpg" alt="Our Hospital" onerror="this.style.background='linear-gradient(135deg,#162447,#0f1f3d)'" />
-          <div class="why-img-badge">
-            <strong>24/7</strong>
-            <span>Emergency</span>
+      <div class="grid-3" id="homeDoctorsGrid">
+        <!-- Rendered via JS based on HospitalStore -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SURGICAL PROCEDURES HUB
+       ======================================================================== -->
+  <section class="section section-alt" id="proceduresSection">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          Clinical Procedures
+        </span>
+        <h2 class="section-title">Surgical Procedures & Treatments</h2>
+        <p class="section-desc">Minimally invasive keyhole laparoscopic procedures and advanced trauma surgery.</p>
+      </div>
+
+      <div class="grid-3" id="homeProceduresGrid">
+        <!-- Rendered via JS based on HospitalStore -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HOSPITAL FACILITIES SECTION
+       ======================================================================== -->
+  <section class="section" id="facilitiesSection">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          Infrastructure
+        </span>
+        <h2 class="section-title">World-Class Hospital Facilities</h2>
+        <p class="section-desc">Engineered for patient safety, clinical sterility, and rapid surgical recovery.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="IMG_20250615_114959.jpg" alt="Modular Laparoscopic OT" onerror="this.src='ppt.jpg'">
+          </div>
+          <div class="card-body">
+            <span class="badge badge-neutral" style="align-self:flex-start; margin-bottom:8px;">OT Wing</span>
+            <h3>Modular Laminar OT</h3>
+            <p>Ultra-clean positive pressure operation theatres equipped with HD laparoscopic vision towers and advanced anesthesia monitoring.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="IMG_20250615_115528.jpg" alt="Emergency Life Support" onerror="this.src='ppt.jpg'">
+          </div>
+          <div class="card-body">
+            <span class="badge badge-danger" style="align-self:flex-start; margin-bottom:8px;">Critical Care</span>
+            <h3>24/7 Trauma Emergency</h3>
+            <p>Round-the-clock emergency triage, defibrillators, multi-parameter cardiac monitors, and ACLS-trained medical officers.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="IMG_20250615_114936.jpg" alt="Consultation Chambers & Daycare" onerror="this.src='ppt.jpg'">
+          </div>
+          <div class="card-body">
+            <span class="badge badge-success" style="align-self:flex-start; margin-bottom:8px;">Recovery</span>
+            <h3>Inpatient Daycare Suites</h3>
+            <p>Air-conditioned private and daycare recovery suites designed for smooth, same-day postoperative discharge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CASHLESS TPA EMPANELMENTS
+       ======================================================================== -->
+  <section class="section section-alt" id="tpaSection">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Insurance Partners
+        </span>
+        <h2 class="section-title">Cashless Mediclaim & Ayushman Bharat</h2>
+        <p class="section-desc">Direct tie-ups with leading health insurance TPAs for hassle-free cashless hospitalization.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:16px;">
+        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Star Health
+        </div>
+        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Care Health
+        </div>
+        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          HDFC ERGO
+        </div>
+        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          ICICI Lombard
+        </div>
+        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Niva Bupa
+        </div>
+        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Ayushman Bharat (PM-JAY)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CONTACT & LOCATION
+       ======================================================================== -->
+  <section class="section" id="contactSection">
+    <div class="container">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:center;">
+        <div style="background:var(--bg-section); padding:36px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle);">
+          <span class="section-tag">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Get in Touch
+          </span>
+          <h3 style="font-family:var(--font-heading); font-size:1.5rem; font-weight:700; color:var(--primary); margin-bottom:16px;">
+            Nalanda Advance Healthcare Hospital
+          </h3>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; font-size:0.9rem;">
+            <div>
+              <strong style="color:var(--primary); display:block; margin-bottom:2px;">Hospital Address:</strong>
+              <span data-bind="settings.address" style="color:var(--text-secondary);">Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar - 803101</span>
+            </div>
+            <div>
+              <strong style="color:var(--primary); display:block; margin-bottom:2px;">24/7 Emergency Helpline:</strong>
+              <a href="tel:+919155764409" style="color:var(--emergency); font-weight:700; font-size:1.05rem;" data-bind="settings.emergencyPhone">+91 91557 64409</a>
+            </div>
+            <div>
+              <strong style="color:var(--primary); display:block; margin-bottom:2px;">Official Desk Email:</strong>
+              <a href="mailto:nalandahospital@gmail.com" style="color:var(--secondary); font-weight:600;">nalandahospital@gmail.com</a>
+            </div>
+          </div>
+
+          <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="booking.html" class="btn btn-primary" style="flex:1;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Book Appointment
+            </a>
+            <a href="https://wa.me/919155764409" target="_blank" class="btn btn-teal" style="flex:1;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              WhatsApp Us
+            </a>
+          </div>
+        </div>
+
+        <!-- Google Map Embed -->
+        <div style="border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-subtle); height:380px; box-shadow:var(--shadow-sm);">
+          <iframe
+            src="https://maps.google.com/maps?q=Bihar+Sharif+Police+Line+Nalanda+Bihar&output=embed"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            title="Hospital Google Map">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FOOTER (DEEP MEDICAL NAVY)
+       Strict Privacy Rule: NO sensitive doctor or admin portal links
+       ======================================================================== -->
+  <footer class="site-footer no-print">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4 class="footer-heading" data-bind="settings.hospitalName">Nalanda Advance Healthcare</h4>
+          <p style="font-size:0.875rem; line-height:1.6; color:#98a2b3; margin-bottom:16px;">
+            Dedicated to ethical, transparent, and high-quality surgical and inpatient healthcare for families across Nalanda and Bihar.
+          </p>
+          <div style="font-size:0.8125rem; color:#667085;">
+            Reg. No: BR-NAL-2024-HOSP-0842
           </div>
         </div>
 
         <div>
-          <div class="section-tag reveal" style="text-align:left">Why Choose Us</div>
-          <h2 class="section-title reveal" style="text-align:left">Healthcare Built on<br><em style="font-style:italic; color:var(--gold2)">Trust & Excellence</em></h2>
-
-          <div class="why-features">
-            <div class="why-feature reveal">
-              <div class="why-feature-icon">🏆</div>
-              <div>
-                <h4>Experienced Specialists</h4>
-                <p>Our team of certified doctors and surgeons brings decades of combined expertise to every case.</p>
-              </div>
-            </div>
-            <div class="why-feature reveal">
-              <div class="why-feature-icon">🔬</div>
-              <div>
-                <h4>Advanced Technology</h4>
-                <p>Modern diagnostic and treatment equipment ensures accurate, timely care for every patient.</p>
-              </div>
-            </div>
-            <div class="why-feature reveal">
-              <div class="why-feature-icon">💛</div>
-              <div>
-                <h4>Patient-First Approach</h4>
-                <p>We believe that compassion is as important as competence. Every patient is treated with dignity.</p>
-              </div>
-            </div>
-            <div class="why-feature reveal">
-              <div class="why-feature-icon">📍</div>
-              <div>
-                <h4>Conveniently Located</h4>
-                <p>Situated in the heart of Bihar Sharif, easily accessible from all parts of Nalanda district.</p>
-              </div>
-            </div>
-          </div>
+          <h4 class="footer-heading">Patient Services</h4>
+          <ul class="footer-links">
+            <li><a href="booking.html">Book OPD Appointment</a></li>
+            <li><a href="booking.html#reportsTab">My Reports & Digital Rx</a></li>
+            <li><a href="#proceduresSection">Surgical Procedures</a></li>
+            <li><a href="#tpaSection">Cashless Mediclaim</a></li>
+            <li><a href="testimonials.html">Patient Testimonials</a></li>
+          </ul>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="gold-line"></div>
+        <div>
+          <h4 class="footer-heading">Emergency & Help</h4>
+          <ul class="footer-links">
+            <li><a href="tel:+919155764409" style="color:#fda29b; font-weight:700;">Emergency: +91 91557 64409</a></li>
+            <li><a href="mailto:nalandahospital@gmail.com">nalandahospital@gmail.com</a></li>
+            <li><a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">Police Line, Bihar Sharif</a></li>
+          </ul>
+        </div>
 
-  <!-- ─── FAQ ───────────────────────────────────── -->
-  <section id="faq">
-    <div class="section">
-      <div class="section-header reveal">
-        <div class="section-tag">Got Questions?</div>
-        <h2 class="section-title">Frequently Asked Questions</h2>
-        <p class="section-sub">Everything you need to know before your visit.</p>
-      </div>
-
-      <div class="faq-list reveal">
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            What are your working hours?
-            <span class="faq-icon">+</span>
+        <div>
+          <h4 class="footer-heading">Patient Portal</h4>
+          <p style="font-size:0.84rem; color:#98a2b3; margin-bottom:14px;">Sign in to view your prescriptions, or book as a guest with zero registration required.</p>
+          <button type="button" class="btn btn-teal btn-sm" onclick="openPatientAuthModal()" style="width:100%;">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Patient Sign In / Register
           </button>
-          <div class="faq-a">
-            <p>We are open <strong>24/7 for emergency services</strong>. OPD (Outpatient Department) services are available from <strong>9 AM to 6 PM</strong>, Monday through Saturday.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            How do I book an appointment?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">
-            <p>You can book online via our website, call us directly at <strong>+91 91557 64409</strong>, or visit the hospital in person during working hours. Walk-ins are always welcome.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            Do you accept insurance?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">
-            <p>Yes, we work with multiple health insurance providers. Please bring your insurance card and relevant documents. Contact us in advance to confirm coverage details.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">
-            Is there a pharmacy on the premises?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-a">
-            <p>Yes, our in-house pharmacy is available to patients with valid prescriptions. It operates during OPD hours for routine medications.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="gold-line"></div>
-
-  <!-- ─── CONTACT ────────────────────────────────── -->
-  <div class="section-alt">
-    <div class="section" id="contact">
-      <div class="section-header reveal">
-        <div class="section-tag">Get In Touch</div>
-        <h2 class="section-title">Contact Us</h2>
-        <p class="section-sub">We're here to help. Reach out anytime and our team will respond promptly.</p>
-      </div>
-
-      <div class="contact-grid">
-        <div class="contact-info-card reveal">
-          <div class="contact-item">
-            <div class="contact-icon">📞</div>
-            <div class="contact-detail">
-              <span>Phone</span>
-              <a href="tel:+919155764409">+91 91557 64409</a>
-            </div>
-          </div>
-          <div class="contact-item">
-            <div class="contact-icon">✉️</div>
-            <div class="contact-detail">
-              <span>Email</span>
-              <a href="mailto:nalandahospital@gmail.com">nalandahospital@gmail.com</a>
-            </div>
-          </div>
-          <div class="contact-item">
-            <div class="contact-icon">📍</div>
-            <div class="contact-detail">
-              <span>Address</span>
-              <p>Bihar Sharif Police Line, Near Flyover,<br>Nalanda, Bihar</p>
-            </div>
-          </div>
-          <div class="contact-item">
-            <div class="contact-icon">🕐</div>
-            <div class="contact-detail">
-              <span>Hours</span>
-              <p>Emergency: 24/7 &nbsp;·&nbsp; OPD: 9 AM – 6 PM</p>
-            </div>
-          </div>
-
-          <a href="appointment.html" class="btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
-            📅 Book an Appointment
-          </a>
-        </div>
-
-        <div class="map-card reveal">
-          <iframe
-            src="https://maps.google.com/maps?q=Bihar+Sharif+Police+Line+Nalanda+Bihar&output=embed"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Hospital Location">
-          </iframe>
-          <a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank" rel="noopener" class="map-btn">
-            📍 Open in Google Maps
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── FOOTER ────────────────────────────────── -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <div class="nav-brand" style="margin-bottom:0">
-            <div class="nav-logo">🏥</div>
-            <div class="nav-brand-name">
-              Nalanda Healthcare
-              <span>Advance Hospital · Pvt Ltd</span>
-            </div>
-          </div>
-          <p>Providing comprehensive, compassionate healthcare to the people of Nalanda and beyond. Your health is our highest commitment.</p>
-        </div>
-
-        <div class="footer-col">
-          <h4>Quick Links</h4>
-          <a href="#services">Services</a>
-          <a href="doctors.html">Our Doctors</a>
-          <a href="testimonials.html">Testimonials</a>
-          <a href="appointment.html">Book Appointment</a>
-          <a href="#faq">FAQ</a>
-        </div>
-
-        <div class="footer-col">
-          <h4>Contact</h4>
-          <a href="tel:+919155764409">+91 91557 64409</a>
-          <a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">Bihar Sharif, Nalanda</a>
-          <a href="appointment.html" style="color:var(--gold2); margin-top:8px;">→ Emergency: 24/7</a>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2025 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.</p>
-        <p>Designed with ❤️ for better healthcare in Bihar</p>
+        <div>© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.</div>
+        <div>Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar</div>
       </div>
     </div>
   </footer>
 
-  <!-- ─── WHATSAPP FLOAT ─────────────────────────── -->
-  <a class="float-wa" href="https://wa.me/919155764409" target="_blank" rel="noopener" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
-    💬
-  </a>
-
-  <!-- ─── SCRIPTS ───────────────────────────────── -->
+  <!-- ========================================================================
+       PATIENT AUTHENTICATION MODAL (ZERO EMOJIS, CLEAN CLINICAL UI)
+       ======================================================================== -->
   <script>
-    // ── Theme ──────────────────────────────────────────────
-    const themeBtn = document.getElementById('themeBtn');
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light') { document.body.classList.add('light'); themeBtn.textContent = '🌙'; }
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDoctorsShowcase();
+      renderProceduresShowcase();
+      updatePatientNavState();
 
-    themeBtn.addEventListener('click', () => {
-      document.body.classList.toggle('light');
-      const isLight = document.body.classList.contains('light');
-      themeBtn.textContent = isLight ? '🌙' : '☀️';
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    });
-
-    // ── Navbar scroll ──────────────────────────────────────
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
-    });
-
-    // ── Mobile nav ─────────────────────────────────────────
-    const hamburger = document.getElementById('hamburger');
-    const mobileNav = document.getElementById('mobileNav');
-    let mobileOpen = false;
-
-    hamburger.addEventListener('click', () => {
-      mobileOpen = !mobileOpen;
-      mobileNav.classList.toggle('open', mobileOpen);
-    });
-
-    function closeMobile() {
-      mobileOpen = false;
-      mobileNav.classList.remove('open');
-    }
-
-    // ── FAQ accordion ──────────────────────────────────────
-    function toggleFaq(btn) {
-      const item = btn.closest('.faq-item');
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
-    }
-
-    // ── Counter animation ──────────────────────────────────
-    function animateCounter(el) {
-      const target = parseInt(el.dataset.target);
-      const suffix = target === 24 ? '/7' : (target >= 1000 ? '+' : '+');
-      const duration = 2000;
-      const step = target / (duration / 16);
-      let current = 0;
-
-      const timer = setInterval(() => {
-        current = Math.min(current + step, target);
-        el.textContent = Math.floor(current) + suffix;
-        if (current >= target) clearInterval(timer);
-      }, 16);
-    }
-
-    // ── Scroll reveal ──────────────────────────────────────
-    const revealEls = document.querySelectorAll('.reveal');
-    const serviceCards = document.querySelectorAll('.service-card');
-    let statsAnimated = false;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-
-    revealEls.forEach(el => observer.observe(el));
-
-    // Service cards staggered
-    const cardObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 100);
-          cardObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    serviceCards.forEach(c => cardObserver.observe(c));
-
-    // Stats counter trigger
-    const statsBar = document.querySelector('.stats-bar');
-    const statsObserver = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !statsAnimated) {
-        statsAnimated = true;
-        document.querySelectorAll('.stat-number').forEach(el => animateCounter(el));
+      if (window.HospitalStore) {
+        HospitalStore.subscribe(() => {
+          renderDoctorsShowcase();
+          renderProceduresShowcase();
+        });
       }
-    }, { threshold: 0.5 });
+    });
 
-    statsObserver.observe(statsBar);
+    function updatePatientNavState() {
+      const patient = HospitalAuth.getCurrentPatient();
+      const topBtn = document.getElementById('patientTopAuthBtn');
+      const navBtn = document.getElementById('patientNavAuthBtn');
+
+      if (patient && !patient.isGuest) {
+        const text = patient.name.split(' ')[0] || 'My Account';
+        if (topBtn) topBtn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${text}`;
+        if (navBtn) navBtn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${text}`;
+      }
+    }
+
+    function openPatientAuthModal() {
+      const patient = HospitalAuth.getCurrentPatient();
+
+      if (patient && !patient.isGuest) {
+        const html = `
+          <div style="text-align:center; padding:10px 0;">
+            <div style="width:48px; height:48px; background:var(--accent-soft); color:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <h3 style="font-family:var(--font-heading); font-size:1.25rem; font-weight:700; color:var(--primary); margin-bottom:4px;">${patient.name}</h3>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:20px;">${patient.email || patient.phone || ''}</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <a href="booking.html#reportsTab" class="btn btn-primary" onclick="closeModal()">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                View My Prescriptions & Tokens
+              </a>
+              <a href="booking.html" class="btn btn-teal" onclick="closeModal()">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Book New Appointment
+              </a>
+              <button class="btn btn-secondary" onclick="HospitalAuth.logoutPatient(); closeModal(); updatePatientNavState(); showToast('Signed out of patient portal', 'success');">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        `;
+        openModal("Patient Account", html);
+        return;
+      }
+
+      const html = `
+        <div>
+          <!-- Tab Switcher -->
+          <div style="display:flex; background:var(--bg-section); border-radius:var(--radius-md); padding:4px; margin-bottom:20px;">
+            <button type="button" id="btnAuthTabLogin" onclick="toggleAuthTab('login')" class="btn btn-sm" style="flex:1; background:var(--primary); color:#ffffff;">Sign In</button>
+            <button type="button" id="btnAuthTabSignup" onclick="toggleAuthTab('signup')" class="btn btn-sm" style="flex:1; background:transparent; color:var(--text-primary);">Create Account</button>
+          </div>
+
+          <!-- Sign In Form -->
+          <div id="authLoginBox">
+            <form onsubmit="handlePatientLoginSubmit(event)">
+              <div class="form-group">
+                <label class="form-label">Email or Mobile Number</label>
+                <input type="text" id="pLoginEmail" class="form-input" placeholder="Enter registered email or mobile" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="pLoginPass" class="form-input" placeholder="Enter your password" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px;">Sign In to Account</button>
+            </form>
+          </div>
+
+          <!-- Create Account Form -->
+          <div id="authSignupBox" style="display:none;">
+            <form onsubmit="handlePatientSignupSubmit(event)">
+              <div class="form-group">
+                <label class="form-label">Full Name <span class="req">*</span></label>
+                <input type="text" id="pRegName" class="form-input" placeholder="e.g. Ramesh Prasad" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">10-Digit Mobile Number <span class="req">*</span></label>
+                <input type="tel" id="pRegPhone" class="form-input" placeholder="e.g. 9876543210" pattern="[6-9][0-9]{9}" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password <span class="req">*</span></label>
+                <input type="password" id="pRegPass" class="form-input" placeholder="Minimum 6 characters" minlength="6" required>
+              </div>
+              <button type="submit" class="btn btn-teal" style="width:100%; margin-top:6px;">Create Patient Account</button>
+            </form>
+          </div>
+
+          <div style="text-align:center; margin-top:20px; padding-top:16px; border-top:1px solid var(--border-subtle);">
+            <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:8px;">Booking without an account?</p>
+            <a href="booking.html" class="btn btn-secondary btn-sm" onclick="closeModal()">
+              Continue as Guest (No Account Required) →
+            </a>
+          </div>
+        </div>
+      `;
+
+      openModal("Patient Portal Access", html);
+    }
+
+    function toggleAuthTab(tab) {
+      document.getElementById('authLoginBox').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('authSignupBox').style.display = tab === 'signup' ? 'block' : 'none';
+      document.getElementById('btnAuthTabLogin').style.background = tab === 'login' ? 'var(--primary)' : 'transparent';
+      document.getElementById('btnAuthTabLogin').style.color = tab === 'login' ? '#ffffff' : 'var(--text-primary)';
+      document.getElementById('btnAuthTabSignup').style.background = tab === 'signup' ? 'var(--primary)' : 'transparent';
+      document.getElementById('btnAuthTabSignup').style.color = tab === 'signup' ? '#ffffff' : 'var(--text-primary)';
+    }
+
+    async function handlePatientLoginSubmit(e) {
+      e.preventDefault();
+      const val = document.getElementById('pLoginEmail').value.trim();
+      const pass = document.getElementById('pLoginPass').value.trim();
+
+      const res = await HospitalAuth.loginPatient(val, pass);
+      if (res.success) {
+        showToast("Welcome back!", "success");
+        closeModal();
+        updatePatientNavState();
+      } else {
+        showToast(res.error || "Invalid login credentials", "danger");
+      }
+    }
+
+    async function handlePatientSignupSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('pRegName').value.trim();
+      const phone = document.getElementById('pRegPhone').value.trim();
+      const pass = document.getElementById('pRegPass').value.trim();
+
+      const res = await HospitalAuth.registerPatient({ name, mobile: phone, password: pass });
+      if (res.success) {
+        showToast("Account created successfully! You are now signed in.", "success");
+        closeModal();
+        updatePatientNavState();
+      } else {
+        showToast(res.error || "Registration failed", "danger");
+      }
+    }
+
+    // Doctors Showcase (handles blank canvas state)
+    function renderDoctorsShowcase() {
+      const container = document.getElementById('homeDoctorsGrid');
+      if (!container || !window.HospitalStore) return;
+
+      const doctors = HospitalStore.getDoctors();
+
+      if (!doctors || doctors.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; background:var(--bg-section); padding:40px var(--space-6); border-radius:var(--radius-lg); border:1px dashed var(--border-subtle); text-align:center;">
+            <div style="width:48px; height:48px; background:#ffffff; color:var(--secondary); border:1px solid var(--border-subtle); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            </div>
+            <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin-bottom:6px;">Medical Faculty Schedule Being Updated</h4>
+            <p style="font-size:0.875rem; color:var(--text-secondary); max-width:540px; margin:0 auto 18px auto;">
+              Direct walk-in outpatient consultations and emergency services are available round the clock at the hospital reception desk.
+            </p>
+            <a href="booking.html" class="btn btn-primary btn-sm">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Open OPD Appointment Desk
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = doctors.map(doc => `
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="${doc.photo}" alt="${doc.name}" onerror="this.src='IMG_20250615_114959.jpg'">
+          </div>
+          <div class="card-body">
+            <span class="badge ${doc.status === 'available' ? 'badge-success' : 'badge-warning'}" style="align-self:flex-start; margin-bottom:8px;">
+              ${doc.status === 'available' ? 'Available in OPD' : (doc.status === 'ot' ? 'In OT Surgery' : 'On Leave')}
+            </span>
+            <h3>${doc.name}</h3>
+            <div style="font-size:0.8125rem; color:var(--secondary); font-weight:700; margin-bottom:4px;">${doc.dept}</div>
+            <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:14px;">${doc.degree || ''} · ${doc.title || ''}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:12px; margin-top:auto;">
+              <span style="font-weight:700; color:var(--primary); font-size:0.875rem;">₹${doc.fee} OPD</span>
+              <a href="booking.html?doc=${doc.id}" class="btn btn-teal btn-sm">Book Slot</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Procedures Showcase (handles blank canvas state)
+    function renderProceduresShowcase() {
+      const container = document.getElementById('homeProceduresGrid');
+      if (!container || !window.HospitalStore) return;
+
+      const procs = HospitalStore.getProcedures();
+
+      if (!procs || procs.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; background:#ffffff; padding:40px var(--space-6); border-radius:var(--radius-lg); border:1px dashed var(--border-subtle); text-align:center;">
+            <div style="width:48px; height:48px; background:var(--bg-section); color:var(--secondary); border:1px solid var(--border-subtle); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            </div>
+            <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin-bottom:6px;">Surgical Procedures Directory</h4>
+            <p style="font-size:0.875rem; color:var(--text-secondary); max-width:540px; margin:0 auto 18px auto;">
+              Detailed patient preparation guides and surgical package information are maintained by the hospital administration.
+            </p>
+            <a href="booking.html" class="btn btn-secondary btn-sm">Schedule Clinical Consultation</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = procs.map(proc => `
+        <div class="card">
+          <div class="card-body">
+            <span class="badge badge-neutral" style="align-self:flex-start; margin-bottom:8px;">${proc.category || 'General Surgery'}</span>
+            <h3>${proc.name || proc.title}</h3>
+            <p style="font-size:0.86rem; color:var(--text-secondary); line-height:1.5; margin-bottom:16px;">${proc.desc || proc.summary || ''}</p>
+            <div style="margin-top:auto; padding-top:12px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.84rem; font-weight:700; color:var(--primary);">₹${proc.estCost || '25000'} Est.</span>
+              <a href="booking.html" class="btn btn-secondary btn-sm">Consult Doctor</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
   </script>
 
 </body>

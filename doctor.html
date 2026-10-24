@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Private Doctor Chamber Portal · Nalanda Advance Healthcare</title>
+  
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/print.css" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <!-- HTML2PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Hospital Ecosystem Engine -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/hospitalStore.js"></script>
+  <script src="js/printEngine.js"></script>
+  <script src="js/main.js"></script>
+
+  <style>
+    body {
+      background-color: var(--primary);
+      color: var(--text-primary);
+      padding-bottom: 84px;
+    }
+
+    .doctor-phone-shell {
+      max-width: 500px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: var(--bg-section);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .doc-phone-header {
+      background-color: var(--primary);
+      color: #ffffff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--secondary);
+    }
+
+    .doc-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      border: 1.5px solid var(--secondary);
+    }
+
+    /* 1-Tap Status Controller */
+    .status-controller-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 12px 16px;
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .status-tap-pill {
+      padding: 10px 8px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background-color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition-fast);
+      color: var(--primary);
+    }
+
+    .status-tap-pill.active {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* Patient Queue Cards */
+    .patient-queue-list {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .queue-patient-card {
+      background-color: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 16px;
+      box-shadow: var(--shadow-xs);
+      transition: var(--transition-fast);
+    }
+
+    .queue-patient-card.in-consultation {
+      border-color: var(--secondary);
+      background-color: var(--secondary-light);
+    }
+
+    .token-chip {
+      background-color: var(--primary);
+      color: #ffffff;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .quick-vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .medicine-adder-row {
+      background-color: var(--bg-section);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .doctor-login-shell {
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 36px 30px;
+      background-color: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-modal);
+      text-align: center;
+    }
+
+    .mobile-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-top: 1px solid var(--border-subtle);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 1000;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .mobile-bottom-tab {
+      background: none;
+      border: none;
+      padding: 10px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .mobile-bottom-tab.active {
+      color: var(--secondary);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden print area -->
+  <div id="activePrintArea"></div>
+
+  <!-- --------------------------------------------------------------------------
+       DOCTOR LOGIN GATE (NO EMOJIS, CLEAN CLINICAL UI)
+       -------------------------------------------------------------------------- -->
+  <div id="doctorLoginScreen" class="no-print" style="padding: 20px;">
+    <div class="doctor-login-shell">
+      <div style="width:52px; height:52px; background:var(--secondary-light); color:var(--secondary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto;">
+        <svg class="icon icon-xl" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+      </div>
+
+      <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+        Staff Authentication
+      </span>
+      <h2 style="font-family:var(--font-heading); font-size:1.6rem; font-weight:700; color:var(--primary); margin:0 0 8px 0;">
+        Doctor Chamber Login
+      </h2>
+      <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px; line-height:1.5;">
+        Private consultation access. Credentials are created by hospital administration.
+      </p>
+
+      <form onsubmit="handleDoctorLoginSubmit(event)" style="text-align:left;">
+        <div class="form-group">
+          <label class="form-label">Doctor Login Email / ID</label>
+          <input type="text" id="docLoginEmail" class="form-input" placeholder="e.g. dr.sinha@nalanda.com" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom:24px;">
+          <label class="form-label">Password (Set by Admin)</label>
+          <input type="password" id="docLoginPassword" class="form-input" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:12px;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Sign In to Chamber
+        </button>
+      </form>
+
+      <div style="margin-top:20px; font-size:0.8125rem; color:var(--text-secondary); background:var(--bg-section); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+        New doctors: Please contact reception to receive your initial access password.
+      </div>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------------------------------
+       DOCTOR MOBILE CHAMBER APP (SHOWN AFTER LOGIN)
+       -------------------------------------------------------------------------- -->
+  <div id="doctorAppShell" class="doctor-phone-shell" style="display:none;">
+
+    <!-- TOP HEADER BAR -->
+    <header class="doc-phone-header no-print">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <img id="activeDocPhoto" src="IMG_20250615_114959.jpg" alt="Doctor" class="doc-avatar" onerror="this.src='IMG_20250615_114959.jpg'">
+        <div>
+          <h4 id="activeDocName" style="font-family:var(--font-heading); font-size:1.05rem; font-weight:700; color:#ffffff; margin:0; line-height:1.2;">
+            Dr. Consultant
+          </h4>
+          <span id="activeDocDept" style="font-size:0.7rem; color:#93c5fd; letter-spacing:0.06em; text-transform:uppercase; font-weight:600;">
+            Specialist
+          </span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-secondary btn-sm" onclick="openChangePasswordModal()" style="padding:5px 8px; font-size:0.75rem;" title="Change Password">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 2l-2 2m-1.5 1.5L12 11l4 4 5.5-5.5a2.12 2.12 0 0 0 0-3L19 4"></path><path d="M3 21l3-3"></path><path d="M7.5 16.5l2 2"></path></svg>
+          Password
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="handleDoctorLogout()" style="padding:5px 8px; font-size:0.75rem;" title="Sign Out">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 1-TAP LIVE DUTY CONTROLLER -->
+    <div class="status-controller-grid no-print">
+      <button type="button" class="status-tap-pill" id="pill-available" onclick="setDocStatus('available')">
+        <span style="color:var(--success);">●</span> In OPD
+      </button>
+      <button type="button" class="status-tap-pill" id="pill-ot" onclick="setDocStatus('ot')">
+        <span style="color:var(--warning);">●</span> OT Surgery
+      </button>
+      <button type="button" class="status-tap-pill" id="pill-emergency" onclick="setDocStatus('emergency')">
+        <span style="color:var(--emergency);">●</span> Emergency
+      </button>
+      <button type="button" class="status-tap-pill" id="pill-leave" onclick="setDocStatus('leave')">
+        <span style="color:#64748b;">●</span> On Leave
+      </button>
+    </div>
+
+    <!-- ----------------------------------------------------------------------
+         PANEL 1: PATIENT QUEUE
+         ---------------------------------------------------------------------- -->
+    <section id="panel-queue" class="doc-panel-section">
+      <div style="padding: 16px 16px 0 16px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 style="font-family:var(--font-heading); font-size:1.25rem; font-weight:700; color:var(--primary); margin:0;">
+            Live Patient Queue
+          </h3>
+          <span id="queueStatsCount" style="font-size:0.78rem; color:var(--text-secondary); font-weight:600;">
+            0 Patients in Queue
+          </span>
+        </div>
+        <button onclick="renderDoctorQueue()" class="btn btn-secondary btn-sm" style="padding:4px 8px; font-size:0.75rem;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          Refresh
+        </button>
+      </div>
+
+      <div id="queueCardsContainer" class="patient-queue-list">
+        <!-- Patient queue cards injected via JS -->
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         PANEL 2: E-PRESCRIPTION PAD
+         ---------------------------------------------------------------------- -->
+    <section id="panel-rx" class="doc-panel-section" style="display:none; padding:16px;">
+      <div style="margin-bottom:14px;">
+        <span style="font-size:0.72rem; color:var(--secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Digital Consultation</span>
+        <h3 style="font-family:var(--font-heading); font-size:1.35rem; font-weight:700; color:var(--primary); margin:0;">
+          Write Consultation Rx
+        </h3>
+      </div>
+
+      <form id="docPrescriptionForm" onsubmit="handlePrescriptionSave(event)" style="background:#ffffff; border-radius:var(--radius-lg); padding:16px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+        <input type="hidden" id="rxAptId">
+        <input type="hidden" id="rxUHID">
+
+        <!-- Selected Patient Demographics Card -->
+        <div style="background:var(--accent-soft); border-radius:var(--radius-md); padding:12px; margin-bottom:14px; border:1px solid rgba(18, 48, 74, 0.08);">
+          <div style="font-size:0.72rem; color:var(--primary); font-weight:700; text-transform:uppercase;">Current Patient</div>
+          <div id="rxDisplayPatient" style="font-weight:700; font-size:0.95rem; color:var(--primary);">Select patient from queue</div>
+        </div>
+
+        <!-- Quick Vitals Input -->
+        <div class="quick-vitals-grid">
+          <div>
+            <label class="form-label" style="font-size:0.6875rem;">BP (mmHg)</label>
+            <input type="text" id="vitBP" class="form-input" placeholder="120/80" style="padding:6px 8px; font-size:0.8125rem;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.6875rem;">Pulse (bpm)</label>
+            <input type="text" id="vitPulse" class="form-input" placeholder="78" style="padding:6px 8px; font-size:0.8125rem;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.6875rem;">Temp (°F)</label>
+            <input type="text" id="vitTemp" class="form-input" placeholder="98.6" style="padding:6px 8px; font-size:0.8125rem;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.6875rem;">SpO2 (%)</label>
+            <input type="text" id="vitSpO2" class="form-input" placeholder="99%" style="padding:6px 8px; font-size:0.8125rem;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.6875rem;">Weight (kg)</label>
+            <input type="text" id="vitWeight" class="form-input" placeholder="65" style="padding:6px 8px; font-size:0.8125rem;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.6875rem;">Sugar (RBS)</label>
+            <input type="text" id="vitSugar" class="form-input" placeholder="110" style="padding:6px 8px; font-size:0.8125rem;">
+          </div>
+        </div>
+
+        <!-- Clinical Diagnosis -->
+        <div class="form-group">
+          <label class="form-label">Clinical Diagnosis <span class="req">*</span></label>
+          <input type="text" id="rxDiagnosis" class="form-input" placeholder="e.g. Acute Gastritis / URI" required>
+        </div>
+
+        <!-- Prescribed Medications -->
+        <div style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label class="form-label" style="margin:0;">Prescribed Medicines (Rx)</label>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addMedicineRow()" style="padding:4px 8px; font-size:0.75rem;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Medicine
+            </button>
+          </div>
+          <div id="medicinesContainer">
+            <!-- Medicine rows added here -->
+          </div>
+        </div>
+
+        <!-- Investigations & Follow up -->
+        <div class="form-group">
+          <label class="form-label">Advised Lab Tests / Investigations</label>
+          <input type="text" id="rxTests" class="form-input" placeholder="e.g. CBC, Ultrasound Abdomen, LFT">
+        </div>
+
+        <div class="form-group" style="margin-bottom:18px;">
+          <label class="form-label">Dietary & Follow-Up Advice</label>
+          <input type="text" id="rxFollowUp" class="form-input" value="Review after 5 days or SOS">
+        </div>
+
+        <!-- Actions -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+          <button type="submit" class="btn btn-primary" style="justify-content:center; padding:10px;">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Save Rx
+          </button>
+          <button type="button" class="btn btn-success" onclick="handleSaveAndCompleteNow()" style="justify-content:center; padding:10px; background:var(--success); color:#ffffff;" title="Save Prescription and Complete Token">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Complete Token
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="handleSaveAndPrintNow()" style="justify-content:center; padding:10px;">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Save & Print
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         PANEL 3: SCHEDULE & SLOTS
+         ---------------------------------------------------------------------- -->
+    <section id="panel-slots" class="doc-panel-section" style="display:none; padding:16px;">
+      <div style="margin-bottom:16px;">
+        <h3 style="font-family:var(--font-heading); font-size:1.35rem; font-weight:700; color:var(--primary); margin:0;">
+          Schedule & Slot Controls
+        </h3>
+        <p style="font-size:0.8125rem; color:var(--text-secondary);">Tap a slot to block or unblock patient bookings in real time.</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">Consultation Date</label>
+        <input type="date" id="docSlotDate" class="form-input" onchange="renderDocSlotBlocker()">
+      </div>
+
+      <div id="docSlotsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         PANEL 4: LEAVE & OT REQUEST
+         ---------------------------------------------------------------------- -->
+    <section id="panel-leave" class="doc-panel-section" style="display:none; padding:16px;">
+      <div style="margin-bottom:16px;">
+        <h3 style="font-family:var(--font-heading); font-size:1.35rem; font-weight:700; color:var(--primary); margin:0;">
+          Apply Leave / OT Notice
+        </h3>
+        <p style="font-size:0.8125rem; color:var(--text-secondary);">Notify hospital reception of scheduled leaves, dedicated OT surgery blocks, or emergency absence.</p>
+      </div>
+
+      <form onsubmit="handleLeaveSubmit(event)" style="background:#ffffff; border-radius:var(--radius-lg); padding:16px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs); margin-bottom:24px;">
+        <div class="form-group">
+          <label class="form-label">Notice Category</label>
+          <select id="leaveCategory" class="form-select">
+            <option value="Personal / Medical Leave">Personal / Medical Leave</option>
+            <option value="Dedicated OT / Surgery Schedule">Dedicated OT / Surgery Schedule</option>
+            <option value="Conference / Out of Station">Conference / Out of Station</option>
+            <option value="Casual Leave">Casual Leave</option>
+          </select>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+          <div>
+            <label class="form-label">Start Date</label>
+            <input type="date" id="leaveStart" class="form-input" required>
+          </div>
+          <div>
+            <label class="form-label">End Date</label>
+            <input type="date" id="leaveEnd" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:18px;">
+          <label class="form-label">Reason / Case Details</label>
+          <textarea id="leaveReason" class="form-textarea" placeholder="e.g. Laparoscopic surgery block in modular OT 1..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;">
+          Submit Notice to Reception
+        </button>
+      </form>
+
+      <div>
+        <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 12px 0;">
+          My Leave & OT Notices History
+        </h4>
+        <div id="doctorLeavesHistoryContainer">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- BOTTOM FIXED NAV -->
+    <nav class="mobile-bottom-nav no-print">
+      <button class="mobile-bottom-tab active" id="tab-btn-queue" onclick="switchDoctorTab('queue')">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+        Queue
+      </button>
+      <button class="mobile-bottom-tab" id="tab-btn-rx" onclick="switchDoctorTab('rx')">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        Write Rx
+      </button>
+      <button class="mobile-bottom-tab" id="tab-btn-slots" onclick="switchDoctorTab('slots')">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Slots
+      </button>
+      <button class="mobile-bottom-tab" id="tab-btn-leave" onclick="switchDoctorTab('leave')">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        Leave
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL FOR DOCTOR -->
+  <div id="changePasswordModal" style="display:none; position:fixed; inset:0; background:rgba(18,48,74,0.6); backdrop-filter:blur(4px); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+    <div class="modal-card" style="max-width:400px;">
+      <div class="modal-header">
+        <h3 style="font-size:1.15rem; font-weight:700; color:var(--primary); margin:0;">Change Password</h3>
+        <button class="modal-close-btn" onclick="closeChangePasswordModal()" aria-label="Close">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:16px;">
+          Update the initial password assigned by the hospital administrator.
+        </p>
+
+        <form onsubmit="handleDoctorChangePasswordSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">New Password (Min. 6 chars)</label>
+            <input type="password" id="newDocPassword" class="form-input" minlength="6" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px;">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" id="confirmDocPassword" class="form-input" minlength="6" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeDoctor = null;
+    let currentConsultingApt = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkDoctorSession();
+
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('docSlotDate').value = today;
+      document.getElementById('leaveStart').min = today;
+      document.getElementById('leaveEnd').min = today;
+
+      if (window.HospitalStore) {
+        HospitalStore.subscribe(() => {
+          if (activeDoctor) {
+            renderDoctorQueue();
+            renderDocSlotBlocker();
+            renderDoctorLeavesHistory();
+          }
+        });
+      }
+    });
+
+    function checkDoctorSession() {
+      const stored = HospitalAuth.getCurrentDoctor();
+      if (stored) {
+        const fresh = HospitalStore.getDoctorById(stored.id);
+        activeDoctor = fresh || stored;
+        showDoctorApp();
+      } else {
+        document.getElementById('doctorLoginScreen').style.display = 'block';
+        document.getElementById('doctorAppShell').style.display = 'none';
+      }
+    }
+
+    async function handleDoctorLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('docLoginEmail').value.trim();
+      const pass = document.getElementById('docLoginPassword').value.trim();
+
+      const res = await HospitalAuth.loginDoctor(email, pass);
+      if (res.success) {
+        activeDoctor = res.doctor;
+        showToast(`Welcome Dr. ${activeDoctor.name}`, "success");
+        showDoctorApp();
+      } else {
+        showToast(res.error || "Invalid doctor credentials", "danger");
+      }
+    }
+
+    function showDoctorApp() {
+      document.getElementById('doctorLoginScreen').style.display = 'none';
+      document.getElementById('doctorAppShell').style.display = 'block';
+
+      document.getElementById('activeDocName').textContent = activeDoctor.name;
+      document.getElementById('activeDocDept').textContent = activeDoctor.specialty || activeDoctor.dept;
+      document.getElementById('activeDocPhoto').src = activeDoctor.photo;
+
+      updateStatusPillUI(activeDoctor.status || 'available');
+      renderDoctorQueue();
+      renderDocSlotBlocker();
+      renderDoctorLeavesHistory();
+    }
+
+    function handleDoctorLogout() {
+      HospitalAuth.logoutDoctor();
+      activeDoctor = null;
+      showToast("Signed out of Chamber", "info");
+      document.getElementById('doctorLoginScreen').style.display = 'block';
+      document.getElementById('doctorAppShell').style.display = 'none';
+    }
+
+    function openChangePasswordModal() {
+      document.getElementById('changePasswordModal').style.display = 'flex';
+    }
+
+    function closeChangePasswordModal() {
+      document.getElementById('changePasswordModal').style.display = 'none';
+    }
+
+    async function handleDoctorChangePasswordSubmit(e) {
+      e.preventDefault();
+      if (!activeDoctor) return;
+
+      const p1 = document.getElementById('newDocPassword').value;
+      const p2 = document.getElementById('confirmDocPassword').value;
+
+      if (p1 !== p2) {
+        showToast("Passwords do not match", "danger");
+        return;
+      }
+
+      const res = await HospitalAuth.changeDoctorPassword(activeDoctor.id, p1);
+      if (res.success) {
+        showToast("Password updated successfully!", "success");
+        closeChangePasswordModal();
+      } else {
+        showToast(res.error || "Failed to update password", "danger");
+      }
+    }
+
+    function setDocStatus(status) {
+      if (!activeDoctor) return;
+      HospitalStore.updateDoctorStatus(activeDoctor.id, status);
+      activeDoctor.status = status;
+      updateStatusPillUI(status);
+      showToast(`Status updated to ${status.toUpperCase()}`, "success");
+    }
+
+    function updateStatusPillUI(status) {
+      ['available', 'ot', 'emergency', 'leave'].forEach(s => {
+        const btn = document.getElementById(`pill-${s}`);
+        if (btn) btn.classList.toggle('active', s === status);
+      });
+    }
+
+    function switchDoctorTab(tab) {
+      ['queue', 'rx', 'slots', 'leave'].forEach(t => {
+        document.getElementById(`panel-${t}`).style.display = t === tab ? 'block' : 'none';
+        document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
+      });
+      if (tab === 'leave') renderDoctorLeavesHistory();
+      if (tab === 'queue') renderDoctorQueue();
+      if (tab === 'slots') renderDocSlotBlocker();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderDoctorQueue() {
+      const container = document.getElementById('queueCardsContainer');
+      if (!container || !activeDoctor) return;
+
+      const allApts = HospitalStore.getAppointments();
+      const myApts = allApts.filter(a => a.doctorId === activeDoctor.id || a.dept === activeDoctor.dept);
+
+      document.getElementById('queueStatsCount').textContent = `${myApts.length} Patients in Queue`;
+
+      if (myApts.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:36px 16px; color:var(--text-secondary); background:#ffffff; border-radius:var(--radius-lg); border:1px dashed var(--border-subtle); font-size:0.875rem;">
+            No patients currently waiting in queue.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = myApts.map(apt => `
+        <div class="queue-patient-card ${apt.status === 'In Consultation' ? 'in-consultation' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="token-chip">${apt.tokenNo}</span>
+            <span class="badge ${apt.status === 'In Consultation' ? 'badge-warning' : 'badge-neutral'}">${apt.status}</span>
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin:0 0 2px 0;">${apt.patientName}</h4>
+            <div style="font-size:0.8125rem; color:var(--text-secondary);">
+              ${apt.age}Y / ${apt.gender} · Blood: ${apt.bloodGroup || 'N/A'} · UHID: <strong>${apt.uhid}</strong>
+            </div>
+            <div style="font-size:0.8125rem; color:var(--primary); margin-top:6px; background:var(--bg-section); padding:6px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <strong>Symptoms:</strong> ${apt.symptoms || 'General Checkup'}
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            ${apt.status !== 'Completed' ? `
+              <button class="btn btn-primary btn-sm" onclick="callNextPatient('${apt.id}')" style="flex:1; min-width:80px; justify-content:center;">
+                Call
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="flex:1; min-width:80px; justify-content:center;">
+                Write Rx
+              </button>
+              <button class="btn btn-success btn-sm" onclick="completeToken('${apt.id}')" style="flex:1; min-width:110px; justify-content:center; background:var(--success); color:#ffffff;" title="Complete Consultation Token">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Complete Token
+              </button>
+            ` : `
+              <button class="btn btn-secondary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="flex:1; justify-content:center;">
+                View / Edit Rx
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="reopenToken('${apt.id}')" style="flex:1; justify-content:center; font-size:0.75rem;">
+                Re-open Token
+              </button>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function callNextPatient(aptId) {
+      HospitalStore.updateAppointment(aptId, { status: "In Consultation" });
+      showToast("Patient called into chamber", "success");
+      renderDoctorQueue();
+    }
+
+    function openPrescriptionFor(aptId) {
+      const apt = HospitalStore.getAppointmentById(aptId);
+      if (!apt) return;
+
+      currentConsultingApt = apt;
+      document.getElementById('rxAptId').value = apt.id;
+      document.getElementById('rxUHID').value = apt.uhid;
+      document.getElementById('rxDisplayPatient').textContent = `${apt.patientName} (${apt.age}Y/${apt.gender}) · Token ${apt.tokenNo}`;
+      document.getElementById('rxDiagnosis').value = apt.symptoms || '';
+
+      const container = document.getElementById('medicinesContainer');
+      container.innerHTML = '';
+      addMedicineRow({ name: "Tab. Paracetamol 650mg", dosage: "1-0-1", timing: "After Food", duration: "3 Days" });
+
+      switchDoctorTab('rx');
+    }
+
+    function addMedicineRow(med = {}) {
+      const container = document.getElementById('medicinesContainer');
+      const rowId = 'med-' + Date.now() + Math.random().toString().slice(2, 5);
+
+      const div = document.createElement('div');
+      div.className = 'medicine-adder-row';
+      div.id = rowId;
+      div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <input type="text" class="form-input med-name" placeholder="Medicine / Syrup Name" value="${med.name || ''}" style="font-weight:600; padding:6px 10px; font-size:0.875rem;">
+          <button type="button" onclick="document.getElementById('${rowId}').remove()" style="background:none; border:none; color:var(--emergency); cursor:pointer; padding:0 8px; font-weight:700;">✕</button>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <select class="form-select med-dosage" style="width:85px; padding:6px; font-size:0.75rem;">
+            <option value="1-0-1" ${med.dosage === '1-0-1' ? 'selected' : ''}>1-0-1</option>
+            <option value="1-1-1" ${med.dosage === '1-1-1' ? 'selected' : ''}>1-1-1</option>
+            <option value="1-0-0" ${med.dosage === '1-0-0' ? 'selected' : ''}>1-0-0</option>
+            <option value="0-0-1" ${med.dosage === '0-0-1' ? 'selected' : ''}>0-0-1</option>
+            <option value="SOS" ${med.dosage === 'SOS' ? 'selected' : ''}>SOS</option>
+          </select>
+          <select class="form-select med-timing" style="width:105px; padding:6px; font-size:0.75rem;">
+            <option value="After Food">After Food</option>
+            <option value="Before Food">Before Food</option>
+            <option value="Bedtime">At Bedtime</option>
+          </select>
+          <input type="text" class="form-input med-duration" placeholder="Duration" value="${med.duration || '5 Days'}" style="width:80px; padding:6px; font-size:0.75rem;">
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function collectPrescriptionPayload() {
+      const aptId = document.getElementById('rxAptId').value;
+      const apt = currentConsultingApt || HospitalStore.getAppointmentById(aptId);
+
+      const medicines = [];
+      document.querySelectorAll('#medicinesContainer .medicine-adder-row').forEach(row => {
+        const name = row.querySelector('.med-name').value.trim();
+        if (name) {
+          medicines.push({
+            name,
+            dosage: row.querySelector('.med-dosage').value,
+            timing: row.querySelector('.med-timing').value,
+            duration: row.querySelector('.med-duration').value
+          });
+        }
+      });
+
+      return {
+        appointmentId: aptId,
+        uhid: apt ? apt.uhid : 'NAH-2026-TEMP',
+        patientName: apt ? apt.patientName : 'Walk-In Patient',
+        ageGender: apt ? `${apt.age} / ${apt.gender}` : '35 / M',
+        doctorName: activeDoctor ? activeDoctor.name : 'Dr. Consultant',
+        doctorTitle: activeDoctor ? activeDoctor.title : 'Senior Consultant',
+        date: new Date().toISOString().slice(0, 10),
+        vitals: {
+          bp: document.getElementById('vitBP').value || '120/80 mmHg',
+          pulse: document.getElementById('vitPulse').value || '76 bpm',
+          temp: document.getElementById('vitTemp').value || '98.6°F',
+          weight: document.getElementById('vitWeight').value || '65 kg',
+          spo2: document.getElementById('vitSpO2').value || '99%'
+        },
+        diagnosis: document.getElementById('rxDiagnosis').value.trim(),
+        medicines,
+        investigations: document.getElementById('rxTests').value.trim(),
+        followUp: document.getElementById('rxFollowUp').value.trim()
+      };
+    }
+
+    function handlePrescriptionSave(e) {
+      if (e) e.preventDefault();
+      const payload = collectPrescriptionPayload();
+      HospitalStore.savePrescription(payload);
+      showToast("Prescription saved and sent to patient portal", "success");
+      switchDoctorTab('queue');
+    }
+
+    function handleSaveAndPrintNow() {
+      const payload = collectPrescriptionPayload();
+      HospitalStore.savePrescription(payload);
+      showToast("Printing prescription...", "success");
+      PrintEngine.printPrescription(payload, currentConsultingApt);
+      switchDoctorTab('queue');
+    }
+
+    function completeToken(aptId) {
+      HospitalStore.updateAppointment(aptId, { status: "Completed" });
+      showToast("Token marked as Completed", "success");
+      renderDoctorQueue();
+    }
+
+    function reopenToken(aptId) {
+      HospitalStore.updateAppointment(aptId, { status: "In Consultation" });
+      showToast("Token re-opened into consultation", "info");
+      renderDoctorQueue();
+    }
+
+    function handleSaveAndCompleteNow() {
+      const payload = collectPrescriptionPayload();
+      HospitalStore.savePrescription(payload);
+      if (payload.appointmentId) {
+        HospitalStore.updateAppointment(payload.appointmentId, { status: "Completed" });
+      }
+      showToast("Prescription saved and Token Completed!", "success");
+      renderDoctorQueue();
+      switchDoctorTab('queue');
+    }
+
+    function renderDocSlotBlocker() {
+      const container = document.getElementById('docSlotsGrid');
+      if (!container || !activeDoctor) return;
+
+      const blocked = activeDoctor.blockedSlots || [];
+      const slots = [
+        "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM",
+        "11:30 AM", "12:00 PM", "12:30 PM", "02:00 PM",
+        "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM"
+      ];
+
+      container.innerHTML = slots.map(slot => {
+        const isBlocked = blocked.includes(slot);
+        return `
+          <button type="button" class="btn ${isBlocked ? 'btn-danger' : 'btn-secondary'} btn-sm" onclick="toggleBlockSlot('${slot}')" style="justify-content:center; padding:8px 4px; font-size:0.75rem;">
+            ${isBlocked ? 'Blocked ' + slot : 'Active ' + slot}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleBlockSlot(slot) {
+      if (!activeDoctor) return;
+      let blocked = activeDoctor.blockedSlots || [];
+
+      if (blocked.includes(slot)) {
+        blocked = blocked.filter(s => s !== slot);
+        showToast(`Unblocked ${slot}`, "success");
+      } else {
+        blocked.push(slot);
+        showToast(`Blocked ${slot}`, "warning");
+      }
+
+      HospitalStore.updateDoctor(activeDoctor.id, { blockedSlots: blocked });
+      activeDoctor.blockedSlots = blocked;
+      renderDocSlotBlocker();
+    }
+
+    function handleLeaveSubmit(e) {
+      e.preventDefault();
+      if (!activeDoctor) return;
+
+      const category = document.getElementById('leaveCategory').value;
+      const start = document.getElementById('leaveStart').value;
+      const end = document.getElementById('leaveEnd').value;
+      const reason = document.getElementById('leaveReason').value.trim();
+
+      HospitalStore.submitLeaveRequest({
+        doctorId: activeDoctor.id,
+        doctorName: activeDoctor.name,
+        category,
+        startDate: start,
+        endDate: end,
+        reason
+      });
+
+      showToast("Leave notice submitted to reception", "success");
+      document.getElementById('leaveReason').value = '';
+      renderDoctorLeavesHistory();
+    }
+
+    function renderDoctorLeavesHistory() {
+      const container = document.getElementById('doctorLeavesHistoryContainer');
+      if (!container || !activeDoctor) return;
+
+      const allLeaves = HospitalStore.getLeaveRequests();
+      const myLeaves = allLeaves.filter(l => l.doctorId === activeDoctor.id);
+
+      if (myLeaves.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:20px; background:#ffffff; border-radius:var(--radius-md); border:1px dashed var(--border-subtle); color:var(--text-secondary); font-size:0.8125rem;">
+            No leave or OT notices submitted yet.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = myLeaves.map(l => {
+        const isApproved = l.status === 'Approved';
+        const isPending = l.status === 'Pending';
+        const badge = isApproved 
+          ? '<span class="badge badge-success">Approved (Off Duty)</span>' 
+          : (isPending ? '<span class="badge badge-warning">Pending Reception Approval</span>' : '<span class="badge badge-neutral">Dismissed</span>');
+
+        return `
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; margin-bottom:10px; box-shadow:var(--shadow-xs);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+              <span style="font-size:0.75rem; font-weight:700; color:var(--secondary); text-transform:uppercase;">${l.category || 'Leave Notice'}</span>
+              ${badge}
+            </div>
+            <div style="font-size:0.84rem; color:var(--primary); font-weight:600; margin-bottom:4px;">
+              ${l.startDate} to ${l.endDate}
+            </div>
+            <div style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:8px;">
+              ${l.reason}
+            </div>
+            ${isPending ? `
+              <button class="btn btn-secondary btn-sm" onclick="cancelMyLeaveRequest('${l.id}')" style="color:var(--emergency); font-size:0.75rem; padding:4px 8px;">
+                Cancel Notice
+              </button>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function cancelMyLeaveRequest(id) {
+      if (confirm("Cancel this pending leave notice?")) {
+        HospitalStore.deleteLeaveRequest(id);
+        showToast("Leave request cancelled", "info");
+        renderDoctorLeavesHistory();
+      }
+    }
+  </script>
+
+</body>
+</html>

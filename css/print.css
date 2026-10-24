@@ -1,0 +1,391 @@
+/* ==========================================================================
+   OFFICIAL HOSPITAL PRINT & PDF ENGINE STYLESHEET
+   Nalanda Advance Healthcare Hospital Pvt Ltd
+   Dual Format: A4 Letterhead Prescription & Compact Thermal/A5 Token Slip
+   ========================================================================== */
+
+/* Screen Preview Container (hidden by default unless modal opened) */
+.print-paper-container {
+  display: none;
+}
+
+/* Base Print Template styling (Used both for on-screen modal & window.print) */
+.hospital-print-document {
+  background: #ffffff;
+  color: #0f172a;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.4;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   FORMAT 1: A4 OFFICIAL PRESCRIPTION & MEDICAL SUMMARY
+   -------------------------------------------------------------------------- */
+.a4-prescription-layout {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 18mm;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Header Letterhead */
+.print-header {
+  border-bottom: 2.5px solid #0b4f6c;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.print-brand-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.print-logo-circle {
+  width: 56px;
+  height: 56px;
+  background: #0b4f6c;
+  color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.print-hospital-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0b4f6c;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.print-hospital-tagline {
+  font-size: 0.78rem;
+  color: #c9a84c;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.print-hospital-meta {
+  font-size: 0.72rem;
+  color: #475569;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+.print-header-right {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #334155;
+  border-left: 2px solid #e2e8f0;
+  padding-left: 14px;
+}
+
+.print-header-right strong {
+  color: #dc2626;
+  font-size: 0.85rem;
+  display: block;
+}
+
+/* Patient Demographics Box */
+.print-patient-bar {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.patient-field-item label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.patient-field-item span {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Vitals Strip */
+.print-vitals-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 0.78rem;
+  flex-wrap: wrap;
+}
+
+.vital-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vital-metric strong {
+  color: #0369a1;
+}
+
+/* Clinical Notes & Rx Body */
+.print-rx-body {
+  flex-grow: 1;
+}
+
+.rx-symbol-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-family: serif;
+  color: #0b4f6c;
+  margin-bottom: 12px;
+}
+
+.rx-symbol-line span {
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.clinical-section-block {
+  margin-bottom: 16px;
+}
+
+.clinical-block-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0b4f6c;
+  border-bottom: 1.5px solid #cbd5e1;
+  padding-bottom: 3px;
+  margin-bottom: 6px;
+}
+
+.clinical-block-content {
+  font-size: 0.86rem;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+/* Medicines Table */
+.print-medicine-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 20px 0;
+  font-size: 0.82rem;
+}
+
+.print-medicine-table th {
+  background: #f1f5f9;
+  color: #0b4f6c;
+  font-weight: 700;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.print-medicine-table td {
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.print-medicine-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+/* Footer & Signatures */
+.print-footer {
+  margin-top: 24px;
+  border-top: 2px solid #0b4f6c;
+  padding-top: 14px;
+}
+
+.print-signature-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.qr-verification-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.mock-qr {
+  width: 52px;
+  height: 52px;
+  border: 1px solid #000;
+  padding: 2px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  text-align: center;
+}
+
+.doctor-signature-box {
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+.doctor-sign-line {
+  width: 160px;
+  height: 1px;
+  background: #334155;
+  margin: 0 0 6px auto;
+}
+
+.print-disclaimer {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* --------------------------------------------------------------------------
+   FORMAT 2: COMPACT THERMAL / A5 TOKEN SLIP (80mm / A5)
+   -------------------------------------------------------------------------- */
+.thermal-receipt-layout {
+  width: 80mm;
+  min-height: auto;
+  padding: 8mm 6mm;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  margin: 0 auto;
+}
+
+.thermal-center {
+  text-align: center;
+}
+
+.thermal-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #000;
+}
+
+.thermal-tagline {
+  font-size: 9px;
+  margin-bottom: 6px;
+}
+
+.thermal-divider {
+  border-top: 1px dashed #000;
+  margin: 6px 0;
+}
+
+.thermal-token-badge {
+  background: #000;
+  color: #fff;
+  padding: 6px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.thermal-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 3px 0;
+}
+
+/* ==========================================================================
+   NATIVE HARDWARE PRINTER TRIGGERS (@media print)
+   ========================================================================== */
+@media print {
+  /* Hide all website chrome, navigations, switcher bar, buttons */
+  body * {
+    visibility: hidden;
+  }
+
+  .site-header,
+  .site-footer,
+  .portal-switcher-bar,
+  .emergency-utility-bar,
+  .floating-widget-wrap,
+  .modal-overlay,
+  .btn,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Only display the active printable document */
+  #activePrintArea,
+  #activePrintArea * {
+    visibility: visible;
+  }
+
+  #activePrintArea {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .a4-prescription-layout {
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 10mm 12mm !important;
+  }
+
+  .thermal-receipt-layout {
+    border: none !important;
+    width: 80mm !important;
+    padding: 4mm !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+}

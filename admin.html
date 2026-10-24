@@ -1,0 +1,2417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Private Admin & Reception Operations Hub · Nalanda Advance Healthcare</title>
+  
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/print.css" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <!-- HTML2PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Hospital Ecosystem Engine -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/hospitalStore.js"></script>
+  <script src="js/printEngine.js"></script>
+  <script src="js/main.js"></script>
+
+  <style>
+    body {
+      background-color: var(--bg-section);
+      color: var(--text-primary);
+    }
+
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .admin-sidebar {
+      width: 270px;
+      background-color: var(--primary);
+      color: #ffffff;
+      padding: 24px 16px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: #98a2b3;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: var(--transition-fast);
+    }
+
+    .admin-nav-item:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .admin-nav-item.active {
+      background-color: var(--secondary);
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .admin-main {
+      flex: 1;
+      padding: var(--space-8) var(--space-10);
+      background-color: var(--bg-section);
+      overflow-y: auto;
+    }
+
+    .kpi-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .kpi-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--primary);
+    }
+
+    .bed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .bed-card {
+      border-radius: var(--radius-md);
+      padding: 14px;
+      border: 1px solid var(--border-subtle);
+      background-color: #ffffff;
+      transition: var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .bed-card.available {
+      border-color: rgba(7, 148, 85, 0.3);
+      background-color: #f6fef9;
+    }
+
+    .bed-card.occupied {
+      border-color: rgba(217, 45, 32, 0.3);
+      background-color: #fef3f2;
+    }
+
+    /* TV Display Overlay & Native Fullscreen */
+    #tvDisplayModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #091a2b;
+      color: #ffffff;
+      z-index: 999999;
+      padding: 24px 32px;
+      overflow-y: auto;
+      box-sizing: border-box;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    #tvDisplayModal:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      padding: 24px 32px;
+      background: #091a2b;
+      box-sizing: border-box;
+      display: flex !important;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+    #tvDisplayModal:-webkit-full-screen {
+      width: 100vw;
+      height: 100vh;
+      padding: 24px 32px;
+      background: #091a2b;
+      box-sizing: border-box;
+      display: flex !important;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 900px) {
+      .admin-layout {
+        flex-direction: column;
+      }
+      .admin-sidebar {
+        width: 100%;
+      }
+      .admin-main {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden active print container -->
+  <div id="activePrintArea"></div>
+
+  <!-- AUTH SCREEN: Requires mohitk43131@gmail.com / moh45678 or RTDB authorized email -->
+  <div id="authScreen" class="no-print" style="padding: 20px;">
+    <div style="max-width:440px; margin:60px auto; background:#ffffff; padding:36px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); box-shadow:var(--shadow-modal); text-align:center;">
+      <div style="width:48px; height:48px; background:var(--accent-soft); color:var(--primary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto;">
+        <svg class="icon icon-xl" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </div>
+
+      <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+        Administration Desk
+      </span>
+      <h2 style="font-family:var(--font-heading); font-size:1.6rem; font-weight:700; color:var(--primary); margin:0 0 8px 0;">
+        Admin & Reception Portal
+      </h2>
+      <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px; line-height:1.5;">
+        Private administrative access. Credentials verified against Firebase Realtime Database.
+      </p>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" style="text-align:left;">
+        <div class="form-group">
+          <label class="form-label">Admin Email</label>
+          <input type="email" id="adminEmail" class="form-input" value="mohitk43131@gmail.com" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Password</label>
+          <input type="password" id="adminPassword" class="form-input" value="moh45678" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:12px;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Sign In as Administrator
+        </button>
+      </form>
+
+      <div style="display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--text-secondary); font-size:0.75rem;">
+        <span style="flex:1; height:1px; background:var(--border-subtle);"></span>
+        OR
+        <span style="flex:1; height:1px; background:var(--border-subtle);"></span>
+      </div>
+
+      <button type="button" class="btn btn-secondary" onclick="handleGoogleSignIn()" style="width:100%; padding:10px; font-size:0.84rem;">
+        Sign In with Google Admin
+      </button>
+
+      <div style="background:var(--bg-section); border-radius:var(--radius-md); padding:12px; margin-top:20px; font-size:0.78rem; color:var(--text-secondary); text-align:left; border:1px solid var(--border-subtle);">
+        <strong>Default Master Admin:</strong><br>
+        Email: <code>mohitk43131@gmail.com</code> | Password: <code>moh45678</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN APP DASHBOARD -->
+  <div id="adminApp" class="admin-layout" style="display:none;">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar no-print">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1);">
+          <div style="width:36px; height:36px; background:var(--secondary); color:#ffffff; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg class="icon icon-md" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <div>
+            <h4 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:700; color:#ffffff; margin:0; line-height:1.2;">Nalanda Admin</h4>
+            <span style="font-size:0.6875rem; color:#98a2b3; text-transform:uppercase; letter-spacing:0.06em;">Reception & CMS Desk</span>
+          </div>
+        </div>
+
+        <nav>
+          <div class="admin-nav-item active" onclick="switchAdminTab('reception')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            Reception Walk-In Desk
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('beds')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M2 4v16"></path><path d="M2 8h18a2 2 0 0 1 2 2v10"></path><path d="M2 17h20"></path><path d="M6 8v9"></path></svg>
+            Bed & Daycare Census
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('appointments')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Appointments & Spam Filter
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('doctors')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            Doctors CRUD & Logins
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('overview')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            Operational KPIs
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('adminUsers')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Admin Emails (RTDB)
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('procedures')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            Procedures & Surgery
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('settings')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Hospital CMS Settings
+          </div>
+          <div class="admin-nav-item" onclick="switchAdminTab('leaves')">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Staff Leaves & OT
+          </div>
+        </nav>
+      </div>
+
+      <div>
+        <button class="btn btn-teal btn-sm" onclick="launchCounterTV()" style="width:100%; justify-content:center; margin-bottom:10px;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          Open Counter TV
+        </button>
+
+        <div style="font-size:0.75rem; color:#98a2b3; margin-bottom:8px;" id="adminUserBadge">
+          Admin: mohitk43131@gmail.com
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="handleLogout()" style="width:100%; justify-content:center; margin-bottom:6px;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Sign Out
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="resetToCleanBlankData()" style="width:100%; justify-content:center; font-size:0.75rem; background:transparent; color:#ffffff; border-color:rgba(255,255,255,0.15);">
+          Blank Canvas Reset
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+
+      <!-- ====================================================================
+           1. RECEPTION DESK: RAPID WALK-IN & 1-CLICK HARDWARE PRINTING
+           ==================================================================== -->
+      <section id="tab-reception" class="admin-tab-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+              Reception Desk Console
+            </span>
+            <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+              Front Desk Walk-In Registration
+            </h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="launchCounterTV()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            Fullscreen OPD TV Display
+          </button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:20px; align-items:start;">
+          
+          <!-- Rapid Walk-In Form -->
+          <div style="background:#ffffff; padding:24px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h3 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin:0;">
+                Quick Patient Entry
+              </h3>
+              <span class="badge badge-success">Express Token</span>
+            </div>
+
+            <form onsubmit="handleReceptionWalkIn(event)">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Patient Name <span class="req">*</span></label>
+                  <input type="text" id="recPatientName" class="form-input" placeholder="e.g. Anil Kumar" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">10-Digit Mobile <span class="req">*</span></label>
+                  <input type="tel" id="recMobile" class="form-input" placeholder="e.g. 9876543210" pattern="[6-9][0-9]{9}" required>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Age</label>
+                  <input type="number" id="recAge" class="form-input" value="35" min="1" max="115" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Gender</label>
+                  <select id="recGender" class="form-select">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Child">Child</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Fee (₹)</label>
+                  <input type="number" id="recFee" class="form-input" value="500" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Consulting Specialist</label>
+                <select id="recDoctorSelect" class="form-select" onchange="updateRecDocFee(this.value)">
+                  <!-- Injected via JS -->
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom:18px;">
+                <label class="form-label">Chief Complaint / Symptoms</label>
+                <input type="text" id="recSymptoms" class="form-input" placeholder="e.g. Fever, Abdominal checkup, General medicine">
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <button type="submit" name="printType" value="thermal" class="btn btn-primary" style="justify-content:center;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                  Print 80mm Slip
+                </button>
+                <button type="submit" name="printType" value="a4" class="btn btn-secondary" style="justify-content:center;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  Print A4 Card
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Live Doctor Duty Status on Reception -->
+          <div style="background:#ffffff; padding:24px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+            <h3 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
+              Faculty On-Duty Toggles
+            </h3>
+            <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:14px;">
+              Reception can override chamber duty status in 1 click:
+            </p>
+
+            <div id="receptionDoctorsRosterList" style="display:flex; flex-direction:column; gap:8px;">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           2. BED & DAYCARE OCCUPANCY TRACKER (WARD CENSUS)
+           ==================================================================== -->
+      <!-- ====================================================================
+           2. BED & DAYCARE OCCUPANCY TRACKER (FULL EDIT & CENSUS)
+           ==================================================================== -->
+      <section id="tab-beds" class="admin-tab-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+              Inpatient & Daycare Census
+            </span>
+            <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+              Bed & Daycare Occupancy Tracker
+            </h2>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn btn-teal btn-sm" onclick="launchCounterTV()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              View on Counter TV
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openAddBedModal()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add New Bed
+            </button>
+          </div>
+        </div>
+
+        <!-- Census Metrics Summary Row -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px;">
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; box-shadow:var(--shadow-xs);">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Total Beds</div>
+            <div id="metricTotalBeds" style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--primary);">0</div>
+            <div style="font-size:0.75rem; color:var(--secondary);" id="metricTotalSub">All hospital wards</div>
+          </div>
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; box-shadow:var(--shadow-xs);">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Occupied Beds</div>
+            <div id="metricOccupiedBeds" style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--emergency);">0</div>
+            <div style="font-size:0.75rem; color:var(--emergency);" id="metricOccupiedPct">In-use</div>
+          </div>
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; box-shadow:var(--shadow-xs);">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Vacant / Available</div>
+            <div id="metricVacantBeds" style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--success);">0</div>
+            <div style="font-size:0.75rem; color:var(--success);">Ready for admission</div>
+          </div>
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; box-shadow:var(--shadow-xs);">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Daycare Recovery</div>
+            <div id="metricDaycareBeds" style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--teal);">0</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">Post-op & Laparoscopy</div>
+          </div>
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; box-shadow:var(--shadow-xs);">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Emergency & ICU</div>
+            <div id="metricCriticalBeds" style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--primary);">0</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">Critical & Trauma Bays</div>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm bed-filter-pill active" onclick="filterBedsByWard('All', this)">All Beds</button>
+            <button class="btn btn-secondary btn-sm bed-filter-pill" onclick="filterBedsByWard('Daycare', this)">Daycare Suite</button>
+            <button class="btn btn-secondary btn-sm bed-filter-pill" onclick="filterBedsByWard('Emergency', this)">Emergency & Trauma</button>
+            <button class="btn btn-secondary btn-sm bed-filter-pill" onclick="filterBedsByWard('ICU', this)">ICU / HDU</button>
+            <button class="btn btn-secondary btn-sm bed-filter-pill" onclick="filterBedsByWard('General Ward', this)">General Ward</button>
+          </div>
+          <div id="bedSummaryBadge" class="badge badge-neutral" style="padding:6px 12px; font-size:0.8125rem;">
+            Calculating vacancy...
+          </div>
+        </div>
+
+        <!-- Beds Cards Grid -->
+        <div id="allBedsMasterGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:14px;">
+          <!-- Dynamically Injected via JS with complete Edit, Admit, Vacate, Delete buttons -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           3. MASTER APPOINTMENTS & SPAM REVIEW
+           ==================================================================== -->
+      <section id="tab-appointments" class="admin-tab-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+              Queue Management
+            </span>
+            <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+              Appointments & Spam Review
+            </h2>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <select id="aptTypeFilter" onchange="filterAptsList()" class="form-select" style="width:190px; padding:8px 12px; font-size:0.8125rem;">
+              <option value="ALL">All Bookings</option>
+              <option value="GUEST">Guest Web Bookings</option>
+              <option value="ACCOUNT">Verified Accounts</option>
+              <option value="WALKIN">Reception Walk-Ins</option>
+            </select>
+            <input type="text" id="aptFilterSearch" class="form-input" style="width:220px; padding:8px 12px; font-size:0.8125rem;" placeholder="Search Patient or Token..." oninput="filterAptsList()">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Patient Details</th>
+                <th>Mode</th>
+                <th>Doctor</th>
+                <th>Date & Slot</th>
+                <th>Fee</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminAptsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           4. DOCTORS CRUD & CREDENTIAL MANAGEMENT
+           ==================================================================== -->
+      <section id="tab-doctors" class="admin-tab-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+              Faculty Credentials
+            </span>
+            <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+              Doctors CRUD & Logins
+            </h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddDoctorModal()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Doctor Profile & Password
+          </button>
+        </div>
+
+        <div id="adminDoctorsList" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px;">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           5. OPERATIONAL KPIS & SUMMARY
+           ==================================================================== -->
+      <section id="tab-overview" class="admin-tab-panel" style="display:none;">
+        <div style="margin-bottom:24px;">
+          <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+            Hospital Statistics
+          </span>
+          <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+            Hospital Operations Telemetry
+          </h2>
+        </div>
+
+        <div class="kpi-cards-grid">
+          <div class="kpi-card">
+            <div class="kpi-title">Total Bookings</div>
+            <div class="kpi-value" id="kpiAptsCount">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Active Doctors</div>
+            <div class="kpi-value" id="kpiDocsActive">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Authorized Admins</div>
+            <div class="kpi-value" id="kpiAdminsCount">1</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">OPD Revenue</div>
+            <div class="kpi-value" id="kpiRevenue">₹0</div>
+          </div>
+        </div>
+
+        <div style="background:#ffffff; border-radius:var(--radius-lg); padding:24px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+          <h3 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin-bottom:8px;">
+            Private Staff URLs
+          </h3>
+          <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:16px;">
+            These direct URLs are excluded from public patient homepages:
+          </p>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="doctor.html" target="_blank" class="btn btn-secondary btn-sm">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              Doctor Chamber Mobile App
+            </a>
+            <a href="booking.html" target="_blank" class="btn btn-secondary btn-sm">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              Public Patient Booking Portal
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           6. ADMIN EMAILS & RTDB AUTHORIZATION
+           ==================================================================== -->
+      <section id="tab-adminUsers" class="admin-tab-panel" style="display:none;">
+        <div style="margin-bottom:24px;">
+          <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+            Security & Access Control
+          </span>
+          <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
+            Authorized Admin Emails
+          </h2>
+          <p style="font-size:0.875rem; color:var(--text-secondary);">
+            Manage authorized staff email accounts verified in Firebase Realtime Database.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border-radius:var(--radius-lg); padding:20px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs); max-width:680px; margin-bottom:20px;">
+          <h3 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:700; color:var(--primary); margin-bottom:12px;">
+            Authorize New Admin Email
+          </h3>
+          <form onsubmit="handleAddNewAdmin(event)" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="email" id="newAdminEmailInput" class="form-input" style="flex:1; min-width:240px;" placeholder="e.g. staff.nalanda@gmail.com" required>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Grant Access
+            </button>
+          </form>
+        </div>
+
+        <div id="adminsListContainer" style="max-width:680px;">
+          <!-- List rendered via JS -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           7. PROCEDURES CMS
+           ==================================================================== -->
+      <section id="tab-procedures" class="admin-tab-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+              Clinical Packages
+            </span>
+            <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+              Procedures CMS
+            </h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddProcedureModal()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Procedure Guide
+          </button>
+        </div>
+
+        <div id="adminProceduresList" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:16px;">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           8. HOSPITAL SETTINGS CMS
+           ==================================================================== -->
+      <section id="tab-settings" class="admin-tab-panel" style="display:none;">
+        <div style="margin-bottom:24px;">
+          <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+            Content Management
+          </span>
+          <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+            Hospital CMS Settings
+          </h2>
+        </div>
+
+        <div style="background:#ffffff; padding:28px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); max-width:760px; box-shadow:var(--shadow-xs);">
+          <form id="settingsForm" onsubmit="handleSettingsSave(event)">
+            <div class="form-group">
+              <label class="form-label">Hospital Name</label>
+              <input type="text" id="setHospitalName" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Tagline</label>
+              <input type="text" id="setTagline" class="form-input" required>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">Emergency Helpline</label>
+                <input type="text" id="setEmergencyPhone" class="form-input" required>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">Registration Number</label>
+                <input type="text" id="setRegNo" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hospital Address</label>
+              <input type="text" id="setAddress" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Announcement Ticker Text</label>
+              <input type="text" id="setAnnouncement" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hero Title</label>
+              <input type="text" id="setHeroTitle" class="form-input" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+              <label class="form-label">Hero Subtitle</label>
+              <textarea id="setHeroSub" class="form-textarea" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              Broadcast Changes Live
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           9. STAFF LEAVES
+           ==================================================================== -->
+      <!-- ====================================================================
+           9. STAFF LEAVES & OT DUTY MANAGEMENT
+           ==================================================================== -->
+      <section id="tab-leaves" class="admin-tab-panel" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--secondary); display:block; margin-bottom:4px;">
+              Doctor Rostering & Scheduling
+            </span>
+            <h2 style="font-family:var(--font-heading); font-size:1.75rem; font-weight:700; color:var(--primary); margin:0;">
+              Staff Leave & OT Notices
+            </h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAdminLeaveModal()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Record Doctor Leave / OT Block
+          </button>
+        </div>
+
+        <!-- Filter bar -->
+        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm leave-filter-btn active" onclick="filterLeavesList('All', this)">All Notices</button>
+          <button class="btn btn-secondary btn-sm leave-filter-btn" onclick="filterLeavesList('Pending', this)">Pending Approval</button>
+          <button class="btn btn-secondary btn-sm leave-filter-btn" onclick="filterLeavesList('Approved', this)">Approved (Off Duty)</button>
+          <button class="btn btn-secondary btn-sm leave-filter-btn" onclick="filterLeavesList('Rejected', this)">Dismissed</button>
+        </div>
+
+        <div id="adminLeavesContainer" style="max-width:860px;">
+          <!-- Injected via JS -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FULLSCREEN OPD COUNTER TV & LIVE BED MONITOR (NO EMOJIS, SHARP CLINICAL SCREEN) -->
+  <div id="tvDisplayModal">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:14px; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="width:40px; height:40px; background:var(--secondary); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;">
+          <svg class="icon icon-md" style="color:#ffffff;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div>
+          <h1 style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:#ffffff; margin:0;">
+            Nalanda Advance Healthcare
+          </h1>
+          <span style="color:var(--secondary); font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;">
+            Live OPD Queue & Bed Occupancy Monitor
+          </span>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div id="tvClock" style="font-family:monospace; font-size:1.5rem; color:#93c5fd; font-weight:700;">
+          12:00:00 PM
+        </div>
+        <button id="btnToggleFullscreen" onclick="toggleTVFullscreen()" class="btn btn-secondary btn-sm" style="background:rgba(255,255,255,0.12); color:#ffffff; border-color:rgba(255,255,255,0.3);">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+          <span id="fsBtnLabel">Full Screen</span>
+        </button>
+        <button onclick="closeCounterTV()" class="btn btn-secondary btn-sm" style="background:rgba(255,255,255,0.1); color:#ffffff; border-color:rgba(255,255,255,0.25);">
+          ✕ Exit
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN TV SPLIT MONITOR (OPD QUEUE LEFT + BED OCCUPANCY RIGHT) -->
+    <div style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:20px; align-items:stretch; flex:1; margin-bottom:18px;">
+      
+      <!-- LEFT: OPD CONSULTATION QUEUE -->
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <!-- Now Calling Token Box -->
+        <div style="background:rgba(255,255,255,0.06); border-radius:var(--radius-xl); padding:30px 24px; text-align:center; border:1px solid rgba(255,255,255,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+          <span style="color:var(--secondary); font-size:0.85rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;">Now Calling into Chamber</span>
+          <div id="tvCurrentToken" style="font-family:var(--font-heading); font-size:5.5rem; font-weight:800; color:#ffffff; line-height:1.05; margin:10px 0;">
+            --
+          </div>
+          <div id="tvCurrentPatient" style="font-size:1.65rem; font-weight:700; color:#93c5fd;">
+            Waiting for next patient...
+          </div>
+          <div id="tvCurrentDoctor" style="font-size:1.05rem; color:#cbd5e1; margin-top:6px;">
+            Consultation Chamber
+          </div>
+        </div>
+
+        <!-- Next In Queue List -->
+        <div style="background:rgba(255,255,255,0.04); border-radius:var(--radius-lg); padding:20px; border:1px solid rgba(255,255,255,0.1); flex:1;">
+          <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--secondary); margin:0 0 12px 0;">
+            Upcoming OPD Queue
+          </h3>
+          <div id="tvUpcomingQueueList" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: LIVE BED & DAYCARE OCCUPANCY DASHBOARD -->
+      <div style="background:rgba(255,255,255,0.04); border-radius:var(--radius-xl); padding:22px; border:1px solid rgba(255,255,255,0.12); display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+            <div>
+              <h3 style="font-family:var(--font-heading); font-size:1.2rem; font-weight:700; color:#ffffff; margin:0;">
+                Bed & Daycare Occupancy
+              </h3>
+              <span style="font-size:0.75rem; color:var(--secondary); font-weight:600;">Real-Time Ward Vacancy Monitor</span>
+            </div>
+            <div id="tvBedSummaryBadge" style="font-size:0.8rem; font-weight:700; background:rgba(255,255,255,0.08); padding:4px 10px; border-radius:var(--radius-sm);">
+              Loading...
+            </div>
+          </div>
+
+          <!-- Ward Vacancy Counters Grid -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px;">
+            <div style="background:rgba(255,255,255,0.06); padding:10px; border-radius:var(--radius-md); text-align:center; border:1px solid rgba(255,255,255,0.1);">
+              <div style="font-size:0.6875rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">Daycare Suite</div>
+              <div id="tvStatDaycare" style="font-family:var(--font-heading); font-size:1.25rem; font-weight:800; color:#38bdf8; margin:2px 0;">--</div>
+              <div style="font-size:0.65rem; color:#cbd5e1;">Laparoscopy & Daycare</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); padding:10px; border-radius:var(--radius-md); text-align:center; border:1px solid rgba(255,255,255,0.1);">
+              <div style="font-size:0.6875rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">ICU / ER Bay</div>
+              <div id="tvStatICU" style="font-family:var(--font-heading); font-size:1.25rem; font-weight:800; color:#4ade80; margin:2px 0;">--</div>
+              <div style="font-size:0.65rem; color:#cbd5e1;">Critical Care Bays</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); padding:10px; border-radius:var(--radius-md); text-align:center; border:1px solid rgba(255,255,255,0.1);">
+              <div style="font-size:0.6875rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">General Ward</div>
+              <div id="tvStatWard" style="font-family:var(--font-heading); font-size:1.25rem; font-weight:800; color:#facc15; margin:2px 0;">--</div>
+              <div style="font-size:0.65rem; color:#cbd5e1;">Inpatient Beds</div>
+            </div>
+          </div>
+
+          <!-- All Bed Status Chips Grid -->
+          <div style="font-size:0.75rem; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Live Bed Availability Breakdown</div>
+          <div id="tvBedsChipsList" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;">
+            <!-- Live Bed Chips Injected via JS -->
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem; color:#94a3b8; text-align:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
+          Admissions, Daycare Surgeries & TPA Cashless Desk: Counter 1
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Ticker -->
+    <div style="background:rgba(0,0,0,0.25); border-radius:var(--radius-md); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(255,255,255,0.1);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="badge badge-danger">24/7 Emergency</span>
+        <div style="font-size:0.875rem; color:#e2e8f0;">
+          Trauma Helpline: <strong>+91 91557 64409</strong> · Reception Desk Token Inquiries
+        </div>
+      </div>
+      <div style="font-size:0.8125rem; color:#93c5fd; font-weight:600;">
+        Ayushman Bharat (PM-JAY) & Cashless TPA Empanelled
+      </div>
+    </div>
+  </div>
+
+  <!-- BED ADMIT / EDIT MODAL -->
+  <div id="bedManageModal" style="display:none; position:fixed; inset:0; background:rgba(18,48,74,0.6); backdrop-filter:blur(4px); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+    <div class="modal-card" style="max-width:520px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <h3 id="bedModalTitle" style="font-size:1.15rem; font-weight:700; color:var(--primary); margin:0;">
+          Admit Patient / Edit Bed
+        </h3>
+        <button class="modal-close-btn" onclick="closeBedManageModal()" aria-label="Close">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form onsubmit="handleBedFormSubmit(event)">
+          <input type="hidden" id="editBedId">
+
+          <!-- Bed Settings Section -->
+          <div style="background:var(--bg-section); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:16px;">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--secondary); text-transform:uppercase; margin-bottom:10px;">
+              Bed Configuration
+            </div>
+            <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:12px; margin-bottom:10px;">
+              <div>
+                <label class="form-label">Bed Name / Label</label>
+                <input type="text" id="bedInputName" class="form-input" placeholder="e.g. Daycare Bed 1" required>
+              </div>
+              <div>
+                <label class="form-label">Ward Section</label>
+                <select id="bedInputWard" class="form-select">
+                  <option value="Daycare">Daycare Suite</option>
+                  <option value="Emergency">Emergency & Trauma</option>
+                  <option value="ICU">ICU / HDU</option>
+                  <option value="General Ward">General Ward</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label">Bed Occupancy Status</label>
+              <select id="bedInputStatus" class="form-select" onchange="toggleBedPatientFields(this.value)">
+                <option value="Available">Available / Vacant</option>
+                <option value="Occupied">Occupied (Admitted Patient)</option>
+                <option value="Maintenance">Under Cleaning / Maintenance</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Patient Admission Demographics Section (Visible when Occupied) -->
+          <div id="bedPatientFieldsWrapper" style="display:none; background:#ffffff; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:16px;">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:10px;">
+              Patient Admission Details
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label">Admitted Patient Name</label>
+              <input type="text" id="bedPatientName" class="form-input" placeholder="e.g. Suresh Kumar">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label class="form-label">UHID / Mobile</label>
+                <input type="text" id="bedPatientUHID" class="form-input" placeholder="NAH-2026-XXXX">
+              </div>
+              <div>
+                <label class="form-label">Attending Doctor</label>
+                <input type="text" id="bedDoctorName" class="form-input" placeholder="Consulting Surgeon">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label">Diagnosis / Surgery Case</label>
+              <input type="text" id="bedDiagnosis" class="form-input" placeholder="e.g. Daycare Laparoscopic Cholecystectomy">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Admission Timestamp</label>
+              <input type="text" id="bedAdmitTime" class="form-input" placeholder="Auto-populated or current time">
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <button type="button" id="btnDeleteBed" class="btn btn-secondary btn-sm" onclick="handleDeleteCurrentBed()" style="color:var(--emergency); display:none;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Delete Bed
+            </button>
+            <div style="display:flex; gap:10px; margin-left:auto;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="closeBedManageModal()">
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary btn-sm">
+                Save & Update Census
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN RECORD DOCTOR LEAVE MODAL -->
+  <div id="adminLeaveModal" style="display:none; position:fixed; inset:0; background:rgba(18,48,74,0.6); backdrop-filter:blur(4px); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 style="font-size:1.15rem; font-weight:700; color:var(--primary); margin:0;">
+          Record Doctor Leave / OT Surgery Notice
+        </h3>
+        <button class="modal-close-btn" onclick="closeAdminLeaveModal()" aria-label="Close">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form onsubmit="handleAdminLeaveSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Doctor / Specialist</label>
+            <select id="adminLeaveDocSelect" class="form-select" required>
+              <!-- Injected via JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Leave / Notice Category</label>
+            <select id="adminLeaveCategory" class="form-select">
+              <option value="Personal / Medical Leave">Personal / Medical Leave</option>
+              <option value="Dedicated OT / Surgery Schedule">Dedicated OT / Surgery Schedule</option>
+              <option value="Conference / Academic Training">Conference / Academic Training</option>
+              <option value="Casual Leave">Casual Leave</option>
+            </select>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div>
+              <label class="form-label">Start Date</label>
+              <input type="date" id="adminLeaveStartDate" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">End Date</label>
+              <input type="date" id="adminLeaveEndDate" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px;">
+            <label class="form-label">Reason / Case Details</label>
+            <textarea id="adminLeaveReason" class="form-textarea" placeholder="e.g. Off duty for laparoscopic procedures in OT..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            Save & Broadcast Leave Notice
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuthAndInit();
+
+      if (window.location.search.includes('tv=1') || window.location.hash === '#tv') {
+        launchCounterTV();
+      }
+
+      if (window.HospitalStore) {
+        HospitalStore.subscribe(() => {
+          updateKPIs();
+          renderAppointmentsTable();
+          renderAdminDoctors();
+          renderAdminProcedures();
+          renderAdminLeaves();
+          renderBedsView();
+          renderReceptionDoctorsRoster();
+        });
+      }
+    });
+
+    function checkAuthAndInit() {
+      const admin = HospitalAuth.getCurrentAdmin();
+      if (admin) {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('adminApp').style.display = 'flex';
+        document.getElementById('adminUserBadge').textContent = `Admin: ${admin.email}`;
+        loadDashboardData();
+      } else {
+        document.getElementById('authScreen').style.display = 'block';
+        document.getElementById('adminApp').style.display = 'none';
+      }
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value.trim();
+      const pass = document.getElementById('adminPassword').value.trim();
+
+      const res = await HospitalAuth.loginAdminWithEmail(email, pass);
+      if (res.success) {
+        showToast("Welcome Administrator", "success");
+        checkAuthAndInit();
+      } else {
+        showToast(res.error || "Authentication failed", "danger");
+      }
+    }
+
+    async function handleGoogleSignIn() {
+      const res = await HospitalAuth.loginAdminWithGoogle();
+      if (res.success) {
+        showToast("Signed in with Google successfully", "success");
+        checkAuthAndInit();
+      } else {
+        showToast(res.error || "Google sign-in error", "danger");
+      }
+    }
+
+    async function handleLogout() {
+      await HospitalAuth.logoutAdmin();
+      showToast("Signed out successfully", "success");
+      checkAuthAndInit();
+    }
+
+    function loadDashboardData() {
+      updateKPIs();
+      populateDoctorSelects();
+      renderAppointmentsTable();
+      renderAdminDoctors();
+      renderAdminProcedures();
+      loadSettingsForm();
+      renderAdminLeaves();
+      renderAdminsList();
+      renderBedsView();
+      renderReceptionDoctorsRoster();
+    }
+
+    function switchAdminTab(tabName) {
+      document.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('onclick').includes(tabName));
+      });
+      document.querySelectorAll('.admin-tab-panel').forEach(panel => {
+        panel.style.display = panel.id === `tab-${tabName}` ? 'block' : 'none';
+      });
+
+      if (tabName === 'beds') renderBedsView();
+      else if (tabName === 'leaves') renderAdminLeaves();
+      else if (tabName === 'appointments') renderAppointmentsTable();
+      else if (tabName === 'doctors') renderAdminDoctors();
+      else if (tabName === 'reception') { populateDoctorSelects(); renderReceptionDoctorsRoster(); }
+      else if (tabName === 'procedures') renderAdminProcedures();
+      else if (tabName === 'settings') loadSettingsForm();
+      else if (tabName === 'adminUsers') renderAdminsList();
+      else if (tabName === 'overview') updateKPIs();
+    }
+
+    async function updateKPIs() {
+      const apts = HospitalStore.getAppointments();
+      const docs = HospitalStore.getDoctors();
+      const admins = await HospitalAuth.getAuthorizedAdmins();
+
+      document.getElementById('kpiAptsCount').textContent = apts.length;
+      document.getElementById('kpiDocsActive').textContent = docs.length;
+      document.getElementById('kpiAdminsCount').textContent = admins.length;
+
+      const totalRev = apts.reduce((sum, a) => sum + (parseInt(a.fee) || 0), 0);
+      document.getElementById('kpiRevenue').textContent = `₹${totalRev.toLocaleString()}`;
+    }
+
+    // ------------------------------------------------------------------------
+    // RECEPTION DESK & RAPID WALK-IN
+    // ------------------------------------------------------------------------
+    function populateDoctorSelects() {
+      const sel = document.getElementById('recDoctorSelect');
+      if (!sel) return;
+
+      const docs = HospitalStore.getDoctors();
+      if (docs.length === 0) {
+        sel.innerHTML = `<option value="">No doctors created yet (Add in Doctors tab)</option>`;
+        return;
+      }
+
+      sel.innerHTML = docs.map(d => `<option value="${d.id}" data-fee="${d.fee}">${d.name} (${d.dept}) - ₹${d.fee}</option>`).join('');
+      if (docs[0]) {
+        document.getElementById('recFee').value = docs[0].fee || 500;
+      }
+    }
+
+    function updateRecDocFee(docId) {
+      const doc = HospitalStore.getDoctorById(docId);
+      if (doc && doc.fee) {
+        document.getElementById('recFee').value = doc.fee;
+      }
+    }
+
+    function renderReceptionDoctorsRoster() {
+      const container = document.getElementById('receptionDoctorsRosterList');
+      if (!container) return;
+
+      const docs = HospitalStore.getDoctors();
+      if (docs.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:16px; color:var(--text-secondary); font-size:0.8125rem;">No doctors registered yet. Add in Doctors tab.</div>`;
+        return;
+      }
+
+      container.innerHTML = docs.map(d => {
+        const status = d.status || 'available';
+        return `
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:10px 14px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div>
+              <strong style="color:var(--primary); font-size:0.875rem;">${d.name}</strong>
+              <div style="font-size:0.75rem; color:var(--text-secondary);">${d.dept} · Fee: ₹${d.fee}</div>
+            </div>
+            <select onchange="updateDocStatusFromRec('${d.id}', this.value)" class="form-select" style="width:auto; padding:4px 8px; font-size:0.75rem; font-weight:600;">
+              <option value="available" ${status === 'available' ? 'selected' : ''}>In OPD</option>
+              <option value="ot" ${status === 'ot' ? 'selected' : ''}>In OT Surgery</option>
+              <option value="emergency" ${status === 'emergency' ? 'selected' : ''}>Emergency Call</option>
+              <option value="leave" ${status === 'leave' ? 'selected' : ''}>On Leave</option>
+            </select>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateDocStatusFromRec(docId, newStatus) {
+      HospitalStore.updateDoctorStatus(docId, newStatus);
+      showToast(`Doctor duty status updated to ${newStatus.toUpperCase()}`, "success");
+    }
+
+    function handleReceptionWalkIn(e) {
+      e.preventDefault();
+      const submitter = e.submitter;
+      const printType = submitter ? submitter.value : 'thermal';
+
+      const docId = document.getElementById('recDoctorSelect').value;
+      const doc = HospitalStore.getDoctorById(docId) || { id: 'temp', name: 'Duty Doctor', dept: 'General OPD', fee: 500 };
+
+      const apt = {
+        patientName: document.getElementById('recPatientName').value.trim(),
+        mobile: document.getElementById('recMobile').value.trim(),
+        age: parseInt(document.getElementById('recAge').value) || 30,
+        gender: document.getElementById('recGender').value,
+        fee: parseInt(document.getElementById('recFee').value) || doc.fee,
+        doctorId: doc.id,
+        doctorName: doc.name,
+        dept: doc.dept,
+        symptoms: document.getElementById('recSymptoms').value.trim() || 'General OPD Consultation',
+        date: new Date().toISOString().slice(0, 10),
+        timeSlot: "Immediate Walk-In",
+        type: "Walk-In Desk",
+        paymentStatus: "Paid at Desk",
+        paymentMode: "Cash / Desk",
+        status: "Confirmed",
+        isGuest: false,
+        isWalkIn: true
+      };
+
+      const saved = HospitalStore.addAppointment(apt);
+      showToast(`Walk-In Token Generated: ${saved.tokenNo}`, "success");
+
+      if (printType === 'thermal') {
+        PrintEngine.printTokenSlip(saved);
+      } else {
+        PrintEngine.printA4AppointmentSlip(saved);
+      }
+
+      document.getElementById('recPatientName').value = '';
+      document.getElementById('recMobile').value = '';
+      document.getElementById('recSymptoms').value = '';
+    }
+
+    // ------------------------------------------------------------------------
+    // BED OCCUPANCY TRACKER & INPATIENT CENSUS
+    // ------------------------------------------------------------------------
+    let selectedBedWardFilter = 'All';
+
+    function filterBedsByWard(ward, btn) {
+      selectedBedWardFilter = ward;
+      document.querySelectorAll('.bed-filter-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderBedsView();
+    }
+
+    function renderBedsView() {
+      const beds = HospitalStore.getBeds();
+      const total = beds.length;
+      const occupied = beds.filter(b => b.status === 'Occupied').length;
+      const vacant = beds.filter(b => b.status === 'Available').length;
+
+      const daycare = beds.filter(b => (b.ward || '').toLowerCase().includes('daycare'));
+      const daycareOcc = daycare.filter(b => b.status === 'Occupied').length;
+
+      const critical = beds.filter(b => (b.ward || '').toLowerCase().includes('icu') || (b.ward || '').toLowerCase().includes('emergency'));
+      const criticalOcc = critical.filter(b => b.status === 'Occupied').length;
+
+      const general = beds.filter(b => (b.ward || '').toLowerCase().includes('general') || (b.ward || '').toLowerCase().includes('ward'));
+      const generalOcc = general.filter(b => b.status === 'Occupied').length;
+
+      // Update KPI metrics
+      const elTotal = document.getElementById('metricTotalBeds');
+      if (elTotal) elTotal.textContent = total;
+
+      const elOcc = document.getElementById('metricOccupiedBeds');
+      if (elOcc) elOcc.textContent = occupied;
+
+      const elOccPct = document.getElementById('metricOccupiedPct');
+      if (elOccPct) elOccPct.textContent = total > 0 ? `${Math.round((occupied / total) * 100)}% Census` : '0% Census';
+
+      const elVac = document.getElementById('metricVacantBeds');
+      if (elVac) elVac.textContent = vacant;
+
+      const elDay = document.getElementById('metricDaycareBeds');
+      if (elDay) elDay.textContent = `${daycareOcc} / ${daycare.length}`;
+
+      const elCrit = document.getElementById('metricCriticalBeds');
+      if (elCrit) elCrit.textContent = `${criticalOcc} / ${critical.length}`;
+
+      const elBadge = document.getElementById('bedSummaryBadge');
+      if (elBadge) elBadge.textContent = `${occupied} Occupied · ${vacant} Vacant (${total} Total)`;
+
+      // Filtered Beds
+      const filtered = selectedBedWardFilter === 'All' 
+        ? beds 
+        : beds.filter(b => (b.ward || '').toLowerCase().includes(selectedBedWardFilter.toLowerCase()));
+
+      const container = document.getElementById('allBedsMasterGrid');
+      if (!container) return;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:32px; background:#ffffff; border-radius:var(--radius-lg); border:1px dashed var(--border-subtle); color:var(--text-secondary); font-size:0.875rem;">
+            No beds found in "${selectedBedWardFilter}". Click "Add New Bed" above to configure a bed in this ward.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(b => {
+        const isOcc = b.status === 'Occupied';
+        const isMaint = b.status === 'Maintenance';
+        const badge = isOcc 
+          ? '<span class="badge badge-danger">Occupied</span>' 
+          : (isMaint ? '<span class="badge badge-warning">Maintenance</span>' : '<span class="badge badge-success">Available</span>');
+
+        return `
+          <div style="background:#ffffff; border:1px solid ${isOcc ? 'rgba(217,45,32,0.3)' : 'var(--border-subtle)'}; border-radius:var(--radius-lg); padding:16px; box-shadow:var(--shadow-xs); display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.7rem; font-weight:700; color:var(--secondary); text-transform:uppercase; letter-spacing:0.06em;">
+                  ${b.ward}
+                </span>
+                ${badge}
+              </div>
+              <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 8px 0;">
+                ${b.name || b.bedNo}
+              </h4>
+
+              ${isOcc ? `
+                <div style="background:var(--bg-section); border-radius:var(--radius-sm); padding:10px; margin-bottom:12px; border:1px solid var(--border-subtle); font-size:0.8125rem;">
+                  <div style="font-weight:700; color:var(--primary);">${b.patientName || 'Admitted Patient'}</div>
+                  <div style="color:var(--text-secondary); font-size:0.75rem; margin-top:2px;">
+                    ${b.uhid ? `UHID: ${b.uhid} · ` : ''}Doctor: ${b.doctorName || 'Attending Surgeon'}
+                  </div>
+                  ${b.diagnosis ? `<div style="color:var(--teal); font-size:0.75rem; margin-top:4px;">Case: ${b.diagnosis}</div>` : ''}
+                  ${b.admittedAt ? `<div style="color:var(--text-muted); font-size:0.7rem; margin-top:4px;">Admitted: ${b.admittedAt}</div>` : ''}
+                </div>
+              ` : (isMaint ? `
+                <div style="background:#fffbeb; color:#b45309; border-radius:var(--radius-sm); padding:10px; margin-bottom:12px; font-size:0.75rem; border:1px solid #fef3c7;">
+                  Bed under sterilization and linen preparation.
+                </div>
+              ` : `
+                <div style="background:#f0fdf4; color:#15803d; border-radius:var(--radius-sm); padding:10px; margin-bottom:12px; font-size:0.75rem; border:1px solid #dcfce7;">
+                  Vacant & ready for patient admission.
+                </div>
+              `)}
+            </div>
+
+            <div style="display:flex; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border-subtle); padding-top:10px;">
+              ${isOcc ? `
+                <button class="btn btn-secondary btn-sm" onclick="dischargeBed('${b.id}')" style="flex:1; justify-content:center; color:var(--emergency); font-size:0.75rem; padding:6px;">
+                  Vacate / Discharge
+                </button>
+              ` : `
+                <button class="btn btn-primary btn-sm" onclick="openAdmitBedModal('${b.id}')" style="flex:1; justify-content:center; font-size:0.75rem; padding:6px;">
+                  Admit Patient
+                </button>
+              `}
+              <button class="btn btn-secondary btn-sm" onclick="openEditBedModal('${b.id}')" title="Edit Bed Settings" style="padding:6px 10px;">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="deleteBedAdmin('${b.id}')" title="Remove Bed" style="padding:6px 8px; color:var(--emergency);">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal Operations for Bed
+    function openAddBedModal() {
+      document.getElementById('bedModalTitle').textContent = "Add New Hospital Bed";
+      document.getElementById('editBedId').value = "";
+      document.getElementById('bedInputName').value = "";
+      document.getElementById('bedInputWard').value = selectedBedWardFilter === 'All' ? 'Daycare' : selectedBedWardFilter;
+      document.getElementById('bedInputStatus').value = "Available";
+      document.getElementById('btnDeleteBed').style.display = "none";
+      toggleBedPatientFields("Available");
+      document.getElementById('bedManageModal').style.display = "flex";
+    }
+
+    function openEditBedModal(bedId) {
+      const bed = HospitalStore.getBedById(bedId);
+      if (!bed) return;
+
+      document.getElementById('bedModalTitle').textContent = `Edit ${bed.name || bed.bedNo}`;
+      document.getElementById('editBedId').value = bed.id;
+      document.getElementById('bedInputName').value = bed.name || bed.bedNo;
+      document.getElementById('bedInputWard').value = bed.ward || 'Daycare';
+      document.getElementById('bedInputStatus').value = bed.status || 'Available';
+      document.getElementById('bedPatientName').value = bed.patientName || '';
+      document.getElementById('bedPatientUHID').value = bed.uhid || '';
+      document.getElementById('bedDoctorName').value = bed.doctorName || '';
+      document.getElementById('bedDiagnosis').value = bed.diagnosis || '';
+      document.getElementById('bedAdmitTime').value = bed.admittedAt || '';
+      document.getElementById('btnDeleteBed').style.display = "inline-flex";
+
+      toggleBedPatientFields(bed.status);
+      document.getElementById('bedManageModal').style.display = "flex";
+    }
+
+    function openAdmitBedModal(bedId) {
+      const bed = HospitalStore.getBedById(bedId);
+      if (!bed) return;
+
+      document.getElementById('bedModalTitle').textContent = `Admit Patient to ${bed.name || bed.bedNo}`;
+      document.getElementById('editBedId').value = bed.id;
+      document.getElementById('bedInputName').value = bed.name || bed.bedNo;
+      document.getElementById('bedInputWard').value = bed.ward || 'Daycare';
+      document.getElementById('bedInputStatus').value = "Occupied";
+      document.getElementById('bedPatientName').value = "";
+      document.getElementById('bedPatientUHID').value = `NAH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      document.getElementById('bedDoctorName').value = "";
+      document.getElementById('bedDiagnosis').value = "";
+      document.getElementById('bedAdmitTime').value = new Date().toLocaleString();
+      document.getElementById('btnDeleteBed').style.display = "none";
+
+      toggleBedPatientFields("Occupied");
+      document.getElementById('bedManageModal').style.display = "flex";
+      setTimeout(() => document.getElementById('bedPatientName').focus(), 100);
+    }
+
+    function closeBedManageModal() {
+      document.getElementById('bedManageModal').style.display = "none";
+    }
+
+    function toggleBedPatientFields(status) {
+      const wrapper = document.getElementById('bedPatientFieldsWrapper');
+      if (wrapper) wrapper.style.display = status === 'Occupied' ? 'block' : 'none';
+    }
+
+    function handleBedFormSubmit(e) {
+      e.preventDefault();
+      const bedId = document.getElementById('editBedId').value;
+      const name = document.getElementById('bedInputName').value.trim();
+      const ward = document.getElementById('bedInputWard').value;
+      const status = document.getElementById('bedInputStatus').value;
+
+      const payload = {
+        name,
+        ward,
+        status,
+        patientName: status === 'Occupied' ? document.getElementById('bedPatientName').value.trim() : '',
+        uhid: status === 'Occupied' ? document.getElementById('bedPatientUHID').value.trim() : '',
+        doctorName: status === 'Occupied' ? document.getElementById('bedDoctorName').value.trim() : '',
+        diagnosis: status === 'Occupied' ? document.getElementById('bedDiagnosis').value.trim() : '',
+        admittedAt: status === 'Occupied' ? (document.getElementById('bedAdmitTime').value || new Date().toLocaleString()) : ''
+      };
+
+      if (bedId) {
+        HospitalStore.updateBed(bedId, payload);
+        showToast(`Bed "${name}" updated successfully`, "success");
+      } else {
+        HospitalStore.addBed(payload);
+        showToast(`New Bed "${name}" added to ${ward}`, "success");
+      }
+
+      closeBedManageModal();
+      renderBedsView();
+      updateTVBeds();
+    }
+
+    function dischargeBed(bedId) {
+      const bed = HospitalStore.getBedById(bedId);
+      if (!bed) return;
+
+      if (confirm(`Discharge patient "${bed.patientName || 'Current Patient'}" from ${bed.name || bed.bedNo}?`)) {
+        HospitalStore.updateBed(bedId, {
+          status: "Available",
+          patientName: "",
+          uhid: "",
+          diagnosis: "",
+          doctorName: "",
+          admittedAt: ""
+        });
+        showToast(`${bed.name || bed.bedNo} is now vacant & ready`, "info");
+        renderBedsView();
+        updateTVBeds();
+      }
+    }
+
+    function deleteBedAdmin(bedId) {
+      const bed = HospitalStore.getBedById(bedId);
+      if (!bed) return;
+
+      if (confirm(`Permanently remove ${bed.name || bed.bedNo} from hospital census?`)) {
+        HospitalStore.deleteBed(bedId);
+        showToast("Bed removed from hospital records", "info");
+        renderBedsView();
+        updateTVBeds();
+      }
+    }
+
+    function handleDeleteCurrentBed() {
+      const bedId = document.getElementById('editBedId').value;
+      if (bedId) {
+        deleteBedAdmin(bedId);
+        closeBedManageModal();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // COUNTER TV MODE & NATIVE FULLSCREEN (WITH LIVE BED DASHBOARD)
+    // ------------------------------------------------------------------------
+    let tvInterval = null;
+
+    function launchCounterTV() {
+      const modal = document.getElementById('tvDisplayModal');
+      modal.style.display = 'flex';
+
+      updateTVClock();
+      updateTVQueue();
+      updateTVBeds();
+
+      // Attempt native browser fullscreen on user click
+      toggleTVFullscreen(true);
+
+      if (!tvInterval) {
+        tvInterval = setInterval(() => {
+          updateTVClock();
+          updateTVQueue();
+          updateTVBeds();
+        }, 2500);
+      }
+    }
+
+    function isTVFullscreenActive() {
+      return !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+    }
+
+    function toggleTVFullscreen(forceEnter) {
+      const elem = document.getElementById('tvDisplayModal') || document.documentElement;
+      const isFs = isTVFullscreenActive();
+
+      if (forceEnter === true || (!isFs && forceEnter !== false)) {
+        const enterFn = elem.requestFullscreen ||
+                        elem.webkitRequestFullscreen ||
+                        elem.mozRequestFullScreen ||
+                        elem.msRequestFullscreen ||
+                        document.documentElement.requestFullscreen ||
+                        document.documentElement.webkitRequestFullscreen;
+        if (enterFn) {
+          try {
+            const p = enterFn.call(elem);
+            if (p && typeof p.catch === 'function') {
+              p.catch(err => {
+                if (elem !== document.documentElement && document.documentElement.requestFullscreen) {
+                  document.documentElement.requestFullscreen().catch(() => {});
+                }
+              });
+            }
+          } catch(err) {
+            if (elem !== document.documentElement && document.documentElement.requestFullscreen) {
+              try { document.documentElement.requestFullscreen(); } catch(e) {}
+            }
+          }
+        }
+      } else {
+        const exitFn = document.exitFullscreen ||
+                       document.webkitExitFullscreen ||
+                       document.mozCancelFullScreen ||
+                       document.msExitFullscreen;
+        if (exitFn) {
+          try {
+            const p = exitFn.call(document);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          } catch(err) {}
+        }
+      }
+    }
+
+    // Sync fullscreen button text with actual screen state
+    function syncFullscreenUI() {
+      const isFs = isTVFullscreenActive();
+      const label = document.getElementById('fsBtnLabel');
+      if (label) label.textContent = isFs ? 'Exit Full Screen' : 'Full Screen';
+    }
+
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
+      document.addEventListener(evt, syncFullscreenUI);
+    });
+
+    function closeCounterTV() {
+      const modal = document.getElementById('tvDisplayModal');
+      modal.style.display = 'none';
+
+      if (isTVFullscreenActive()) {
+        const exitFn = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+        if (exitFn) {
+          try { exitFn.call(document); } catch(e) {}
+        }
+      }
+
+      if (tvInterval) {
+        clearInterval(tvInterval);
+        tvInterval = null;
+      }
+    }
+
+    function updateTVClock() {
+      const el = document.getElementById('tvClock');
+      if (el) el.textContent = new Date().toLocaleTimeString();
+    }
+
+    function updateTVQueue() {
+      const apts = HospitalStore.getAppointments();
+      const inConsult = apts.find(a => a.status === 'In Consultation');
+
+      if (inConsult) {
+        document.getElementById('tvCurrentToken').textContent = inConsult.tokenNo;
+        document.getElementById('tvCurrentPatient').textContent = inConsult.patientName;
+        document.getElementById('tvCurrentDoctor').textContent = `Chamber: ${inConsult.doctorName} (${inConsult.dept})`;
+      } else {
+        const next = apts.find(a => a.status === 'Confirmed');
+        if (next) {
+          document.getElementById('tvCurrentToken').textContent = next.tokenNo;
+          document.getElementById('tvCurrentPatient').textContent = `${next.patientName} (Next in Line)`;
+          document.getElementById('tvCurrentDoctor').textContent = `Chamber: ${next.doctorName}`;
+        } else {
+          document.getElementById('tvCurrentToken').textContent = "--";
+          document.getElementById('tvCurrentPatient').textContent = "Queue Clear";
+          document.getElementById('tvCurrentDoctor').textContent = "Walk-Ins Welcome";
+        }
+      }
+
+      const upcoming = apts.filter(a => a.status === 'Confirmed').slice(0, 5);
+      const container = document.getElementById('tvUpcomingQueueList');
+      if (!container) return;
+
+      if (upcoming.length === 0) {
+        container.innerHTML = `<div style="color:#94a3b8; font-size:0.875rem;">No further appointments waiting in queue.</div>`;
+      } else {
+        container.innerHTML = upcoming.map(a => `
+          <div style="background:rgba(255,255,255,0.06); padding:10px 14px; border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.08);">
+            <div>
+              <strong style="color:#ffffff; font-size:1.05rem;">${a.tokenNo}</strong> · <span style="color:#93c5fd;">${a.patientName}</span>
+            </div>
+            <div style="font-size:0.8125rem; color:#cbd5e1;">${a.doctorName}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function updateTVBeds() {
+      const beds = HospitalStore.getBeds();
+      const total = beds.length;
+      const occupied = beds.filter(b => b.status === 'Occupied').length;
+      const available = total - occupied;
+
+      const daycare = beds.filter(b => (b.ward || '').toLowerCase().includes('daycare'));
+      const daycareAvail = daycare.filter(b => b.status === 'Available').length;
+
+      const critical = beds.filter(b => (b.ward || '').toLowerCase().includes('icu') || (b.ward || '').toLowerCase().includes('emergency'));
+      const criticalAvail = critical.filter(b => b.status === 'Available').length;
+
+      const ward = beds.filter(b => (b.ward || '').toLowerCase().includes('general') || (b.ward || '').toLowerCase().includes('ward'));
+      const wardAvail = ward.filter(b => b.status === 'Available').length;
+
+      const badgeEl = document.getElementById('tvBedSummaryBadge');
+      if (badgeEl) badgeEl.innerHTML = `<span style="color:#4ade80;">${available} Vacant</span> · <span style="color:#f87171;">${occupied} Occupied</span>`;
+
+      const statDaycare = document.getElementById('tvStatDaycare');
+      if (statDaycare) statDaycare.textContent = `${daycareAvail} / ${daycare.length} Ready`;
+
+      const statICU = document.getElementById('tvStatICU');
+      if (statICU) statICU.textContent = `${criticalAvail} / ${critical.length} Ready`;
+
+      const statWard = document.getElementById('tvStatWard');
+      if (statWard) statWard.textContent = `${wardAvail} / ${ward.length} Ready`;
+
+      const listEl = document.getElementById('tvBedsChipsList');
+      if (listEl) {
+        listEl.innerHTML = beds.map(b => {
+          const isAvail = b.status === 'Available';
+          return `
+            <div style="background:rgba(255,255,255,${isAvail ? '0.08' : '0.04'}); border:1px solid ${isAvail ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)'}; border-radius:var(--radius-sm); padding:7px 10px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700; font-size:0.8125rem; color:#ffffff;">${b.name || b.bedNo}</div>
+                <div style="font-size:0.65rem; color:#94a3b8;">${b.ward}</div>
+              </div>
+              <span style="font-size:0.6875rem; font-weight:700; padding:2px 7px; border-radius:10px; background:${isAvail ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}; color:${isAvail ? '#4ade80' : '#f87171'};">
+                ${isAvail ? 'Vacant' : 'In-Use'}
+              </span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // APPOINTMENTS & SPAM MANAGEMENT
+    // ------------------------------------------------------------------------
+    function filterAptsList() {
+      renderAppointmentsTable();
+    }
+
+    function renderAppointmentsTable() {
+      const tbody = document.getElementById('adminAptsTableBody');
+      if (!tbody) return;
+
+      let apts = HospitalStore.getAppointments();
+      const filterType = document.getElementById('aptTypeFilter') ? document.getElementById('aptTypeFilter').value : 'ALL';
+      const q = (document.getElementById('aptFilterSearch') ? document.getElementById('aptFilterSearch').value : '').toLowerCase().trim();
+
+      if (filterType === 'GUEST') {
+        apts = apts.filter(a => a.isGuest);
+      } else if (filterType === 'ACCOUNT') {
+        apts = apts.filter(a => a.patientAccountId && !a.isGuest);
+      } else if (filterType === 'WALKIN') {
+        apts = apts.filter(a => a.isWalkIn);
+      }
+
+      if (q) {
+        apts = apts.filter(a =>
+          (a.patientName && a.patientName.toLowerCase().includes(q)) ||
+          (a.tokenNo && a.tokenNo.toLowerCase().includes(q)) ||
+          (a.mobile && a.mobile.includes(q)) ||
+          (a.uhid && a.uhid.toLowerCase().includes(q))
+        );
+      }
+
+      if (apts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:28px; color:var(--text-secondary);">No appointment records matching filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = apts.map(a => {
+        const modeBadge = a.isWalkIn 
+          ? '<span class="badge badge-neutral">Walk-In</span>'
+          : (a.isGuest 
+            ? '<span class="badge badge-warning">Guest Web</span>' 
+            : '<span class="badge badge-success">Account</span>');
+
+        return `
+          <tr>
+            <td><strong style="color:var(--primary); font-size:0.95rem;">${a.tokenNo}</strong></td>
+            <td>
+              <strong>${a.patientName}</strong> (${a.age}Y/${a.gender})<br>
+              <span style="font-size:0.75rem; color:var(--text-secondary);">${a.mobile} · UHID: ${a.uhid}</span>
+            </td>
+            <td>${modeBadge}</td>
+            <td><strong>${a.doctorName}</strong><br><span style="font-size:0.75rem; color:var(--text-secondary);">${a.dept}</span></td>
+            <td>${a.date}<br><span style="font-size:0.75rem; color:var(--text-secondary);">${a.timeSlot}</span></td>
+            <td>₹${a.fee}</td>
+            <td>
+              <select onchange="updateAptStatus('${a.id}', this.value)" class="form-select" style="padding:4px 8px; font-size:0.75rem; width:auto;">
+                <option value="Confirmed" ${a.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                <option value="In Consultation" ${a.status === 'In Consultation' ? 'selected' : ''}>In Chamber</option>
+                <option value="Completed" ${a.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                <option value="Cancelled" ${a.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="btn ${a.status === 'Completed' ? 'btn-secondary' : 'btn-success'} btn-sm" onclick="quickCompleteTokenAdmin('${a.id}')" title="${a.status === 'Completed' ? 'Completed' : 'Complete Token'}" style="padding:4px 8px; ${a.status !== 'Completed' ? 'background:var(--success); color:#ffffff;' : ''}">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick='PrintEngine.printTokenSlip(${JSON.stringify(a)})' title="Print 80mm Slip" style="padding:4px 8px;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick='PrintEngine.printA4AppointmentSlip(${JSON.stringify(a)})' title="Print A4 Slip" style="padding:4px 8px;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="discardSpamAppointment('${a.id}')" title="Reject / Delete Spam" style="padding:4px 8px; color:var(--emergency);">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateAptStatus(aptId, status) {
+      HospitalStore.updateAppointment(aptId, { status });
+      showToast(`Token status updated to ${status}`, "success");
+      updateKPIs();
+    }
+
+    function quickCompleteTokenAdmin(aptId) {
+      HospitalStore.updateAppointment(aptId, { status: "Completed" });
+      showToast("Token marked as Completed", "success");
+      renderAppointmentsTable();
+      updateKPIs();
+    }
+
+    function discardSpamAppointment(aptId) {
+      if (confirm("Delete this appointment record?")) {
+        HospitalStore.deleteAppointment(aptId);
+        showToast("Record removed", "info");
+        renderAppointmentsTable();
+        updateKPIs();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // DOCTORS CRUD & INITIAL PASSWORD SETUP
+    // ------------------------------------------------------------------------
+    function renderAdminDoctors() {
+      const container = document.getElementById('adminDoctorsList');
+      if (!container) return;
+
+      const docs = HospitalStore.getDoctors();
+      if (docs.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:36px; background:#ffffff; border-radius:var(--radius-lg); border:1px dashed var(--border-subtle);">
+            <div style="width:44px; height:44px; background:var(--bg-section); color:var(--secondary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            </div>
+            <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin-bottom:6px;">Blank Doctor Roster</h4>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:16px;">Add real doctor profiles, consultation fees, and assign initial chamber passwords.</p>
+            <button class="btn btn-primary btn-sm" onclick="openAddDoctorModal()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Doctor Profile
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = docs.map(d => `
+        <div style="background:#ffffff; border-radius:var(--radius-lg); padding:18px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+            <img src="${d.photo}" alt="${d.name}" style="width:58px; height:58px; border-radius:var(--radius-md); object-fit:cover; border:1px solid var(--border-subtle);" onerror="this.src='IMG_20250615_114959.jpg'">
+            <div>
+              <span style="font-size:0.6875rem; color:var(--secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">${d.dept}</span>
+              <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:2px 0;">${d.name}</h4>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">${d.title || d.degree} · Fee: ₹${d.fee}</div>
+            </div>
+          </div>
+
+          <!-- Doctor Credentials Card -->
+          <div style="background:var(--bg-section); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:14px; font-size:0.78rem; border:1px solid var(--border-subtle);">
+            <div><strong>Login:</strong> <code>${d.email || d.name.toLowerCase().replace(/[^a-z]/g,'') + '@nalanda.com'}</code></div>
+            <div style="margin-top:2px;"><strong>Password:</strong> <code>${d.password || 'moh45678'}</code></div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:10px;">
+            <button class="btn btn-secondary btn-sm" onclick="openEditDoctorModal('${d.id}')" style="font-size:0.75rem; padding:4px 8px;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              Edit Profile
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="deleteDoctorRecord('${d.id}')" style="font-size:0.75rem; padding:4px 8px; color:var(--emergency);">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openAddDoctorModal() {
+      const html = `
+        <form onsubmit="saveDoctorForm(event)">
+          <div class="form-group">
+            <label class="form-label">Doctor Full Name <span class="req">*</span></label>
+            <input type="text" id="docFormName" class="form-input" placeholder="e.g. Dr. A. K. Sinha" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Chamber Login Email <span class="req">*</span></label>
+              <input type="email" id="docFormEmail" class="form-input" placeholder="e.g. dr.sinha@nalanda.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Initial Password <span class="req">*</span></label>
+              <input type="text" id="docFormPassword" class="form-input" value="doc12345" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Designation / Title <span class="req">*</span></label>
+            <input type="text" id="docFormTitle" class="form-input" placeholder="e.g. Senior Laparoscopic Surgeon" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select id="docFormDept" class="form-select">
+                <option value="Surgery">General & Laparoscopic Surgery</option>
+                <option value="Pediatrics">Pediatrics & Neonatal Care</option>
+                <option value="Medicine">General & Internal Medicine</option>
+                <option value="Gynecology">Obstetrics & Gynecology</option>
+                <option value="Orthopedics">Orthopedics & Joint Trauma</option>
+                <option value="Emergency">Emergency & Critical Care</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Consultation Fee (₹)</label>
+              <input type="number" id="docFormFee" class="form-input" value="500" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Degrees & Qualifications</label>
+            <input type="text" id="docFormDegree" class="form-input" placeholder="MBBS, MS, FMAS" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">OPD Schedule / Timings</label>
+            <input type="text" id="docFormSchedule" class="form-input" placeholder="Mon - Sat: 10:00 AM - 2:00 PM" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Photo Filename or URL</label>
+            <input type="text" id="docFormPhoto" class="form-input" placeholder="IMG_20250615_114959.jpg" value="IMG_20250615_114959.jpg">
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px;">
+            <label class="form-label">Biography & Clinical Experience</label>
+            <textarea id="docFormBio" class="form-textarea" placeholder="Doctor's clinical experience..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            Save Doctor & Grant Chamber Access
+          </button>
+        </form>
+      `;
+      openModal("Add Doctor Profile & Credentials", html);
+    }
+
+    function openEditDoctorModal(docId) {
+      const doc = HospitalStore.getDoctorById(docId);
+      if (!doc) return;
+
+      const html = `
+        <form onsubmit="saveDoctorForm(event, '${doc.id}')">
+          <div class="form-group">
+            <label class="form-label">Doctor Full Name</label>
+            <input type="text" id="docFormName" class="form-input" value="${doc.name}" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Login Email</label>
+              <input type="email" id="docFormEmail" class="form-input" value="${doc.email || ''}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password (Reset)</label>
+              <input type="text" id="docFormPassword" class="form-input" value="${doc.password || 'doc12345'}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Designation / Title</label>
+            <input type="text" id="docFormTitle" class="form-input" value="${doc.title}" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <input type="text" id="docFormDept" class="form-input" value="${doc.dept}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fee (₹)</label>
+              <input type="number" id="docFormFee" class="form-input" value="${doc.fee}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Degrees</label>
+            <input type="text" id="docFormDegree" class="form-input" value="${doc.degree}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">OPD Schedule</label>
+            <input type="text" id="docFormSchedule" class="form-input" value="${doc.opdSchedule}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Photo URL</label>
+            <input type="text" id="docFormPhoto" class="form-input" value="${doc.photo}">
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px;">
+            <label class="form-label">Biography</label>
+            <textarea id="docFormBio" class="form-textarea">${doc.bio || ''}</textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            Update Doctor Profile
+          </button>
+        </form>
+      `;
+      openModal("Edit Doctor Profile", html);
+    }
+
+    function saveDoctorForm(e, editId) {
+      e.preventDefault();
+      const docData = {
+        name: document.getElementById('docFormName').value.trim(),
+        email: document.getElementById('docFormEmail').value.trim(),
+        password: document.getElementById('docFormPassword').value.trim(),
+        title: document.getElementById('docFormTitle').value.trim(),
+        dept: document.getElementById('docFormDept').value.trim(),
+        fee: parseInt(document.getElementById('docFormFee').value) || 500,
+        degree: document.getElementById('docFormDegree').value.trim(),
+        opdSchedule: document.getElementById('docFormSchedule').value.trim(),
+        photo: document.getElementById('docFormPhoto').value.trim() || 'IMG_20250615_114959.jpg',
+        bio: document.getElementById('docFormBio').value.trim(),
+        specialty: document.getElementById('docFormTitle').value.trim(),
+        status: "available",
+        rating: 4.9
+      };
+
+      if (editId) {
+        HospitalStore.updateDoctor(editId, docData);
+        showToast("Doctor profile & password updated", "success");
+      } else {
+        HospitalStore.addDoctor(docData);
+        showToast("New doctor added with chamber credentials", "success");
+      }
+      closeModal();
+      renderAdminDoctors();
+      populateDoctorSelects();
+    }
+
+    function deleteDoctorRecord(docId) {
+      if (confirm("Delete this doctor profile?")) {
+        HospitalStore.deleteDoctor(docId);
+        showToast("Doctor removed", "success");
+        renderAdminDoctors();
+        populateDoctorSelects();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // ADMIN EMAILS MANAGER (RTDB)
+    // ------------------------------------------------------------------------
+    async function renderAdminsList() {
+      const container = document.getElementById('adminsListContainer');
+      if (!container) return;
+
+      const admins = await HospitalAuth.getAuthorizedAdmins();
+      const primary = HospitalAuth.getPrimaryAdminEmail();
+
+      container.innerHTML = admins.map(email => `
+        <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:12px 16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--shadow-xs);">
+          <div>
+            <strong style="color:var(--primary); font-size:0.9rem;">${email}</strong>
+            ${email.toLowerCase() === primary.toLowerCase() ? '<span class="badge badge-neutral" style="margin-left:8px;">Super Admin</span>' : '<span class="badge badge-neutral" style="margin-left:8px;">Authorized</span>'}
+          </div>
+          <div>
+            ${email.toLowerCase() !== primary.toLowerCase() ? `
+              <button class="btn btn-secondary btn-sm" onclick="removeAdmin('${email}')" style="color:var(--emergency); padding:3px 8px; font-size:0.75rem;">
+                Revoke Access
+              </button>
+            ` : '<span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Locked</span>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function handleAddNewAdmin(e) {
+      e.preventDefault();
+      const input = document.getElementById('newAdminEmailInput');
+      const email = input.value.trim();
+
+      const res = await HospitalAuth.addAdminEmail(email);
+      if (res.success) {
+        showToast(`Authorized: ${email} in Firebase RTDB`, "success");
+        input.value = '';
+        renderAdminsList();
+        updateKPIs();
+      } else {
+        showToast(res.error, "danger");
+      }
+    }
+
+    async function removeAdmin(email) {
+      if (confirm(`Revoke admin access for ${email}?`)) {
+        await HospitalAuth.removeAdminEmail(email);
+        showToast(`Access revoked for ${email}`, "success");
+        renderAdminsList();
+        updateKPIs();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // PROCEDURES CMS
+    // ------------------------------------------------------------------------
+    function renderAdminProcedures() {
+      const container = document.getElementById('adminProceduresList');
+      if (!container) return;
+
+      const procs = HospitalStore.getProcedures();
+      if (procs.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:36px; background:#ffffff; border-radius:var(--radius-lg); border:1px dashed var(--border-subtle);">
+            <div style="width:44px; height:44px; background:var(--bg-section); color:var(--secondary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            </div>
+            <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin-bottom:6px;">Blank Procedures Directory</h4>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:16px;">Add surgical procedures, package estimates, and recovery information.</p>
+            <button class="btn btn-primary btn-sm" onclick="openAddProcedureModal()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Procedure
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = procs.map(p => `
+        <div style="background:#ffffff; border-radius:var(--radius-lg); padding:18px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+          <span class="badge badge-neutral" style="margin-bottom:8px;">${p.category}</span>
+          <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 6px 0;">${p.name}</h4>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.5;">${p.desc}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:10px;">
+            <span style="font-size:0.875rem; font-weight:700; color:var(--primary);">₹${p.estCost}</span>
+            <button class="btn btn-secondary btn-sm" onclick="deleteProcedureRecord('${p.id}')" style="color:var(--emergency); font-size:0.75rem; padding:4px 8px;">
+              Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openAddProcedureModal() {
+      const html = `
+        <form onsubmit="saveProcedureForm(event)">
+          <div class="form-group">
+            <label class="form-label">Procedure Name</label>
+            <input type="text" id="procName" class="form-input" placeholder="e.g. Laparoscopic Cholecystectomy (Gallbladder)" required>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <input type="text" id="procCategory" class="form-input" value="Laparoscopic Surgery" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimated Cost (₹)</label>
+              <input type="number" id="procCost" class="form-input" value="28000" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Typical Stay</label>
+            <input type="text" id="procStay" class="form-input" value="Daycare / 24 Hours">
+          </div>
+          <div class="form-group" style="margin-bottom:20px;">
+            <label class="form-label">Patient Guide & Description</label>
+            <textarea id="procDesc" class="form-textarea" placeholder="Clinical preparation and recovery guidelines..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            Save Procedure Guide
+          </button>
+        </form>
+      `;
+      openModal("Add Procedure", html);
+    }
+
+    function saveProcedureForm(e) {
+      e.preventDefault();
+      HospitalStore.addProcedure({
+        name: document.getElementById('procName').value.trim(),
+        category: document.getElementById('procCategory').value.trim(),
+        estCost: parseInt(document.getElementById('procCost').value) || 25000,
+        stay: document.getElementById('procStay').value.trim(),
+        desc: document.getElementById('procDesc').value.trim()
+      });
+      showToast("Procedure added", "success");
+      closeModal();
+      renderAdminProcedures();
+    }
+
+    function deleteProcedureRecord(procId) {
+      if (confirm("Delete procedure?")) {
+        HospitalStore.deleteProcedure(procId);
+        showToast("Procedure removed", "info");
+        renderAdminProcedures();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // SETTINGS CMS
+    // ------------------------------------------------------------------------
+    function loadSettingsForm() {
+      const s = HospitalStore.getSettings();
+      if (!s) return;
+
+      document.getElementById('setHospitalName').value = s.hospitalName || 'Nalanda Advance Healthcare Hospital Pvt Ltd';
+      document.getElementById('setTagline').value = s.tagline || 'Leading Healthcare & Multi-Specialty Surgical Excellence';
+      document.getElementById('setEmergencyPhone').value = s.emergencyPhone || '+91 91557 64409';
+      document.getElementById('setRegNo').value = s.registrationNo || 'BR-NAL-2024-HOSP-0842';
+      document.getElementById('setAddress').value = s.address || 'Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar';
+      document.getElementById('setAnnouncement').value = s.announcement || '24/7 Trauma, Laparoscopy & ICU Critical Care';
+      document.getElementById('setHeroTitle').value = s.heroTitle || 'World-Class Healthcare In Nalanda';
+      document.getElementById('setHeroSub').value = s.heroSubtitle || 'Advanced laparoscopic surgery, pediatric ICU, and personalized medicine.';
+    }
+
+    function handleSettingsSave(e) {
+      e.preventDefault();
+      const updated = {
+        hospitalName: document.getElementById('setHospitalName').value.trim(),
+        tagline: document.getElementById('setTagline').value.trim(),
+        emergencyPhone: document.getElementById('setEmergencyPhone').value.trim(),
+        registrationNo: document.getElementById('setRegNo').value.trim(),
+        address: document.getElementById('setAddress').value.trim(),
+        announcement: document.getElementById('setAnnouncement').value.trim(),
+        heroTitle: document.getElementById('setHeroTitle').value.trim(),
+        heroSubtitle: document.getElementById('setHeroSub').value.trim()
+      };
+      HospitalStore.updateSettings(updated);
+      showToast("Hospital CMS updated and broadcast live!", "success");
+    }
+
+    // ------------------------------------------------------------------------
+    // STAFF LEAVES & OT NOTICES MANAGEMENT
+    // ------------------------------------------------------------------------
+    let currentLeaveFilter = 'All';
+
+    function filterLeavesList(filter, btn) {
+      currentLeaveFilter = filter;
+      document.querySelectorAll('.leave-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderAdminLeaves();
+    }
+
+    function renderAdminLeaves() {
+      const container = document.getElementById('adminLeavesContainer');
+      if (!container) return;
+
+      const leaves = HospitalStore.getLeaveRequests();
+      const filtered = currentLeaveFilter === 'All' 
+        ? leaves 
+        : leaves.filter(l => l.status === currentLeaveFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:32px; background:#ffffff; border-radius:var(--radius-lg); color:var(--text-secondary); border:1px solid var(--border-subtle); font-size:0.875rem;">
+            No ${currentLeaveFilter === 'All' ? '' : currentLeaveFilter.toLowerCase()} doctor leave or OT surgery notices found.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(l => {
+        const isApproved = l.status === 'Approved';
+        const isPending = l.status === 'Pending';
+
+        const badge = isApproved 
+          ? '<span class="badge badge-success">Approved (Off Duty)</span>' 
+          : (isPending ? '<span class="badge badge-warning">Pending Approval</span>' : '<span class="badge badge-neutral">Dismissed</span>');
+
+        return `
+          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:18px; margin-bottom:12px; box-shadow:var(--shadow-xs);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <strong style="color:var(--primary); font-size:1.05rem;">${l.doctorName}</strong>
+                ${l.category ? `<span class="badge badge-neutral" style="margin-left:8px; font-size:0.75rem;">${l.category}</span>` : ''}
+              </div>
+              ${badge}
+            </div>
+
+            <div style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:12px; line-height:1.6; background:var(--bg-section); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <div>Schedule: <strong>${l.startDate}</strong> to <strong>${l.endDate}</strong></div>
+              <div>Case / Reason: <span style="color:var(--primary); font-weight:600;">${l.reason}</span></div>
+              ${l.submittedAt ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Submitted on: ${l.submittedAt}</div>` : ''}
+            </div>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              ${isPending ? `
+                <button class="btn btn-primary btn-sm" onclick="approveLeave('${l.id}')">
+                  Approve Notice & Mark Off Duty
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="dismissLeave('${l.id}')" style="color:var(--emergency);">
+                  Dismiss
+                </button>
+              ` : (isApproved ? `
+                <button class="btn btn-secondary btn-sm" onclick="revokeLeave('${l.id}')" style="font-size:0.75rem;">
+                  Revoke & Return Doctor to Duty
+                </button>
+              ` : `
+                <button class="btn btn-primary btn-sm" onclick="approveLeave('${l.id}')" style="font-size:0.75rem;">
+                  Re-Approve Leave
+                </button>
+              `)}
+              <button class="btn btn-secondary btn-sm" onclick="deleteLeaveRecord('${l.id}')" style="color:var(--emergency); margin-left:auto; font-size:0.75rem; padding:4px 8px;" title="Delete Record">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function approveLeave(id) {
+      HospitalStore.updateLeaveStatus(id, "Approved");
+      showToast("Doctor leave approved & roster status set to Off Duty", "success");
+      renderAdminLeaves();
+      renderReceptionDoctorsRoster();
+    }
+
+    function dismissLeave(id) {
+      HospitalStore.updateLeaveStatus(id, "Rejected");
+      showToast("Leave notice dismissed", "info");
+      renderAdminLeaves();
+      renderReceptionDoctorsRoster();
+    }
+
+    function revokeLeave(id) {
+      HospitalStore.updateLeaveStatus(id, "Revoked");
+      showToast("Leave revoked. Doctor returned to active duty.", "info");
+      renderAdminLeaves();
+      renderReceptionDoctorsRoster();
+    }
+
+    function deleteLeaveRecord(id) {
+      if (confirm("Delete this leave record?")) {
+        HospitalStore.deleteLeaveRequest(id);
+        showToast("Leave record deleted", "info");
+        renderAdminLeaves();
+        renderReceptionDoctorsRoster();
+      }
+    }
+
+    function openAdminLeaveModal() {
+      const select = document.getElementById('adminLeaveDocSelect');
+      const docs = HospitalStore.getDoctors();
+
+      if (docs.length === 0) {
+        showToast("Please add at least one doctor first in the Doctors tab.", "danger");
+        return;
+      }
+
+      select.innerHTML = docs.map(d => `<option value="${d.id}">${d.name} (${d.dept})</option>`).join('');
+
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('adminLeaveStartDate').min = today;
+      document.getElementById('adminLeaveStartDate').value = today;
+      document.getElementById('adminLeaveEndDate').min = today;
+      document.getElementById('adminLeaveEndDate').value = today;
+      document.getElementById('adminLeaveReason').value = "";
+
+      document.getElementById('adminLeaveModal').style.display = "flex";
+    }
+
+    function closeAdminLeaveModal() {
+      document.getElementById('adminLeaveModal').style.display = "none";
+    }
+
+    function handleAdminLeaveSubmit(e) {
+      e.preventDefault();
+      const docId = document.getElementById('adminLeaveDocSelect').value;
+      const doc = HospitalStore.getDoctorById(docId);
+      const category = document.getElementById('adminLeaveCategory').value;
+      const start = document.getElementById('adminLeaveStartDate').value;
+      const end = document.getElementById('adminLeaveEndDate').value;
+      const reason = document.getElementById('adminLeaveReason').value.trim();
+
+      HospitalStore.submitLeaveRequest({
+        doctorId: docId,
+        doctorName: doc ? doc.name : 'Consultant',
+        category,
+        startDate: start,
+        endDate: end,
+        reason,
+        status: "Approved"
+      });
+
+      HospitalStore.updateDoctorStatus(docId, "leave");
+      showToast(`Leave notice logged for ${doc ? doc.name : 'Doctor'}`, "success");
+      closeAdminLeaveModal();
+      renderAdminLeaves();
+      renderReceptionDoctorsRoster();
+    }
+
+    function resetToCleanBlankData() {
+      if (confirm("Reset hospital database to a clean, empty canvas? (Admins will be preserved)")) {
+        HospitalStore.resetToBlankCanvas();
+        showToast("Database reset to clean blank canvas", "info");
+        location.reload();
+      }
+    }
+  </script>
+
+</body>
+</html>

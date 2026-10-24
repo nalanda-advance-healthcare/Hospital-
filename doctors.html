@@ -1,93 +1,223 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Meet Our Doctors - Nalanda Advance Healthcare Hospital</title>  
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="manifest" href="/site.webmanifest">
-    <style>  
-        body {  
-            font-family: Arial, sans-serif;  
-            margin: 0;  
-            padding: 0;  
-            background-color: #f4f8fc;  
-        }  
-        header, footer {  
-            background-color: #0056b3;  
-            color: white;  
-            text-align: center;  
-            padding: 20px;  
-        }  
-        .container {  
-            max-width: 1200px;  
-            margin: 20px auto;  
-            padding: 20px;  
-        }  
-        .cards {  
-            display: grid;  
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));  
-            gap: 20px;  
-        }  
-        .card {  
-            background: white;  
-            border-radius: 8px;  
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
-            padding: 20px;  
-            text-align: center;  
-        }  
-        .card img {  
-            width: 100%;  
-            height: auto;  
-            border-radius: 8px;  
-            margin-bottom: 15px;  
-        }  
-        .card button {  
-            margin-top: 10px;  
-            padding: 10px 20px;  
-            background-color: #0056b3;  
-            color: white;  
-            border: none;  
-            border-radius: 5px;  
-            cursor: pointer;  
-            font-size: 16px;  
-        }  
-        .card button:hover {  
-            background-color: #003f7d;  
-        }  
-    </style>  
-</head>  
-<body>  
-    <header>  
-        <h1>Meet Our Doctors</h1>  
-    </header>  
-    <div class="container">  
-        <div class="cards">  
-            <div class="card">  
-                <img src="image_url_here" alt="no information">  
-                <h3>no information</h3>  
-                <p>Cardiologist with 15+ years of experience.</p>  
-                <a href="appointment.html"><button>Book Appointment</button></a>  
-            </div>  
-            <div class="card">  
-                <img src="image_url_here" alt="no information">  
-                <h3>no information</h3>  
-                <p>Renowned Pediatrician known for excellent care.</p>  
-                <a href="appointment.html"><button>Book Appointment</button></a>  
-            </div>  
-            <div class="card">  
-                <img src="image_url_here" alt="no information">  
-                <h3>no information</h3>  
-                <p>Expert General Surgeon with precision and care.</p>  
-                <a href="appointment.html"><button>Book Appointment</button></a>  
-            </div>  
-        </div>  
-    </div>  
-    <footer>  
-        <p>&copy; 2025 Nalanda Advance Healthcare Hospital. All Rights Reserved.</p>  
-    </footer>  
-</body>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Specialists & Surgeons · Nalanda Advance Healthcare</title>
+  
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/print.css" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <!-- Hospital Ecosystem Engine -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/hospitalStore.js"></script>
+  <script src="js/main.js"></script>
+</head>
+<body>
+
+  <!-- Top Emergency Bar -->
+  <div class="top-bar no-print">
+    <div class="container top-bar-inner">
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <a href="tel:+919155764409" class="emergency-badge" data-bind="settings.emergencyPhone">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          24/7 Emergency: +91 91557 64409
+        </a>
+        <div class="top-bar-meta-item">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span data-bind="settings.address">Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar</span>
+        </div>
+      </div>
+
+      <div class="top-bar-links">
+        <a href="booking.html#reportsTab">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          My Reports & Rx
+        </a>
+        <a href="booking.html" class="btn btn-secondary btn-sm" style="padding:3px 10px; font-size:0.75rem; background:rgba(255,255,255,0.12); color:#ffffff; border-color:rgba(255,255,255,0.25);">
+          Book Appointment
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Header -->
+  <header class="site-header no-print">
+    <div class="container site-nav">
+      <a href="index.html" class="brand-identity">
+        <div class="brand-emblem">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <h1 data-bind="settings.hospitalName">Nalanda Advance Healthcare</h1>
+          <span>Medical Specialists Directory</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="doctors.html" class="active">Doctors</a>
+        <a href="index.html#proceduresSection">Treatments</a>
+        <a href="index.html#facilitiesSection">Facilities</a>
+        <a href="index.html#tpaSection">Cashless TPA</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="index.html#contactSection">Contact</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="booking.html" class="btn btn-teal btn-sm">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Book OPD Token
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <section class="section section-alt" style="padding:var(--space-12) 0;">
+    <div class="container" style="text-align:center;">
+      <span class="section-tag">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+        Clinical Faculty & Surgeons
+      </span>
+      <h1 class="section-title">Medical Specialists</h1>
+      <p class="section-desc" style="max-width:680px; margin:0 auto;">
+        Experienced surgeons and physicians dedicated to comprehensive outpatient evaluation, advanced keyhole laparoscopy, and emergency daycare surgery.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Doctors Grid -->
+  <section class="section" style="min-height:60vh;">
+    <div class="container">
+      <div class="grid-3" id="fullDoctorsGrid">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer no-print">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4 class="footer-heading" data-bind="settings.hospitalName">Nalanda Advance Healthcare</h4>
+          <p style="font-size:0.875rem; line-height:1.6; color:#98a2b3;">
+            Dedicated to ethical, transparent, and high-quality surgical and inpatient healthcare for families across Nalanda and Bihar.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Patient Services</h4>
+          <ul class="footer-links">
+            <li><a href="booking.html">Book OPD Appointment</a></li>
+            <li><a href="booking.html#reportsTab">My Reports & Digital Rx</a></li>
+            <li><a href="index.html#proceduresSection">Surgical Procedures</a></li>
+            <li><a href="index.html#tpaSection">Cashless Mediclaim</a></li>
+            <li><a href="testimonials.html">Patient Testimonials</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Emergency & Help</h4>
+          <ul class="footer-links">
+            <li><a href="tel:+919155764409" style="color:#fda29b; font-weight:700;">Emergency: +91 91557 64409</a></li>
+            <li><a href="mailto:nalandahospital@gmail.com">nalandahospital@gmail.com</a></li>
+            <li><a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">Police Line, Bihar Sharif</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Consultation Hours</h4>
+          <p style="font-size:0.84rem; color:#98a2b3; margin-bottom:12px;">Morning OPD: 10:00 AM – 02:00 PM<br>Evening OPD: 04:00 PM – 07:00 PM<br>Emergency: Open 24/7</p>
+          <a href="booking.html" class="btn btn-teal btn-sm" style="width:100%;">
+            Book Appointment
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.</div>
+        <div>Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDoctorsPage();
+
+      if (window.HospitalStore) {
+        HospitalStore.subscribe(() => renderDoctorsPage());
+      }
+    });
+
+    function renderDoctorsPage() {
+      const container = document.getElementById('fullDoctorsGrid');
+      if (!container) return;
+
+      const docs = HospitalStore.getDoctors();
+
+      if (docs.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:48px var(--space-6); background:var(--bg-section); border-radius:var(--radius-lg); border:1px dashed var(--border-subtle);">
+            <div style="width:48px; height:48px; background:#fff; color:var(--secondary); border:1px solid var(--border-subtle); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            </div>
+            <h4 style="font-family:var(--font-heading); font-size:1.2rem; font-weight:700; color:var(--primary); margin-bottom:6px;">Doctor Roster Being Updated</h4>
+            <p style="font-size:0.875rem; color:var(--text-secondary); max-width:540px; margin:0 auto 18px auto;">Our clinical specialist panel is being scheduled. Walk-in consultations and emergency services are available round the clock at the hospital reception.</p>
+            <a href="booking.html" class="btn btn-primary btn-sm">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Visit Appointment Desk
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = docs.map(doc => `
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="${doc.photo}" alt="${doc.name}" onerror="this.src='IMG_20250615_114959.jpg'">
+          </div>
+          <div class="card-body">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span class="badge badge-neutral">${doc.dept}</span>
+              <span class="badge ${doc.status === 'leave' ? 'badge-warning' : (doc.status === 'ot' ? 'badge-neutral' : (doc.status === 'emergency' ? 'badge-danger' : 'badge-success'))}">
+                ${doc.status === 'leave' ? 'ON LEAVE' : (doc.status === 'ot' ? 'IN SURGERY / OT' : (doc.status === 'emergency' ? 'EMERGENCY' : 'IN OPD'))}
+              </span>
+            </div>
+            <h3>${doc.name}</h3>
+            <div style="font-size:0.8125rem; color:var(--secondary); font-weight:600; margin-bottom:6px;">${doc.title || doc.degree}</div>
+            <p style="font-size:0.84rem; color:var(--text-secondary); line-height:1.5; margin-bottom:14px;">
+              ${doc.bio || 'Consultant specializing in advanced diagnostic care, laparoscopic techniques, and comprehensive patient recovery.'}
+            </p>
+            <div style="font-size:0.8125rem; color:var(--primary); font-weight:600; margin-bottom:14px; background:var(--bg-section); padding:8px 12px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              ${doc.opdSchedule || 'Mon - Sat: 10:00 AM - 02:00 PM'} · Fee: ₹${doc.fee}
+            </div>
+            <a href="booking.html?doc=${doc.id}" class="btn btn-teal btn-sm" style="width:100%; justify-content:center;">
+              Book Consultation
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+
+</body>
 </html>
