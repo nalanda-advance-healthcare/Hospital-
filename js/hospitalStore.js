@@ -14,7 +14,7 @@ const INITIAL_HOSPITAL_DATA = {
     email: "nalandahospital@gmail.com",
     address: "Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar - 803101",
     mapsUrl: "https://maps.app.goo.gl/fKTir4ggG2cFCvSx6",
-    announcement: "24/7 Emergency & Trauma Hospital · Ayushman Bharat (PM-JAY) & Cashless Empanelled",
+    announcement: "24/7 Trauma Emergency Hospital · Advanced Daycare Surgery & Multispecialty Care",
     heroTitle: "ADVANCED SURGICAL & MEDICAL HEALTHCARE",
     heroSub: "Experience world-class surgical care, modular laminar OTs, and compassionate inpatient healing at the heart of Nalanda."
   },
@@ -39,12 +39,11 @@ const INITIAL_HOSPITAL_DATA = {
     { id: "BED-12", name: "General Ward Bed F2", ward: "General Ward", bedNo: "F-02", status: "Available", patientName: "", uhid: "", admittedAt: "", doctorName: "", diagnosis: "" }
   ],
   tpaEmpanelments: [
-    { name: "Star Health Insurance", type: "Cashless TPA" },
-    { name: "Care Health Insurance", type: "Cashless TPA" },
-    { name: "HDFC ERGO Health", type: "Cashless TPA" },
-    { name: "ICICI Lombard General", type: "Cashless TPA" },
-    { name: "Niva Bupa Health", type: "Cashless TPA" },
-    { name: "Ayushman Bharat (PM-JAY)", type: "Govt Scheme" }
+    { name: "Star Health Insurance", type: "Health Insurance" },
+    { name: "Care Health Insurance", type: "Health Insurance" },
+    { name: "HDFC ERGO Health", type: "Health Insurance" },
+    { name: "ICICI Lombard General", type: "Health Insurance" },
+    { name: "Niva Bupa Health", type: "Health Insurance" }
   ]
 };
 
@@ -71,11 +70,29 @@ class HospitalStateStore {
       const saved = localStorage.getItem(this.storageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
+
+        // Sanitize out any stale cached Ayushman / Cashless TPA strings
+        if (parsed.settings && parsed.settings.announcement && 
+           (parsed.settings.announcement.includes("Ayushman") || parsed.settings.announcement.includes("Cashless"))) {
+          parsed.settings.announcement = INITIAL_HOSPITAL_DATA.settings.announcement;
+        }
+
+        // Normalize arrays in case Firebase serialized them as key-value objects
+        const normalizeArray = (val, fallback) => {
+          if (!val) return fallback;
+          if (Array.isArray(val)) return val;
+          return Object.values(val);
+        };
+
         return {
           ...INITIAL_HOSPITAL_DATA,
           ...parsed,
           settings: { ...INITIAL_HOSPITAL_DATA.settings, ...(parsed.settings || {}) },
-          beds: (parsed.beds && parsed.beds.length) ? parsed.beds : INITIAL_HOSPITAL_DATA.beds
+          beds: (parsed.beds && parsed.beds.length) ? parsed.beds : INITIAL_HOSPITAL_DATA.beds,
+          doctors: normalizeArray(parsed.doctors, []),
+          appointments: normalizeArray(parsed.appointments, []),
+          prescriptions: normalizeArray(parsed.prescriptions, []),
+          leaveRequests: normalizeArray(parsed.leaveRequests, [])
         };
       }
     } catch (e) {}
@@ -92,20 +109,60 @@ class HospitalStateStore {
 
   initFirebaseSync() {
     if (typeof fbDatabase !== 'undefined' && fbDatabase) {
+      const normalizeArray = (val, fallback) => {
+        if (!val) return fallback;
+        if (Array.isArray(val)) return val;
+        return Object.values(val);
+      };
+
       const ref = fbDatabase.ref('hospitalData');
       ref.on('value', (snapshot) => {
         const val = snapshot.val();
         if (val) {
+          const remoteSettings = { ...INITIAL_HOSPITAL_DATA.settings, ...(val.settings || {}) };
+          if (remoteSettings.announcement && (remoteSettings.announcement.includes("Ayushman") || remoteSettings.announcement.includes("Cashless"))) {
+            remoteSettings.announcement = INITIAL_HOSPITAL_DATA.settings.announcement;
+          }
+
           this.data = {
             ...INITIAL_HOSPITAL_DATA,
             ...val,
-            settings: { ...INITIAL_HOSPITAL_DATA.settings, ...(val.settings || {}) },
-            beds: (val.beds && val.beds.length) ? val.beds : INITIAL_HOSPITAL_DATA.beds
+            settings: remoteSettings,
+            beds: (val.beds && val.beds.length) ? val.beds : (this.data.beds || INITIAL_HOSPITAL_DATA.beds),
+            doctors: normalizeArray(val.doctors, this.data.doctors || []),
+            appointments: normalizeArray(val.appointments, this.data.appointments || []),
+            prescriptions: normalizeArray(val.prescriptions, this.data.prescriptions || []),
+            leaveRequests: normalizeArray(val.leaveRequests, this.data.leaveRequests || [])
           };
           localStorage.setItem(this.storageKey, JSON.stringify(this.data));
           this.notifySubscribers('firebase-sync');
         } else {
           ref.set(this.data);
+        }
+      });
+
+      // Direct Firebase Realtime Database listener for dedicated prescriptions collection
+      fbDatabase.ref('prescriptions').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          const directRxList = Object.values(val);
+          if (!this.data.prescriptions) this.data.prescriptions = [];
+          if (!Array.isArray(this.data.prescriptions)) {
+            this.data.prescriptions = Object.values(this.data.prescriptions);
+          }
+
+          directRxList.forEach(rx => {
+            if (!rx || !rx.appointmentId) return;
+            const idx = this.data.prescriptions.findIndex(p => p && (p.appointmentId === rx.appointmentId || p.rxId === rx.rxId));
+            if (idx !== -1) {
+              this.data.prescriptions[idx] = { ...this.data.prescriptions[idx], ...rx };
+            } else {
+              this.data.prescriptions.unshift(rx);
+            }
+          });
+
+          localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+          this.notifySubscribers('firebase-rx-sync');
         }
       });
     }
@@ -261,21 +318,33 @@ class HospitalStateStore {
   }
 
   // Prescriptions
-  getPrescriptions() { return this.data.prescriptions || []; }
+  getPrescriptions() {
+    let list = this.data.prescriptions || [];
+    if (!Array.isArray(list)) list = Object.values(list);
+    return list;
+  }
 
   getPrescriptionByApt(aptId) {
-    return (this.data.prescriptions || []).find(p => p.appointmentId === aptId);
+    if (!aptId) return null;
+    return this.getPrescriptions().find(p => p && (p.appointmentId === aptId || p.rxId === aptId));
   }
 
   savePrescription(rxData) {
     if (!this.data.prescriptions) this.data.prescriptions = [];
+    if (!Array.isArray(this.data.prescriptions)) {
+      this.data.prescriptions = Object.values(this.data.prescriptions);
+    }
+
     if (!rxData.rxId) {
       const todayStr = new Date().toISOString().slice(0,10).replace(/-/g, '');
       const count = this.data.prescriptions.length + 1;
       rxData.rxId = `RX-${todayStr}-${String(count).padStart(3, '0')}`;
     }
+    if (!rxData.updatedAt) {
+      rxData.updatedAt = new Date().toISOString();
+    }
 
-    const idx = this.data.prescriptions.findIndex(p => p.appointmentId === rxData.appointmentId);
+    const idx = this.data.prescriptions.findIndex(p => p && (p.appointmentId === rxData.appointmentId || p.rxId === rxData.rxId));
     if (idx !== -1) {
       this.data.prescriptions[idx] = { ...this.data.prescriptions[idx], ...rxData };
     } else {
@@ -287,6 +356,19 @@ class HospitalStateStore {
     }
 
     this.saveLocal(this.data);
+
+    // Direct write to dedicated Firebase Realtime Database node
+    if (typeof fbDatabase !== 'undefined' && fbDatabase) {
+      try {
+        const key = (rxData.appointmentId || rxData.rxId).replace(/[.#$\[\]]/g, '_');
+        fbDatabase.ref(`prescriptions/${key}`).set(rxData).catch(err => {
+          console.warn("Direct prescription Firebase sync notice:", err);
+        });
+      } catch (err) {
+        console.warn("Direct prescription Firebase sync catch:", err);
+      }
+    }
+
     return rxData;
   }
 
@@ -343,6 +425,95 @@ class HospitalStateStore {
     }
     this.data.leaveRequests = (this.data.leaveRequests || []).filter(l => l.id !== id);
     this.saveLocal(this.data);
+  }
+
+  getDoctorLeaveOnDate(doctorId, targetDate) {
+    if (!doctorId || !targetDate) return null;
+    const leaves = this.getLeaveRequests() || [];
+    return leaves.find(l => {
+      if (l.doctorId !== doctorId) return false;
+      if (l.status === 'Rejected' || l.status === 'Revoked') return false;
+      const start = l.startDate;
+      const end = l.endDate || l.startDate;
+      return targetDate >= start && targetDate <= end;
+    }) || null;
+  }
+
+  getDoctorActiveLeave(doctorId) {
+    if (!doctorId) return null;
+    const leaves = (this.getLeaveRequests() || []).filter(l => 
+      l.doctorId === doctorId && l.status !== 'Rejected' && l.status !== 'Revoked'
+    );
+    if (leaves.length > 0) {
+      const today = new Date().toISOString().slice(0, 10);
+      const activeNow = leaves.find(l => {
+        const start = l.startDate;
+        const end = l.endDate || l.startDate;
+        return today >= start && today <= end;
+      });
+      if (activeNow) return activeNow;
+      const future = leaves.filter(l => (l.endDate || l.startDate) >= today);
+      if (future.length > 0) {
+        future.sort((a, b) => a.startDate.localeCompare(b.startDate));
+        return future[0];
+      }
+      return leaves[0];
+    }
+    const doc = this.getDoctorById(doctorId);
+    if (doc && doc.status === 'leave') {
+      const today = new Date().toISOString().slice(0, 10);
+      return {
+        doctorId,
+        doctorName: doc.name,
+        startDate: today,
+        endDate: today,
+        category: "Off Duty / Leave",
+        reason: "Specialist is on leave"
+      };
+    }
+    return null;
+  }
+
+  isDoctorOnLeave(doctorId, targetDate) {
+    if (!doctorId) return null;
+    const doc = this.getDoctorById(doctorId);
+    const leaves = (this.getLeaveRequests() || []).filter(l => 
+      l.doctorId === doctorId && l.status !== 'Rejected' && l.status !== 'Revoked'
+    );
+
+    // If explicit leave records with date ranges exist, ONLY block dates inside the leave interval!
+    if (leaves.length > 0) {
+      if (targetDate) {
+        return leaves.find(l => {
+          const start = l.startDate;
+          const end = l.endDate || l.startDate;
+          return targetDate >= start && targetDate <= end;
+        }) || null;
+      }
+      const today = new Date().toISOString().slice(0, 10);
+      return leaves.find(l => {
+        const start = l.startDate;
+        const end = l.endDate || l.startDate;
+        return today >= start && today <= end;
+      }) || null;
+    }
+
+    // If no explicit leave records exist, but doctor is marked as 'leave', only treat today as blocked
+    if (doc && doc.status === 'leave') {
+      const today = new Date().toISOString().slice(0, 10);
+      if (!targetDate || targetDate === today) {
+        return {
+          doctorId,
+          doctorName: doc.name,
+          startDate: today,
+          endDate: today,
+          category: "Off Duty / Leave",
+          reason: "Specialist is on leave"
+        };
+      }
+      return null;
+    }
+    return null;
   }
 
   resetToCleanBlank() {

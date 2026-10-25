@@ -59,7 +59,7 @@ window.PrintEngine = {
           <div class="print-header-right">
             <strong>24/7 Emergency: ${settings.emergencyPhone || '+91 91557 64409'}</strong>
             OPD Hours: 9:00 AM – 6:00 PM<br>
-            Cashless TPA & PM-JAY Empanelled
+            Multispecialty & Daycare Surgical Centre
           </div>
         </div>
 
@@ -123,11 +123,7 @@ window.PrintEngine = {
             <tbody>
               ${medRows || `
                 <tr>
-                  <td style="text-align:center;">1</td>
-                  <td style="font-weight:700;">Tab. Paracetamol 650mg</td>
-                  <td style="text-align:center; color:#0284c7; font-weight:700;">1-0-1</td>
-                  <td>After Food</td>
-                  <td>3 Days</td>
+                  <td colspan="5" style="text-align:center; color:#64748b; padding:16px; font-weight:500;">No oral medications prescribed. Follow advised investigations & clinical care.</td>
                 </tr>
               `}
             </tbody>

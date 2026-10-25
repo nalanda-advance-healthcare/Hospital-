@@ -372,6 +372,69 @@ button, input, select, textarea {
   gap: var(--space-3);
 }
 
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  color: var(--primary);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.mobile-menu-toggle:hover {
+  background-color: var(--bg-section);
+  border-color: var(--secondary);
+}
+
+@media (max-width: 992px) {
+  .mobile-menu-toggle {
+    display: inline-flex;
+  }
+}
+
+.mobile-nav-drawer {
+  display: none;
+  background-color: #ffffff;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 2px solid var(--secondary);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.mobile-nav-drawer.active {
+  display: block;
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.mobile-nav-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-section);
+  transition: var(--transition-fast);
+}
+
+.mobile-nav-links a:hover,
+.mobile-nav-links a.active {
+  background-color: var(--secondary-light);
+  color: var(--secondary);
+}
+
 /* ==========================================================================
    BUTTONS & INTERACTIVE CONTROLS
    ========================================================================== */
@@ -730,9 +793,23 @@ button, input, select, textarea {
    ========================================================================== */
 .table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background-color: #ffffff;
+  max-width: 100%;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
 }
 
 .data-table {
@@ -941,7 +1018,7 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   RESPONSIVE DESIGN RULES
+   RESPONSIVE DESIGN RULES (PHONE, TABLET & DESKTOP COMPACTABILITY)
    ========================================================================== */
 @media (max-width: 992px) {
   .hero-grid {
@@ -949,7 +1026,7 @@ button, input, select, textarea {
     gap: var(--space-8);
   }
   .hero-image-frame img {
-    height: 340px;
+    height: 320px;
   }
   .footer-grid {
     grid-template-columns: 1fr 1fr;
@@ -961,17 +1038,61 @@ button, input, select, textarea {
 }
 
 @media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
   .section {
     padding: var(--space-10) 0;
   }
   .hero {
-    padding: var(--space-10) 0;
+    padding: var(--space-8) 0;
+  }
+  .hero-title {
+    font-size: 2rem;
+  }
+  .site-nav {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  .brand-text-wrap h1 {
+    font-size: 0.98rem;
+  }
+  .brand-text-wrap span {
+    font-size: 0.625rem;
+  }
+  .nav-actions {
+    gap: 6px;
+  }
+  .nav-actions .btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+  .desktop-only-text {
+    display: none !important;
+  }
+  .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .form-grid-2, .form-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   .footer-grid {
     grid-template-columns: 1fr;
   }
+  .top-bar-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
   .top-bar-meta-item:not(:first-child) {
     display: none;
+  }
+  .top-bar-links {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 0.75rem;
   }
   .hero-cta-group {
     flex-direction: column;
@@ -979,5 +1100,18 @@ button, input, select, textarea {
   }
   .hero-cta-group .btn {
     width: 100%;
+  }
+  .modal-card {
+    margin: 12px;
+    max-height: 94vh;
+  }
+  .modal-header, .modal-body {
+    padding: 16px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1240px;
   }
 }

@@ -187,9 +187,41 @@
       }
       .admin-sidebar {
         width: 100%;
+        padding: 14px 16px;
+      }
+      .admin-sidebar nav {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 8px;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .admin-nav-item {
+        margin-bottom: 0;
+        flex-shrink: 0;
+        padding: 8px 12px;
+        font-size: 0.78rem;
       }
       .admin-main {
-        padding: 20px;
+        padding: 16px 14px;
+      }
+      .kpi-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .kpi-card {
+        padding: 14px;
+      }
+      .kpi-value {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-cards-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -401,14 +433,10 @@
                 <input type="text" id="recSymptoms" class="form-input" placeholder="e.g. Fever, Abdominal checkup, General medicine">
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <button type="submit" name="printType" value="thermal" class="btn btn-primary" style="justify-content:center;">
+              <div>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px; font-weight:600; font-size:0.95rem;">
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                  Print 80mm Slip
-                </button>
-                <button type="submit" name="printType" value="a4" class="btn btn-secondary" style="justify-content:center;">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                  Print A4 Card
+                  Generate & Print 80mm Token Slip
                 </button>
               </div>
             </form>
@@ -725,6 +753,14 @@
             </div>
 
             <div class="form-group">
+              <label class="form-label">Official Hospital Email Address</label>
+              <input type="email" id="setHospitalEmail" class="form-input" placeholder="e.g. nalandahospital@gmail.com" required>
+              <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                Displayed on appointment slips, digital prescriptions, patient portal, and public contact sections.
+              </span>
+            </div>
+
+            <div class="form-group">
               <label class="form-label">Hospital Address</label>
               <input type="text" id="setAddress" class="form-input" required>
             </div>
@@ -810,6 +846,13 @@
         <div id="tvClock" style="font-family:monospace; font-size:1.5rem; color:#93c5fd; font-weight:700;">
           12:00:00 PM
         </div>
+        <button id="btnTVVoiceToggle" onclick="toggleTVVoice()" class="btn btn-secondary btn-sm" title="Toggle Loud Voice Announcements" style="background:rgba(22,140,140,0.3); color:#99f6e4; border-color:rgba(22,140,140,0.5); display:inline-flex; align-items:center; gap:6px;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <span id="tvVoiceLabel">Loud Voice: ON</span>
+        </button>
+        <button onclick="testTVSpeech()" class="btn btn-secondary btn-sm" title="Test Voice Output" style="background:rgba(255,255,255,0.08); color:#cbd5e1; border-color:rgba(255,255,255,0.2);">
+          Test Voice
+        </button>
         <button id="btnToggleFullscreen" onclick="toggleTVFullscreen()" class="btn btn-secondary btn-sm" style="background:rgba(255,255,255,0.12); color:#ffffff; border-color:rgba(255,255,255,0.3);">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
           <span id="fsBtnLabel">Full Screen</span>
@@ -825,17 +868,19 @@
       
       <!-- LEFT: OPD CONSULTATION QUEUE -->
       <div style="display:flex; flex-direction:column; gap:16px;">
-        <!-- Now Calling Token Box -->
-        <div style="background:rgba(255,255,255,0.06); border-radius:var(--radius-xl); padding:30px 24px; text-align:center; border:1px solid rgba(255,255,255,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
-          <span style="color:var(--secondary); font-size:0.85rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;">Now Calling into Chamber</span>
-          <div id="tvCurrentToken" style="font-family:var(--font-heading); font-size:5.5rem; font-weight:800; color:#ffffff; line-height:1.05; margin:10px 0;">
-            --
+        <!-- Now Calling Token Box (Splits into 2 if two doctors call patients) -->
+        <div id="tvCallingWrapper" style="background:rgba(255,255,255,0.06); border-radius:var(--radius-xl); padding:24px 20px; text-align:center; border:1px solid rgba(255,255,255,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:8px;">
+            <span style="color:var(--secondary); font-size:0.85rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; display:flex; align-items:center; gap:8px;">
+              <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#22c55e;"></span>
+              Now Calling into Chamber
+            </span>
+            <span id="tvCallingBadge" style="font-size:0.75rem; color:#93c5fd; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:999px; font-weight:600;">
+              Live Consultation Feed
+            </span>
           </div>
-          <div id="tvCurrentPatient" style="font-size:1.65rem; font-weight:700; color:#93c5fd;">
-            Waiting for next patient...
-          </div>
-          <div id="tvCurrentDoctor" style="font-size:1.05rem; color:#cbd5e1; margin-top:6px;">
-            Consultation Chamber
+          <div id="tvCallingContainer" style="display:grid; gap:14px; align-items:stretch;">
+            <!-- Dynamically populated via updateTVQueue() -->
           </div>
         </div>
 
@@ -892,7 +937,7 @@
         </div>
 
         <div style="font-size:0.75rem; color:#94a3b8; text-align:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
-          Admissions, Daycare Surgeries & TPA Cashless Desk: Counter 1
+          Admissions, Daycare Surgeries & Billing Desk: Counter 1
         </div>
       </div>
     </div>
@@ -906,7 +951,7 @@
         </div>
       </div>
       <div style="font-size:0.8125rem; color:#93c5fd; font-weight:600;">
-        Ayushman Bharat (PM-JAY) & Cashless TPA Empanelled
+        24/7 Emergency & Multispecialty Surgical Care
       </div>
     </div>
   </div>
@@ -1079,6 +1124,11 @@
           renderAdminLeaves();
           renderBedsView();
           renderReceptionDoctorsRoster();
+          const tvModal = document.getElementById('tvDisplayModal');
+          if (tvModal && tvModal.style.display === 'flex') {
+            updateTVQueue();
+            updateTVBeds();
+          }
         });
       }
     });
@@ -1233,8 +1283,6 @@
 
     function handleReceptionWalkIn(e) {
       e.preventDefault();
-      const submitter = e.submitter;
-      const printType = submitter ? submitter.value : 'thermal';
 
       const docId = document.getElementById('recDoctorSelect').value;
       const doc = HospitalStore.getDoctorById(docId) || { id: 'temp', name: 'Duty Doctor', dept: 'General OPD', fee: 500 };
@@ -1254,19 +1302,16 @@
         type: "Walk-In Desk",
         paymentStatus: "Paid at Desk",
         paymentMode: "Cash / Desk",
-        status: "Confirmed",
+        status: "In Waiting Room",
         isGuest: false,
         isWalkIn: true
       };
 
       const saved = HospitalStore.addAppointment(apt);
-      showToast(`Walk-In Token Generated: ${saved.tokenNo}`, "success");
+      showToast(`Walk-In Token Generated: ${saved.tokenNo} (Marked in Waiting Room)`, "success");
 
-      if (printType === 'thermal') {
-        PrintEngine.printTokenSlip(saved);
-      } else {
-        PrintEngine.printA4AppointmentSlip(saved);
-      }
+      // Print 80mm slip directly
+      PrintEngine.printTokenSlip(saved);
 
       document.getElementById('recPatientName').value = '';
       document.getElementById('recMobile').value = '';
@@ -1542,6 +1587,18 @@
       const modal = document.getElementById('tvDisplayModal');
       modal.style.display = 'flex';
 
+      // Unlock browser AudioContext and SpeechSynthesis on user click
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          const ctx = new AudioCtx();
+          if (ctx.state === 'suspended') ctx.resume();
+        }
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.getVoices();
+        }
+      } catch (e) {}
+
       updateTVClock();
       updateTVQueue();
       updateTVBeds();
@@ -1554,7 +1611,7 @@
           updateTVClock();
           updateTVQueue();
           updateTVBeds();
-        }, 2500);
+        }, 2000);
       }
     }
 
@@ -1641,42 +1698,260 @@
       if (el) el.textContent = new Date().toLocaleTimeString();
     }
 
+    // ------------------------------------------------------------------------
+    // TV FULLSCREEN LOUD TEXT-TO-SPEECH ANNOUNCEMENTS (REPEATED TWICE)
+    // ------------------------------------------------------------------------
+    let tvVoiceActive = true;
+    let tvAnnouncedCallsMap = new Map();
+
+    function toggleTVVoice() {
+      tvVoiceActive = !tvVoiceActive;
+      const label = document.getElementById('tvVoiceLabel');
+      if (label) label.textContent = tvVoiceActive ? 'Loud Voice: ON' : 'Voice: MUTED';
+      showToast(tvVoiceActive ? "Loud TV announcements active" : "TV voice muted", "info");
+      if (tvVoiceActive) {
+        testTVSpeech();
+      }
+    }
+
+    function playHospitalDingDong() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const now = ctx.currentTime;
+        // Tone 1: High crisp hospital bell
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(659.25, now); // E5
+        gain1.gain.setValueAtTime(0.28, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.45);
+
+        // Tone 2: Mid resonant chime
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(523.25, now + 0.22); // C5
+        gain2.gain.setValueAtTime(0.32, now + 0.22);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.22);
+        osc2.stop(now + 0.8);
+      } catch (e) {}
+    }
+
+    function testTVSpeech() {
+      speakLoudHospitalCall({
+        tokenNo: "101",
+        patientName: "Demonstration Patient",
+        doctorName: "Dr. Mohit Sharma"
+      });
+    }
+
+    function speakLoudHospitalCall(apt) {
+      if (!tvVoiceActive) return;
+      if (!('speechSynthesis' in window)) return;
+
+      // 1. Play hospital ding-dong chime
+      playHospitalDingDong();
+
+      // 2. Clear any pending speech queue to prevent lagging
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+
+      setTimeout(() => {
+        try {
+          const docClean = (apt.doctorName || 'Doctor').replace(/^Dr\.\s*/i, '');
+          
+          // EXACT REQUIREMENT: Loud announcement stating Patient Name, Token Number, and Doctor Name is calling, REPEATED TWICE
+          const callPhrase = `Token number ${apt.tokenNo}, ${apt.patientName}. Doctor ${docClean} is calling.`;
+          const announcement = `Attention please. ${callPhrase} ... I repeat: ${callPhrase}`;
+
+          const utterance = new SpeechSynthesisUtterance(announcement);
+          utterance.volume = 1.0; // Say loud
+          utterance.rate = 0.88;   // Articulate, professional hospital pacing
+          utterance.pitch = 1.0;
+          utterance.lang = 'en-US';
+
+          // Select natural English voice if available in browser
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            const naturalVoice = voices.find(v => v.lang && (v.lang.includes('en-IN') || v.lang.includes('en-GB') || v.lang.includes('en-US')));
+            if (naturalVoice) utterance.voice = naturalVoice;
+          }
+
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {
+          console.warn("Speech synthesis error:", err);
+        }
+      }, 350);
+    }
+
+    function announceCallingTVTokens(callingList) {
+      // Only announce when TV monitor is actively running on screen
+      const modal = document.getElementById('tvDisplayModal');
+      if (!modal || modal.style.display !== 'flex') return;
+
+      callingList.forEach(a => {
+        if (a && a.status === 'Calling') {
+          const callKey = `${a.id}_${a.lastCalledAt || a.status}`;
+          if (!tvAnnouncedCallsMap.has(callKey)) {
+            tvAnnouncedCallsMap.set(callKey, Date.now());
+            speakLoudHospitalCall(a);
+          }
+        }
+      });
+    }
+
     function updateTVQueue() {
       const apts = HospitalStore.getAppointments();
-      const inConsult = apts.find(a => a.status === 'In Consultation');
+      const callingContainer = document.getElementById('tvCallingContainer');
+      const badge = document.getElementById('tvCallingBadge');
+      if (!callingContainer) return;
 
-      if (inConsult) {
-        document.getElementById('tvCurrentToken').textContent = inConsult.tokenNo;
-        document.getElementById('tvCurrentPatient').textContent = inConsult.patientName;
-        document.getElementById('tvCurrentDoctor').textContent = `Chamber: ${inConsult.doctorName} (${inConsult.dept})`;
+      // Patients currently being called or active inside consultation chamber
+      const callingList = apts.filter(a => a.status === 'Calling' || a.status === 'In Chamber' || a.status === 'In Consultation');
+
+      if (badge) {
+        badge.textContent = callingList.length > 0 ? `${callingList.length} Active in Chamber` : 'Live Chamber Feed';
+      }
+
+      announceCallingTVTokens(callingList);
+
+      if (callingList.length === 2) {
+        // EXACT REQUIREMENT: When two doctors call patients, Now Calling into Chamber splits in two!
+        callingContainer.style.gridTemplateColumns = '1fr 1fr';
+        callingContainer.innerHTML = callingList.map(a => {
+          const isCalling = a.status === 'Calling';
+          return `
+            <div style="background:rgba(255,255,255,0.06); border-radius:var(--radius-lg); padding:20px 14px; border:1.5px solid ${isCalling ? '#ef4444' : 'rgba(22,140,140,0.5)'}; box-shadow:0 6px 20px rgba(0,0,0,0.25); text-align:center; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <span class="badge" style="background:${isCalling ? '#dc2626' : 'var(--secondary)'}; color:#ffffff; font-size:0.75rem; font-weight:700; letter-spacing:0.06em; padding:3px 12px; border-radius:999px;">
+                  ${isCalling ? '● NOW CALLING' : '● IN CHAMBER'}
+                </span>
+                <div style="font-family:var(--font-heading); font-size:3.8rem; font-weight:800; color:#ffffff; line-height:1.05; margin:10px 0 6px 0;">
+                  ${a.tokenNo}
+                </div>
+                <div style="font-size:1.4rem; font-weight:700; color:#93c5fd; line-height:1.2; word-break:break-word;">
+                  ${a.patientName}
+                </div>
+              </div>
+              <div style="margin-top:14px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+                <div style="font-size:1rem; font-weight:700; color:#f8fafc;">
+                  Chamber: ${a.doctorName}
+                </div>
+                <div style="font-size:0.8rem; color:#94a3b8; margin-top:2px;">
+                  ${a.dept}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (callingList.length === 1) {
+        callingContainer.style.gridTemplateColumns = '1fr';
+        const a = callingList[0];
+        const isCalling = a.status === 'Calling';
+        callingContainer.innerHTML = `
+          <div style="background:rgba(255,255,255,0.05); border-radius:var(--radius-lg); padding:24px 18px; border:1.5px solid ${isCalling ? '#ef4444' : 'rgba(22,140,140,0.4)'}; text-align:center;">
+            <span class="badge" style="background:${isCalling ? '#dc2626' : 'var(--secondary)'}; color:#ffffff; font-size:0.8rem; font-weight:700; letter-spacing:0.06em; padding:4px 14px; border-radius:999px;">
+              ${isCalling ? '● NOW CALLING' : '● IN CHAMBER'}
+            </span>
+            <div style="font-family:var(--font-heading); font-size:5.5rem; font-weight:800; color:#ffffff; line-height:1.05; margin:10px 0 8px 0;">
+              ${a.tokenNo}
+            </div>
+            <div style="font-size:1.85rem; font-weight:700; color:#93c5fd;">
+              ${a.patientName}
+            </div>
+            <div style="font-size:1.15rem; color:#f8fafc; margin-top:8px;">
+              Chamber: <strong style="color:#ffffff;">${a.doctorName}</strong> <span style="color:#94a3b8;">(${a.dept})</span>
+            </div>
+          </div>
+        `;
+      } else if (callingList.length > 2) {
+        callingContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(210px, 1fr))';
+        callingContainer.innerHTML = callingList.map(a => {
+          const isCalling = a.status === 'Calling';
+          return `
+            <div style="background:rgba(255,255,255,0.06); border-radius:var(--radius-lg); padding:16px 12px; border:1.5px solid ${isCalling ? '#ef4444' : 'rgba(22,140,140,0.5)'}; text-align:center;">
+              <span class="badge" style="background:${isCalling ? '#dc2626' : 'var(--secondary)'}; color:#ffffff; font-size:0.7rem; font-weight:700; letter-spacing:0.05em; padding:2px 10px; border-radius:999px;">
+                ${isCalling ? 'CALLING' : 'IN CHAMBER'}
+              </span>
+              <div style="font-family:var(--font-heading); font-size:3.25rem; font-weight:800; color:#ffffff; line-height:1.05; margin:6px 0;">
+                ${a.tokenNo}
+              </div>
+              <div style="font-size:1.2rem; font-weight:700; color:#93c5fd; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                ${a.patientName}
+              </div>
+              <div style="font-size:0.9rem; color:#e2e8f0; margin-top:6px;">
+                ${a.doctorName}
+              </div>
+            </div>
+          `;
+        }).join('');
       } else {
-        const next = apts.find(a => a.status === 'Confirmed');
+        const next = apts.find(a => a.status === 'In Waiting Room') || apts.find(a => a.status === 'Confirmed');
+        callingContainer.style.gridTemplateColumns = '1fr';
         if (next) {
-          document.getElementById('tvCurrentToken').textContent = next.tokenNo;
-          document.getElementById('tvCurrentPatient').textContent = `${next.patientName} (Next in Line)`;
-          document.getElementById('tvCurrentDoctor').textContent = `Chamber: ${next.doctorName}`;
+          const isWaiting = next.status === 'In Waiting Room';
+          callingContainer.innerHTML = `
+            <div style="padding:22px; background:rgba(255,255,255,0.03); border-radius:var(--radius-lg); border:1px dashed rgba(255,255,255,0.15);">
+              <span class="badge" style="background:${isWaiting ? '#059669' : 'rgba(255,255,255,0.1)'}; color:#ffffff; font-size:0.75rem; font-weight:600; padding:3px 12px; border-radius:999px;">
+                ${isWaiting ? '● Available In Waiting Room' : 'Next in Line'}
+              </span>
+              <div style="font-family:var(--font-heading); font-size:4.5rem; font-weight:800; color:#ffffff; line-height:1.05; margin:8px 0;">
+                ${next.tokenNo}
+              </div>
+              <div style="font-size:1.6rem; font-weight:700; color:#93c5fd;">
+                ${next.patientName}
+              </div>
+              <div style="font-size:1.05rem; color:#cbd5e1; margin-top:6px;">
+                Consultation Chamber: <strong>${next.doctorName}</strong> (${next.dept})
+              </div>
+            </div>
+          `;
         } else {
-          document.getElementById('tvCurrentToken').textContent = "--";
-          document.getElementById('tvCurrentPatient').textContent = "Queue Clear";
-          document.getElementById('tvCurrentDoctor').textContent = "Walk-Ins Welcome";
+          callingContainer.innerHTML = `
+            <div style="padding:28px 16px; background:rgba(255,255,255,0.02); border-radius:var(--radius-lg);">
+              <div style="font-family:var(--font-heading); font-size:3.5rem; font-weight:800; color:rgba(255,255,255,0.4); line-height:1.05; margin:6px 0;">
+                --
+              </div>
+              <div style="font-size:1.4rem; font-weight:700; color:#93c5fd;">
+                OPD Queue Clear
+              </div>
+              <div style="font-size:0.95rem; color:#94a3b8; margin-top:6px;">
+                Walk-In Registration Open at Reception Desk
+              </div>
+            </div>
+          `;
         }
       }
 
-      const upcoming = apts.filter(a => a.status === 'Confirmed').slice(0, 5);
+      const upcoming = apts.filter(a => a.status === 'In Waiting Room' || a.status === 'Confirmed').slice(0, 5);
       const container = document.getElementById('tvUpcomingQueueList');
       if (!container) return;
 
       if (upcoming.length === 0) {
-        container.innerHTML = `<div style="color:#94a3b8; font-size:0.875rem;">No further appointments waiting in queue.</div>`;
+        container.innerHTML = `<div style="color:#94a3b8; font-size:0.875rem; padding:12px; text-align:center;">No further appointments waiting in queue.</div>`;
       } else {
-        container.innerHTML = upcoming.map(a => `
-          <div style="background:rgba(255,255,255,0.06); padding:10px 14px; border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.08);">
-            <div>
-              <strong style="color:#ffffff; font-size:1.05rem;">${a.tokenNo}</strong> · <span style="color:#93c5fd;">${a.patientName}</span>
+        container.innerHTML = upcoming.map(a => {
+          const isWaitingRoom = a.status === 'In Waiting Room';
+          return `
+            <div style="background:${isWaitingRoom ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.06)'}; padding:10px 14px; border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; border:1px solid ${isWaitingRoom ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.08)'};">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <strong style="color:#ffffff; font-size:1.05rem;">${a.tokenNo}</strong> · <span style="color:#93c5fd; font-weight:600;">${a.patientName}</span>
+                ${isWaitingRoom ? '<span class="badge" style="background:#059669; color:#ffffff; font-size:0.65rem; padding:2px 7px; border-radius:999px;">In Waiting Room</span>' : ''}
+              </div>
+              <div style="font-size:0.8125rem; color:#cbd5e1;">${a.doctorName}</div>
             </div>
-            <div style="font-size:0.8125rem; color:#cbd5e1;">${a.doctorName}</div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
     }
 
@@ -1770,6 +2045,8 @@
             ? '<span class="badge badge-warning">Guest Web</span>' 
             : '<span class="badge badge-success">Account</span>');
 
+        const rx = HospitalStore.getPrescriptionByApt(a.id);
+
         return `
           <tr>
             <td><strong style="color:var(--primary); font-size:0.95rem;">${a.tokenNo}</strong></td>
@@ -1784,13 +2061,19 @@
             <td>
               <select onchange="updateAptStatus('${a.id}', this.value)" class="form-select" style="padding:4px 8px; font-size:0.75rem; width:auto;">
                 <option value="Confirmed" ${a.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-                <option value="In Consultation" ${a.status === 'In Consultation' ? 'selected' : ''}>In Chamber</option>
+                <option value="In Waiting Room" ${a.status === 'In Waiting Room' ? 'selected' : ''}>In Waiting Room</option>
+                <option value="Calling" ${a.status === 'Calling' ? 'selected' : ''}>Calling</option>
+                <option value="In Chamber" ${a.status === 'In Chamber' || a.status === 'In Consultation' ? 'selected' : ''}>In Chamber</option>
                 <option value="Completed" ${a.status === 'Completed' ? 'selected' : ''}>Completed</option>
                 <option value="Cancelled" ${a.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
               </select>
             </td>
             <td>
-              <div style="display:flex; gap:6px;">
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <button class="btn btn-sm ${a.status === 'In Waiting Room' ? 'btn-teal' : 'btn-outline'}" onclick="markPatientWaitingRoom('${a.id}')" title="Mark Patient Available in Waiting Room (Notifies Doctor)" style="padding:4px 9px; font-size:0.75rem; font-weight:600; display:inline-flex; align-items:center; gap:4px; ${a.status === 'In Waiting Room' ? 'background:var(--secondary); color:#ffffff; border-color:var(--secondary);' : 'background:#ecfdf5; color:#047857; border-color:#a7f3d0;'}">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  ${a.status === 'In Waiting Room' ? 'In Waiting Room' : 'Available (Waiting)'}
+                </button>
                 <button class="btn ${a.status === 'Completed' ? 'btn-secondary' : 'btn-success'} btn-sm" onclick="quickCompleteTokenAdmin('${a.id}')" title="${a.status === 'Completed' ? 'Completed' : 'Complete Token'}" style="padding:4px 8px; ${a.status !== 'Completed' ? 'background:var(--success); color:#ffffff;' : ''}">
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </button>
@@ -1800,6 +2083,11 @@
                 <button class="btn btn-secondary btn-sm" onclick='PrintEngine.printA4AppointmentSlip(${JSON.stringify(a)})' title="Print A4 Slip" style="padding:4px 8px;">
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                 </button>
+                ${rx ? `
+                <button class="btn btn-teal btn-sm" onclick='PrintEngine.printPrescription(${JSON.stringify(rx)}, ${JSON.stringify(a)})' title="Print Official Rx" style="padding:4px 8px; background:var(--secondary); color:#ffffff;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </button>
+                ` : ''}
                 <button class="btn btn-secondary btn-sm" onclick="discardSpamAppointment('${a.id}')" title="Reject / Delete Spam" style="padding:4px 8px; color:var(--emergency);">
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                 </button>
@@ -1808,6 +2096,13 @@
           </tr>
         `;
       }).join('');
+    }
+
+    function markPatientWaitingRoom(aptId) {
+      HospitalStore.updateAppointment(aptId, { status: "In Waiting Room" });
+      showToast("Patient marked as Available in Waiting Room! Doctor can now call them.", "success");
+      renderAppointmentsTable();
+      updateKPIs();
     }
 
     function updateAptStatus(aptId, status) {
@@ -2217,27 +2512,32 @@
       const s = HospitalStore.getSettings();
       if (!s) return;
 
-      document.getElementById('setHospitalName').value = s.hospitalName || 'Nalanda Advance Healthcare Hospital Pvt Ltd';
+      document.getElementById('setHospitalName').value = s.hospitalName || 'Nalanda Advance Healthcare Hospital';
       document.getElementById('setTagline').value = s.tagline || 'Leading Healthcare & Multi-Specialty Surgical Excellence';
       document.getElementById('setEmergencyPhone').value = s.emergencyPhone || '+91 91557 64409';
-      document.getElementById('setRegNo').value = s.registrationNo || 'BR-NAL-2024-HOSP-0842';
-      document.getElementById('setAddress').value = s.address || 'Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar';
-      document.getElementById('setAnnouncement').value = s.announcement || '24/7 Trauma, Laparoscopy & ICU Critical Care';
+      document.getElementById('setHospitalEmail').value = s.email || 'nalandahospital@gmail.com';
+      document.getElementById('setRegNo').value = s.regNo || s.registrationNo || 'REG-BR-NAL-2023-8942';
+      document.getElementById('setAddress').value = s.address || 'Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar - 803101';
+      document.getElementById('setAnnouncement').value = s.announcement || '24/7 Trauma Emergency Hospital · Advanced Daycare Surgery & Multispecialty Care';
       document.getElementById('setHeroTitle').value = s.heroTitle || 'World-Class Healthcare In Nalanda';
-      document.getElementById('setHeroSub').value = s.heroSubtitle || 'Advanced laparoscopic surgery, pediatric ICU, and personalized medicine.';
+      document.getElementById('setHeroSub').value = s.heroSub || s.heroSubtitle || 'Advanced laparoscopic surgery, pediatric ICU, and personalized medicine.';
     }
 
     function handleSettingsSave(e) {
       e.preventDefault();
+      const email = document.getElementById('setHospitalEmail').value.trim();
       const updated = {
         hospitalName: document.getElementById('setHospitalName').value.trim(),
         tagline: document.getElementById('setTagline').value.trim(),
         emergencyPhone: document.getElementById('setEmergencyPhone').value.trim(),
+        email: email,
         registrationNo: document.getElementById('setRegNo').value.trim(),
+        regNo: document.getElementById('setRegNo').value.trim(),
         address: document.getElementById('setAddress').value.trim(),
         announcement: document.getElementById('setAnnouncement').value.trim(),
         heroTitle: document.getElementById('setHeroTitle').value.trim(),
-        heroSubtitle: document.getElementById('setHeroSub').value.trim()
+        heroSubtitle: document.getElementById('setHeroSub').value.trim(),
+        heroSub: document.getElementById('setHeroSub').value.trim()
       };
       HospitalStore.updateSettings(updated);
       showToast("Hospital CMS updated and broadcast live!", "success");

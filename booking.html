@@ -232,7 +232,7 @@
 
           <div class="form-group" style="max-width:320px; margin-bottom:24px;">
             <label class="form-label">Consultation Date</label>
-            <input type="date" id="bookDateInput" class="form-input" onchange="renderSlots()">
+            <input type="date" id="bookDateInput" class="form-input" onchange="onBookingDateChanged()">
           </div>
 
           <div style="margin-bottom:28px;">
@@ -270,7 +270,7 @@
               <input type="text" id="hpTrapField" name="hp_hospital_guard" autocomplete="off" tabindex="-1">
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:14px;">
+            <div class="form-grid-2" style="margin-bottom:14px;">
               <div class="form-group" style="margin:0;">
                 <label class="form-label">Patient Full Name <span class="req">*</span></label>
                 <input type="text" id="pName" class="form-input" placeholder="e.g. Ramesh Prasad" required>
@@ -281,7 +281,7 @@
               </div>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px;">
+            <div class="form-grid-3" style="margin-bottom:14px;">
               <div class="form-group" style="margin:0;">
                 <label class="form-label">Age</label>
                 <input type="number" id="pAge" class="form-input" value="35" min="1" max="115" required>
@@ -434,12 +434,12 @@
 
       <div class="modal-body">
         <!-- Mode Switcher -->
-        <div style="display:flex; background:var(--bg-section); border-radius:var(--radius-md); padding:4px; margin-bottom:20px;">
-          <button id="btnAuthModeLogin" onclick="toggleAuthMode('login')" class="btn btn-sm" style="flex:1; background:var(--primary); color:#fff;">Sign In</button>
-          <button id="btnAuthModeRegister" onclick="toggleAuthMode('register')" class="btn btn-sm" style="flex:1; background:transparent; color:var(--text-primary);">Create Account</button>
+        <div id="authModeTabs" style="display:flex; background:var(--bg-section); border-radius:var(--radius-md); padding:4px; margin-bottom:18px;">
+          <button id="btnAuthModeLogin" type="button" onclick="toggleAuthMode('login')" class="btn btn-sm" style="flex:1; background:var(--primary); color:#fff;">Sign In</button>
+          <button id="btnAuthModeRegister" type="button" onclick="toggleAuthMode('register')" class="btn btn-sm" style="flex:1; background:transparent; color:var(--text-primary);">Create Account</button>
         </div>
 
-        <!-- Auth Form -->
+        <!-- Auth Form (Sign In / Register) -->
         <form id="patientLoginForm" onsubmit="handlePatientAuthSubmit(event)">
           <div id="regNameGroup" class="form-group" style="display:none;">
             <label class="form-label">Full Name <span class="req">*</span></label>
@@ -447,18 +447,61 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">10-Digit Mobile Number <span class="req">*</span></label>
-            <input type="tel" id="authPatientMobile" class="form-input" placeholder="e.g. 9876543210" pattern="[6-9][0-9]{9}" required>
+            <label class="form-label" id="lblAuthPatientMobile">Registered Email or 10-Digit Mobile <span class="req">*</span></label>
+            <input type="text" id="authPatientMobile" class="form-input" placeholder="e.g. 9876543210 or name@example.com" required>
+          </div>
+
+          <div id="regEmailGroup" class="form-group" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <label class="form-label" style="margin:0;">Email Address</label>
+              <span style="font-size:0.75rem; color:var(--secondary); font-weight:600;">Optional</span>
+            </div>
+            <input type="email" id="authPatientEmail" class="form-input" placeholder="e.g. name@example.com">
+            <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:3px;">
+              Optional: Enables Firebase Authentication & secure password reset emails.
+            </span>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Password <span class="req">*</span></label>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label class="form-label" style="margin:0;">Password <span class="req">*</span></label>
+              <a href="javascript:void(0)" onclick="toggleAuthMode('forgot')" id="authForgotLink" style="font-size:0.75rem; color:var(--secondary); font-weight:600; text-decoration:none;">Forgot Password?</a>
+            </div>
             <input type="password" id="authPatientPass" class="form-input" placeholder="••••••••" required>
           </div>
 
           <button type="submit" class="btn btn-primary" id="btnSubmitPatientAuth" style="width:100%; margin-top:8px;">
             Sign In to Patient Portal
           </button>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form id="patientForgotForm" onsubmit="handlePatientForgotSubmit(event)" style="display:none;">
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.45;">
+            Enter your registered <strong>Email Address</strong> (for secure Firebase reset link) or <strong>10-digit Mobile Number</strong>.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Registered Email or Mobile Number <span class="req">*</span></label>
+            <input type="text" id="authForgotMobile" class="form-input" placeholder="e.g. name@example.com or 9876543210" required>
+          </div>
+          <div id="forgotPhoneResetGroup" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">New Password <span class="req">*</span></label>
+              <input type="password" id="authForgotPass" class="form-input" placeholder="Minimum 6 characters" minlength="6">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New Password <span class="req">*</span></label>
+              <input type="password" id="authForgotPassConfirm" class="form-input" placeholder="Re-enter new password" minlength="6">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnSubmitForgot" style="width:100%; margin-top:8px;">
+            Send Reset Link / Verify
+          </button>
+          <div style="text-align:center; margin-top:12px;">
+            <a href="javascript:void(0)" onclick="toggleAuthMode('login')" style="font-size:0.8125rem; color:var(--secondary); font-weight:600; text-decoration:none;">
+              ← Back to Sign In
+            </a>
+          </div>
         </form>
       </div>
     </div>
@@ -559,41 +602,128 @@
     }
 
     function toggleAuthMode(mode) {
+      const isForgot = mode === 'forgot';
       isPatientAuthRegister = mode === 'register';
-      document.getElementById('patientModalTitle').textContent = isPatientAuthRegister ? 'Create Patient Account' : 'Patient Sign In';
-      document.getElementById('regNameGroup').style.display = isPatientAuthRegister ? 'block' : 'none';
-      document.getElementById('btnSubmitPatientAuth').textContent = isPatientAuthRegister ? 'Create Account & Sign In' : 'Sign In to Patient Portal';
 
-      document.getElementById('btnAuthModeLogin').style.background = isPatientAuthRegister ? 'transparent' : 'var(--primary)';
-      document.getElementById('btnAuthModeLogin').style.color = isPatientAuthRegister ? 'var(--text-primary)' : '#ffffff';
-      document.getElementById('btnAuthModeRegister').style.background = isPatientAuthRegister ? 'var(--primary)' : 'transparent';
-      document.getElementById('btnAuthModeRegister').style.color = isPatientAuthRegister ? '#ffffff' : 'var(--text-primary)';
+      document.getElementById('patientModalTitle').textContent = isForgot 
+        ? 'Reset Patient Password' 
+        : (isPatientAuthRegister ? 'Create Patient Account' : 'Patient Sign In');
+
+      document.getElementById('authModeTabs').style.display = isForgot ? 'none' : 'flex';
+      document.getElementById('patientLoginForm').style.display = isForgot ? 'none' : 'block';
+      document.getElementById('patientForgotForm').style.display = isForgot ? 'block' : 'none';
+
+      const lblMobile = document.getElementById('lblAuthPatientMobile');
+      const inputMobile = document.getElementById('authPatientMobile');
+
+      if (!isForgot) {
+        document.getElementById('regNameGroup').style.display = isPatientAuthRegister ? 'block' : 'none';
+        document.getElementById('regEmailGroup').style.display = isPatientAuthRegister ? 'block' : 'none';
+        document.getElementById('authForgotLink').style.display = isPatientAuthRegister ? 'none' : 'inline';
+        document.getElementById('btnSubmitPatientAuth').textContent = isPatientAuthRegister ? 'Create Account & Sign In' : 'Sign In to Patient Portal';
+
+        if (isPatientAuthRegister) {
+          if (lblMobile) lblMobile.innerHTML = '10-Digit Mobile Number <span class="req">*</span>';
+          if (inputMobile) inputMobile.placeholder = 'e.g. 9876543210';
+        } else {
+          if (lblMobile) lblMobile.innerHTML = 'Registered Email or 10-Digit Mobile <span class="req">*</span>';
+          if (inputMobile) inputMobile.placeholder = 'e.g. 9876543210 or name@example.com';
+        }
+
+        document.getElementById('btnAuthModeLogin').style.background = isPatientAuthRegister ? 'transparent' : 'var(--primary)';
+        document.getElementById('btnAuthModeLogin').style.color = isPatientAuthRegister ? 'var(--text-primary)' : '#ffffff';
+        document.getElementById('btnAuthModeRegister').style.background = isPatientAuthRegister ? 'var(--primary)' : 'transparent';
+        document.getElementById('btnAuthModeRegister').style.color = isPatientAuthRegister ? '#ffffff' : 'var(--text-primary)';
+      } else {
+        const phoneGroup = document.getElementById('forgotPhoneResetGroup');
+        if (phoneGroup) phoneGroup.style.display = 'none';
+        const submitBtn = document.getElementById('btnSubmitForgot');
+        if (submitBtn) submitBtn.textContent = 'Send Reset Link / Verify';
+      }
     }
 
     async function handlePatientAuthSubmit(e) {
       e.preventDefault();
-      const mobile = document.getElementById('authPatientMobile').value.trim();
+      const loginOrPhone = document.getElementById('authPatientMobile').value.trim();
       const pass = document.getElementById('authPatientPass').value.trim();
 
       if (isPatientAuthRegister) {
         const name = document.getElementById('authPatientName').value.trim() || 'Patient';
-        const res = await HospitalAuth.registerPatient({ name, mobile, password: pass });
+        const email = document.getElementById('authPatientEmail') ? document.getElementById('authPatientEmail').value.trim() : '';
+        const res = await HospitalAuth.registerPatient({ name, mobile: loginOrPhone, email, password: pass });
         if (res.success) {
-          showToast(`Account created for ${name}`, "success");
+          showToast(res.message || `Account created for ${name}`, "success");
           closePatientModal();
           renderAuthBanner();
         } else {
           showToast(res.error || "Registration failed", "danger");
         }
       } else {
-        const res = await HospitalAuth.loginPatient(mobile, pass);
+        const res = await HospitalAuth.loginPatient(loginOrPhone, pass);
         if (res.success) {
           showToast("Welcome back!", "success");
           closePatientModal();
           renderAuthBanner();
         } else {
-          showToast(res.error || "Invalid mobile or password", "danger");
+          showToast(res.error || "Invalid mobile/email or password", "danger");
         }
+      }
+    }
+
+    async function handlePatientForgotSubmit(e) {
+      e.preventDefault();
+      const target = document.getElementById('authForgotMobile').value.trim();
+      if (!target) {
+        showToast("Please enter your registered email or 10-digit mobile number.", "danger");
+        return;
+      }
+
+      const isEmail = target.includes('@');
+      const phoneGroup = document.getElementById('forgotPhoneResetGroup');
+      const isPhoneGroupVisible = phoneGroup && phoneGroup.style.display !== 'none';
+
+      // If user entered email directly, or has not yet entered new password for phone
+      if (isEmail || !isPhoneGroupVisible) {
+        const res = await HospitalAuth.sendPatientPasswordReset(target);
+        if (res.success) {
+          if (res.method === 'firebase_email') {
+            showToast(res.message || "Official Firebase password reset email sent!", "success");
+            setTimeout(() => {
+              toggleAuthMode('login');
+            }, 2500);
+          } else {
+            // RTDB Phone account found without email, prompt for new password
+            if (phoneGroup) phoneGroup.style.display = 'block';
+            const submitBtn = document.getElementById('btnSubmitForgot');
+            if (submitBtn) submitBtn.textContent = 'Save New Password in Database';
+            showToast("Mobile verified. Please enter your new password below.", "info");
+          }
+        } else {
+          showToast(res.error || "Password reset request failed", "danger");
+        }
+        return;
+      }
+
+      // Phone user setting new password in RTDB
+      const pass = document.getElementById('authForgotPass').value.trim();
+      const passConfirm = document.getElementById('authForgotPassConfirm').value.trim();
+
+      if (!pass || pass.length < 6) {
+        showToast("Password must be at least 6 characters.", "danger");
+        return;
+      }
+      if (pass !== passConfirm) {
+        showToast("Passwords do not match. Please re-enter.", "danger");
+        return;
+      }
+
+      const res = await HospitalAuth.sendPatientPasswordReset(target, pass);
+      if (res.success) {
+        showToast(res.message || "Password updated successfully! Welcome to your patient portal.", "success");
+        closePatientModal();
+        renderAuthBanner();
+      } else {
+        showToast(res.error || "Password reset failed", "danger");
       }
     }
 
@@ -618,10 +748,19 @@
       }
     }
 
+    function onBookingDateChanged() {
+      renderDoctorsList();
+      if (selectedDocId) {
+        selectBookingDoctor(selectedDocId);
+      }
+      renderSlots();
+    }
+
     function renderDoctorsList() {
       const container = document.getElementById('bookingDoctorsList');
       if (!container) return;
 
+      const chosenDate = document.getElementById('bookDateInput') ? document.getElementById('bookDateInput').value : new Date().toISOString().slice(0, 10);
       const docs = HospitalStore.getDoctors();
 
       if (docs.length === 0) {
@@ -642,9 +781,12 @@
       }
 
       container.innerHTML = docs.map(doc => {
+        const leave = HospitalStore.isDoctorOnLeave(doc.id, chosenDate);
+        const isOnLeave = !!leave;
         const status = doc.status || 'available';
-        const statusBadge = status === 'leave'
-          ? '<span class="badge badge-warning" style="font-size:0.65rem; padding:2px 6px;">On Leave</span>'
+
+        const statusBadge = isOnLeave
+          ? `<span class="badge badge-warning" style="font-size:0.65rem; padding:2px 6px; background:#fef3c7; color:#92400e; border:1px solid #fcd34d;">On Leave (${leave.startDate} to ${leave.endDate})</span>`
           : (status === 'ot'
             ? '<span class="badge badge-neutral" style="font-size:0.65rem; padding:2px 6px;">In OT / Surgery</span>'
             : (status === 'emergency'
@@ -652,7 +794,7 @@
               : '<span class="badge badge-success" style="font-size:0.65rem; padding:2px 6px;">Available OPD</span>'));
 
         return `
-          <div style="border:1.5px solid ${selectedDocId === doc.id ? 'var(--secondary)' : 'var(--border-subtle)'}; background:${selectedDocId === doc.id ? 'var(--secondary-light)' : '#ffffff'}; border-radius:var(--radius-md); padding:16px; cursor:pointer; transition:var(--transition-fast); box-shadow:var(--shadow-xs);" onclick="selectBookingDoctor('${doc.id}')">
+          <div style="border:1.5px solid ${selectedDocId === doc.id ? 'var(--secondary)' : (isOnLeave ? '#fca5a5' : 'var(--border-subtle)')}; background:${selectedDocId === doc.id ? 'var(--secondary-light)' : (isOnLeave ? '#fff5f5' : '#ffffff')}; border-radius:var(--radius-md); padding:16px; cursor:pointer; transition:var(--transition-fast); box-shadow:var(--shadow-xs); opacity:${isOnLeave ? '0.8' : '1'};" onclick="selectBookingDoctor('${doc.id}')">
             <div style="display:flex; gap:12px; align-items:center;">
               <img src="${doc.photo}" alt="${doc.name}" style="width:54px; height:54px; border-radius:var(--radius-md); object-fit:cover; border:1px solid var(--border-subtle);" onerror="this.src='IMG_20250615_114959.jpg'">
               <div style="flex:1;">
@@ -661,7 +803,9 @@
                   ${statusBadge}
                 </div>
                 <h4 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:700; color:var(--primary); margin:2px 0;">${doc.name}</h4>
-                <div style="font-size:0.75rem; color:var(--text-secondary);">Fee: ₹${doc.fee} OPD</div>
+                <div style="font-size:0.75rem; color:${isOnLeave ? '#dc2626' : 'var(--text-secondary)'}; font-weight:${isOnLeave ? '700' : 'normal'};">
+                  ${isOnLeave ? `Blocked: On Leave until ${leave.endDate}` : `Fee: ₹${doc.fee} OPD`}
+                </div>
               </div>
             </div>
           </div>
@@ -672,25 +816,71 @@
     function selectBookingDoctor(id) {
       selectedDocId = id;
       const doc = HospitalStore.getDoctorById(id);
+      const dateInput = document.getElementById('bookDateInput');
+      let chosenDate = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
+
+      // Check if specialist is on leave on chosenDate
+      const activeLeave = doc ? HospitalStore.isDoctorOnLeave(id, chosenDate) : null;
+      let autoAdjusted = false;
+
+      // If doctor is on leave on the default/current date, auto-advance date to day after leave ends
+      if (activeLeave && activeLeave.endDate) {
+        try {
+          const endD = new Date(activeLeave.endDate);
+          if (!isNaN(endD.getTime())) {
+            endD.setDate(endD.getDate() + 1);
+            const nextDay = endD.toISOString().slice(0, 10);
+            if (dateInput) {
+              dateInput.value = nextDay;
+              chosenDate = nextDay;
+              autoAdjusted = true;
+            }
+          }
+        } catch(e) {}
+      }
+
+      const leaveOnChosen = doc ? HospitalStore.isDoctorOnLeave(id, chosenDate) : null;
+
       if (doc) {
-        const isLeave = doc.status === 'leave';
         const isOT = doc.status === 'ot';
         document.getElementById('step2DocBanner').innerHTML = `
           Selected: <strong style="color:var(--primary);">${doc.name}</strong> (${doc.dept}) · Fee: ₹${doc.fee}
-          ${isLeave ? '<div style="margin-top:6px; color:#b45309; font-size:0.8125rem; font-weight:600; background:#fef3c7; padding:6px 10px; border-radius:var(--radius-sm); border:1px solid #fde68a;">Notice: This specialist has a scheduled leave notice. You may book for a future date.</div>' : ''}
-          ${isOT ? '<div style="margin-top:6px; color:#1e40af; font-size:0.8125rem; font-weight:600; background:#dbeafe; padding:6px 10px; border-radius:var(--radius-sm); border:1px solid #bfdbfe;">Notice: Specialist currently in OT surgery. Consultations proceed as per post-OT schedule.</div>' : ''}
+          ${leaveOnChosen ? `<div style="margin-top:8px; color:#991b1b; font-size:0.8125rem; font-weight:700; background:#fee2e2; padding:10px 14px; border-radius:var(--radius-sm); border:1px solid #fca5a5; line-height:1.5;">
+            ⛔ Specialist On Leave: Dr. ${doc.name} is on scheduled leave from ${leaveOnChosen.startDate} to ${leaveOnChosen.endDate} (${leaveOnChosen.category || 'Leave'}). Booking is blocked for this date. Please select a consultation date after ${leaveOnChosen.endDate}.
+          </div>` : (autoAdjusted ? `<div style="margin-top:8px; color:#1e40af; font-size:0.8125rem; font-weight:600; background:#dbeafe; padding:8px 12px; border-radius:var(--radius-sm); border:1px solid #bfdbfe; line-height:1.4;">
+            ℹ️ Schedule Notice: Dr. ${doc.name} is on leave until ${activeLeave.endDate}. Appointment date automatically set to earliest available date: <strong>${chosenDate}</strong>.
+          </div>` : '')}
+          ${(!leaveOnChosen && isOT) ? '<div style="margin-top:6px; color:#1e40af; font-size:0.8125rem; font-weight:600; background:#dbeafe; padding:6px 10px; border-radius:var(--radius-sm); border:1px solid #bfdbfe;">Notice: Specialist currently in OT surgery. Consultations proceed as per post-OT schedule.</div>' : ''}
         `;
       }
       renderDoctorsList();
+      renderSlots();
     }
 
     function renderSlots() {
       const container = document.getElementById('slotsContainer');
       if (!container) return;
 
+      const chosenDate = document.getElementById('bookDateInput') ? document.getElementById('bookDateInput').value : new Date().toISOString().slice(0, 10);
       const doc = selectedDocId ? HospitalStore.getDoctorById(selectedDocId) : null;
-      const blocked = (doc && doc.blockedSlots) || [];
+      const leave = selectedDocId ? HospitalStore.isDoctorOnLeave(selectedDocId, chosenDate) : null;
 
+      if (leave) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1; background:#fef2f2; border:1px solid #fecaca; border-radius:var(--radius-md); padding:20px; text-align:center;">
+            <div style="font-weight:700; color:#991b1b; font-size:1rem; margin-bottom:6px;">
+              Consultation Slots Blocked (Doctor on Leave)
+            </div>
+            <div style="font-size:0.84rem; color:#b91c1c; line-height:1.5;">
+              Dr. ${doc ? doc.name : 'Specialist'} is on scheduled leave from <strong>${leave.startDate}</strong> to <strong>${leave.endDate}</strong>.
+              <br>Appointments cannot be booked during this period. Please select a consultation date after <strong>${leave.endDate}</strong>.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const blocked = (doc && doc.blockedSlots) || [];
       const slots = ["09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM"];
 
       container.innerHTML = slots.map(s => {
@@ -716,6 +906,22 @@
           return;
         }
       }
+
+      // Allow navigation to Step 2 freely so user can select any date after the leave!
+      // Only block proceeding from Step 2 to Step 3 if the selected appointment date falls within the leave period
+      if (s === 3 && selectedDocId) {
+        const chosenDate = document.getElementById('bookDateInput').value;
+        const leave = HospitalStore.isDoctorOnLeave(selectedDocId, chosenDate);
+        if (leave) {
+          showToast(`Selected specialist is on leave until ${leave.endDate}. Please choose an appointment date after ${leave.endDate}.`, "danger");
+          return;
+        }
+        if (!selectedTimeSlot) {
+          showToast("Please choose an available consultation time slot", "danger");
+          return;
+        }
+      }
+
       [1, 2, 3, 4].forEach(n => {
         document.getElementById(`step${n}`).style.display = n === s ? 'block' : 'none';
       });
@@ -770,6 +976,13 @@
 
       if (!spamCheck.valid) {
         showToast(spamCheck.error || "Too many submissions. Please wait 1 minute.", "danger");
+        return;
+      }
+
+      const chosenDate = document.getElementById('bookDateInput').value;
+      const leave = HospitalStore.isDoctorOnLeave(selectedDocId, chosenDate);
+      if (leave) {
+        showToast(`Cannot book: Specialist is on leave until ${leave.endDate}. Please choose a date after ${leave.endDate}.`, "danger");
         return;
       }
 

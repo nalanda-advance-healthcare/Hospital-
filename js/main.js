@@ -41,6 +41,12 @@ function bindRealtimeHeaderSettings() {
       el.textContent = s.emergencyPhone;
       if (el.tagName === 'A') el.href = `tel:${s.emergencyPhone.replace(/\s+/g, '')}`;
     });
+    document.querySelectorAll('[data-bind="settings.email"]').forEach(el => {
+      if (s.email) {
+        el.textContent = s.email;
+        if (el.tagName === 'A') el.href = `mailto:${s.email}`;
+      }
+    });
     document.querySelectorAll('[data-bind="settings.address"]').forEach(el => el.textContent = s.address);
     document.querySelectorAll('[data-bind="settings.announcement"]').forEach(el => el.textContent = s.announcement);
     document.querySelectorAll('[data-bind="settings.heroTitle"]').forEach(el => el.textContent = s.heroTitle);
@@ -128,4 +134,9 @@ window.closeModal = function() {
     modal.classList.remove('active');
     document.body.style.overflow = '';
   }
+};
+
+window.toggleMobileNavMenu = function() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  if (drawer) drawer.classList.toggle('active');
 };

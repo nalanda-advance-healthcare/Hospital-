@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Private Doctor Chamber Portal · Nalanda Advance Healthcare</title>
   
   <!-- Favicons -->
@@ -34,9 +34,11 @@
       background-color: var(--primary);
       color: var(--text-primary);
       padding-bottom: 84px;
+      min-height: 100vh;
     }
 
     .doctor-phone-shell {
+      width: 100%;
       max-width: 500px;
       margin: 0 auto;
       min-height: 100vh;
@@ -56,6 +58,7 @@
       top: 0;
       z-index: 100;
       border-bottom: 2px solid var(--secondary);
+      gap: 12px;
     }
 
     .doc-avatar {
@@ -64,6 +67,42 @@
       border-radius: var(--radius-md);
       object-fit: cover;
       border: 1.5px solid var(--secondary);
+      background-color: var(--primary-hover);
+    }
+
+    /* Desktop Navigation Tabs */
+    .desktop-top-nav {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .desktop-top-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .desktop-top-tab:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .desktop-top-tab.active {
+      background: var(--secondary);
+      color: #ffffff;
+      font-weight: 700;
+      border-color: var(--secondary);
+      box-shadow: var(--shadow-xs);
     }
 
     /* 1-Tap Status Controller */
@@ -118,9 +157,22 @@
       transition: var(--transition-fast);
     }
 
-    .queue-patient-card.in-consultation {
-      border-color: var(--secondary);
-      background-color: var(--secondary-light);
+    .queue-patient-card.in-consultation,
+    .queue-patient-card.in-chamber {
+      border: 1.5px solid var(--secondary);
+      background-color: #f0fdfa;
+    }
+
+    @keyframes pulseCallingCard {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .queue-patient-card.calling {
+      border: 1.5px solid #ef4444;
+      background-color: #fffaf0;
+      animation: pulseCallingCard 2s infinite;
     }
 
     .token-chip {
@@ -143,12 +195,15 @@
       background-color: var(--bg-section);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 12px;
+      padding: 10px 12px;
       margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .doctor-login-shell {
-      max-width: 420px;
+      max-width: 440px;
       margin: 60px auto;
       padding: 36px 30px;
       background-color: #ffffff;
@@ -191,6 +246,144 @@
     .mobile-bottom-tab.active {
       color: var(--secondary);
       font-weight: 700;
+    }
+
+    .doctor-waiting-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rx-workstation-grid {
+      display: block;
+    }
+
+    .desk-only-remove {
+      display: none !important;
+    }
+
+    .mobile-only-remove {
+      display: inline-block;
+    }
+
+    .leave-desktop-grid {
+      display: block;
+    }
+
+    /* --------------------------------------------------------------------------
+       DESKTOP & MONITOR ADAPTIVE WORKSTATION (min-width: 900px)
+       -------------------------------------------------------------------------- */
+    @media (min-width: 900px) {
+      body {
+        background-color: #0c1e2f;
+        background-image: 
+          radial-gradient(circle at 10% 10%, rgba(22, 140, 140, 0.16) 0%, transparent 40%),
+          radial-gradient(circle at 90% 90%, rgba(18, 48, 74, 0.3) 0%, transparent 40%);
+        padding-bottom: 36px;
+      }
+
+      .doctor-phone-shell {
+        max-width: 1320px;
+        width: 96%;
+        margin: 28px auto;
+        min-height: calc(100vh - 56px);
+        background-color: #f8fafc;
+        border-radius: var(--radius-xl);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+      }
+
+      .doc-phone-header {
+        padding: 16px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .desktop-top-nav {
+        display: flex;
+      }
+
+      .mobile-bottom-nav {
+        display: none !important;
+      }
+
+      .status-controller-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        padding: 14px 28px;
+      }
+
+      .status-tap-pill {
+        padding: 12px 14px;
+        font-size: 0.8125rem;
+      }
+
+      .doc-panel-section {
+        padding: 24px 28px !important;
+      }
+
+      /* RX 2-Column Clinical Workstation Layout */
+      .rx-workstation-grid {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .quick-vitals-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+      }
+
+      .medicine-adder-row {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .medicine-adder-row .med-name-wrap {
+        flex: 2.2;
+        margin-bottom: 0 !important;
+      }
+
+      .medicine-adder-row .med-controls-wrap {
+        flex: 2.8;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      /* Slots desktop grid: 6 slots per row */
+      #docSlotsGrid {
+        grid-template-columns: repeat(6, 1fr) !important;
+        gap: 12px !important;
+      }
+
+      /* Waiting queue desktop cards grid */
+      .doctor-waiting-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 14px;
+      }
+
+      /* Leave desktop grid: Form on left, history on right */
+      .leave-desktop-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .desk-only-remove {
+        display: inline-block !important;
+      }
+
+      .mobile-only-remove {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -246,7 +439,7 @@
        -------------------------------------------------------------------------- -->
   <div id="doctorAppShell" class="doctor-phone-shell" style="display:none;">
 
-    <!-- TOP HEADER BAR -->
+    <!-- TOP HEADER BAR (RESPONSIVE FOR DESKTOP & MOBILE) -->
     <header class="doc-phone-header no-print">
       <div style="display:flex; align-items:center; gap:12px;">
         <img id="activeDocPhoto" src="IMG_20250615_114959.jpg" alt="Doctor" class="doc-avatar" onerror="this.src='IMG_20250615_114959.jpg'">
@@ -260,13 +453,34 @@
         </div>
       </div>
 
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-secondary btn-sm" onclick="openChangePasswordModal()" style="padding:5px 8px; font-size:0.75rem;" title="Change Password">
+      <!-- DESKTOP TOP NAV BAR (SHOWN ON MONITORS / LAPTOPS) -->
+      <nav class="desktop-top-nav" aria-label="Chamber Navigation">
+        <button type="button" class="desktop-top-tab active" id="desk-tab-btn-queue" onclick="switchDoctorTab('queue')">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+          Patient Queue
+        </button>
+        <button type="button" class="desktop-top-tab" id="desk-tab-btn-rx" onclick="switchDoctorTab('rx')">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          Write Consultation Rx
+        </button>
+        <button type="button" class="desktop-top-tab" id="desk-tab-btn-slots" onclick="switchDoctorTab('slots')">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Slots Control
+        </button>
+        <button type="button" class="desktop-top-tab" id="desk-tab-btn-leave" onclick="switchDoctorTab('leave')">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Leave / Notice
+        </button>
+      </nav>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button class="btn btn-secondary btn-sm" onclick="openChangePasswordModal()" style="padding:6px 10px; font-size:0.75rem;" title="Change Password">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 2l-2 2m-1.5 1.5L12 11l4 4 5.5-5.5a2.12 2.12 0 0 0 0-3L19 4"></path><path d="M3 21l3-3"></path><path d="M7.5 16.5l2 2"></path></svg>
           Password
         </button>
-        <button class="btn btn-danger btn-sm" onclick="handleDoctorLogout()" style="padding:5px 8px; font-size:0.75rem;" title="Sign Out">
+        <button class="btn btn-danger btn-sm" onclick="handleDoctorLogout()" style="padding:6px 10px; font-size:0.75rem;" title="Sign Out">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span style="margin-left:2px;">Sign Out</span>
         </button>
       </div>
     </header>
@@ -322,89 +536,110 @@
         </h3>
       </div>
 
-      <form id="docPrescriptionForm" onsubmit="handlePrescriptionSave(event)" style="background:#ffffff; border-radius:var(--radius-lg); padding:16px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
+      <form id="docPrescriptionForm" onsubmit="handlePrescriptionSave(event)" style="background:#ffffff; border-radius:var(--radius-lg); padding:20px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs);">
         <input type="hidden" id="rxAptId">
         <input type="hidden" id="rxUHID">
 
-        <!-- Selected Patient Demographics Card -->
-        <div style="background:var(--accent-soft); border-radius:var(--radius-md); padding:12px; margin-bottom:14px; border:1px solid rgba(18, 48, 74, 0.08);">
-          <div style="font-size:0.72rem; color:var(--primary); font-weight:700; text-transform:uppercase;">Current Patient</div>
-          <div id="rxDisplayPatient" style="font-weight:700; font-size:0.95rem; color:var(--primary);">Select patient from queue</div>
-        </div>
-
-        <!-- Quick Vitals Input -->
-        <div class="quick-vitals-grid">
+        <div class="rx-workstation-grid">
+          <!-- WORKSTATION COLUMN 1: PATIENT, VITALS & MEDICINES -->
           <div>
-            <label class="form-label" style="font-size:0.6875rem;">BP (mmHg)</label>
-            <input type="text" id="vitBP" class="form-input" placeholder="120/80" style="padding:6px 8px; font-size:0.8125rem;">
-          </div>
-          <div>
-            <label class="form-label" style="font-size:0.6875rem;">Pulse (bpm)</label>
-            <input type="text" id="vitPulse" class="form-input" placeholder="78" style="padding:6px 8px; font-size:0.8125rem;">
-          </div>
-          <div>
-            <label class="form-label" style="font-size:0.6875rem;">Temp (°F)</label>
-            <input type="text" id="vitTemp" class="form-input" placeholder="98.6" style="padding:6px 8px; font-size:0.8125rem;">
-          </div>
-          <div>
-            <label class="form-label" style="font-size:0.6875rem;">SpO2 (%)</label>
-            <input type="text" id="vitSpO2" class="form-input" placeholder="99%" style="padding:6px 8px; font-size:0.8125rem;">
-          </div>
-          <div>
-            <label class="form-label" style="font-size:0.6875rem;">Weight (kg)</label>
-            <input type="text" id="vitWeight" class="form-input" placeholder="65" style="padding:6px 8px; font-size:0.8125rem;">
-          </div>
-          <div>
-            <label class="form-label" style="font-size:0.6875rem;">Sugar (RBS)</label>
-            <input type="text" id="vitSugar" class="form-input" placeholder="110" style="padding:6px 8px; font-size:0.8125rem;">
-          </div>
-        </div>
+            <!-- Selected Patient Demographics Card -->
+            <div style="background:var(--accent-soft); border-radius:var(--radius-md); padding:12px; margin-bottom:14px; border:1px solid rgba(18, 48, 74, 0.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                <div style="font-size:0.72rem; color:var(--primary); font-weight:700; text-transform:uppercase;">Current Consulting Patient</div>
+                <select id="rxQueueSelector" class="form-select" onchange="onRxQueueSelectChange(this.value)" style="width:auto; padding:3px 8px; font-size:0.75rem; max-width:210px; border-color:rgba(18,48,74,0.2);">
+                  <option value="">Switch Patient from Queue...</option>
+                </select>
+              </div>
+              <div id="rxDisplayPatient" style="font-weight:700; font-size:0.95rem; color:var(--primary);">Select patient from queue</div>
+            </div>
 
-        <!-- Clinical Diagnosis -->
-        <div class="form-group">
-          <label class="form-label">Clinical Diagnosis <span class="req">*</span></label>
-          <input type="text" id="rxDiagnosis" class="form-input" placeholder="e.g. Acute Gastritis / URI" required>
-        </div>
+            <!-- Quick Vitals Input -->
+            <div style="margin-bottom:14px;">
+              <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:6px; letter-spacing:0.04em;">Patient Vitals</div>
+              <div class="quick-vitals-grid">
+                <div>
+                  <label class="form-label" style="font-size:0.6875rem;">BP (mmHg)</label>
+                  <input type="text" id="vitBP" class="form-input" placeholder="120/80" style="padding:6px 8px; font-size:0.8125rem;">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.6875rem;">Pulse (bpm)</label>
+                  <input type="text" id="vitPulse" class="form-input" placeholder="78" style="padding:6px 8px; font-size:0.8125rem;">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.6875rem;">Temp (°F)</label>
+                  <input type="text" id="vitTemp" class="form-input" placeholder="98.6" style="padding:6px 8px; font-size:0.8125rem;">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.6875rem;">SpO2 (%)</label>
+                  <input type="text" id="vitSpO2" class="form-input" placeholder="99%" style="padding:6px 8px; font-size:0.8125rem;">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.6875rem;">Weight (kg)</label>
+                  <input type="text" id="vitWeight" class="form-input" placeholder="65" style="padding:6px 8px; font-size:0.8125rem;">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.6875rem;">Sugar (RBS)</label>
+                  <input type="text" id="vitSugar" class="form-input" placeholder="110" style="padding:6px 8px; font-size:0.8125rem;">
+                </div>
+              </div>
+            </div>
 
-        <!-- Prescribed Medications -->
-        <div style="margin-bottom:14px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <label class="form-label" style="margin:0;">Prescribed Medicines (Rx)</label>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="addMedicineRow()" style="padding:4px 8px; font-size:0.75rem;">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              Add Medicine
-            </button>
+            <!-- Prescribed Medications -->
+            <div style="margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label class="form-label" style="margin:0; font-size:0.875rem; font-weight:700;">Prescribed Medicines (Rx)</label>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="addMedicineRow()" style="padding:4px 10px; font-size:0.75rem;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  Add Medicine
+                </button>
+              </div>
+              <div id="medicinesContainer">
+                <!-- Medicine rows added here -->
+              </div>
+            </div>
           </div>
-          <div id="medicinesContainer">
-            <!-- Medicine rows added here -->
+
+          <!-- WORKSTATION COLUMN 2: CLINICAL DIAGNOSIS, TESTS, ADVICE & ACTIONS -->
+          <div>
+            <!-- Clinical Diagnosis -->
+            <div class="form-group">
+              <label class="form-label">Clinical Diagnosis <span class="req">*</span></label>
+              <input type="text" id="rxDiagnosis" class="form-input" placeholder="e.g. Acute Gastritis / URI" required>
+            </div>
+
+            <!-- Investigations & Follow up -->
+            <div class="form-group">
+              <label class="form-label">Advised Lab Tests / Investigations</label>
+              <input type="text" id="rxTests" class="form-input" placeholder="e.g. CBC, Ultrasound Abdomen, LFT">
+            </div>
+
+            <div class="form-group" style="margin-bottom:18px;">
+              <label class="form-label">Dietary & Follow-Up Advice</label>
+              <input type="text" id="rxFollowUp" class="form-input" value="Review after 5 days or SOS">
+            </div>
+
+            <!-- Actions Card -->
+            <div style="background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:16px; margin-top:8px;">
+              <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:10px; letter-spacing:0.04em;">
+                Consultation Actions
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                <button type="submit" class="btn btn-primary" style="justify-content:center; padding:10px;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  Save Rx
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="handleSaveAndPrintNow()" style="justify-content:center; padding:10px;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                  Save & Print
+                </button>
+              </div>
+              <button type="button" class="btn btn-success" onclick="handleSaveAndCompleteNow()" style="width:100%; justify-content:center; padding:10px; background:var(--success); color:#ffffff; font-weight:700;" title="Save Prescription and Complete Token">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Complete Token & Discharge
+              </button>
+            </div>
           </div>
-        </div>
-
-        <!-- Investigations & Follow up -->
-        <div class="form-group">
-          <label class="form-label">Advised Lab Tests / Investigations</label>
-          <input type="text" id="rxTests" class="form-input" placeholder="e.g. CBC, Ultrasound Abdomen, LFT">
-        </div>
-
-        <div class="form-group" style="margin-bottom:18px;">
-          <label class="form-label">Dietary & Follow-Up Advice</label>
-          <input type="text" id="rxFollowUp" class="form-input" value="Review after 5 days or SOS">
-        </div>
-
-        <!-- Actions -->
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-          <button type="submit" class="btn btn-primary" style="justify-content:center; padding:10px;">
-            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            Save Rx
-          </button>
-          <button type="button" class="btn btn-success" onclick="handleSaveAndCompleteNow()" style="justify-content:center; padding:10px; background:var(--success); color:#ffffff;" title="Save Prescription and Complete Token">
-            <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Complete Token
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="handleSaveAndPrintNow()" style="justify-content:center; padding:10px;">
-            <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            Save & Print
-          </button>
         </div>
       </form>
     </section>
@@ -441,44 +676,46 @@
         <p style="font-size:0.8125rem; color:var(--text-secondary);">Notify hospital reception of scheduled leaves, dedicated OT surgery blocks, or emergency absence.</p>
       </div>
 
-      <form onsubmit="handleLeaveSubmit(event)" style="background:#ffffff; border-radius:var(--radius-lg); padding:16px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs); margin-bottom:24px;">
-        <div class="form-group">
-          <label class="form-label">Notice Category</label>
-          <select id="leaveCategory" class="form-select">
-            <option value="Personal / Medical Leave">Personal / Medical Leave</option>
-            <option value="Dedicated OT / Surgery Schedule">Dedicated OT / Surgery Schedule</option>
-            <option value="Conference / Out of Station">Conference / Out of Station</option>
-            <option value="Casual Leave">Casual Leave</option>
-          </select>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-          <div>
-            <label class="form-label">Start Date</label>
-            <input type="date" id="leaveStart" class="form-input" required>
+      <div class="leave-desktop-grid">
+        <form onsubmit="handleLeaveSubmit(event)" style="background:#ffffff; border-radius:var(--radius-lg); padding:20px; border:1px solid var(--border-subtle); box-shadow:var(--shadow-xs); margin-bottom:24px;">
+          <div class="form-group">
+            <label class="form-label">Notice Category</label>
+            <select id="leaveCategory" class="form-select">
+              <option value="Personal / Medical Leave">Personal / Medical Leave</option>
+              <option value="Dedicated OT / Surgery Schedule">Dedicated OT / Surgery Schedule</option>
+              <option value="Conference / Out of Station">Conference / Out of Station</option>
+              <option value="Casual Leave">Casual Leave</option>
+            </select>
           </div>
-          <div>
-            <label class="form-label">End Date</label>
-            <input type="date" id="leaveEnd" class="form-input" required>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+            <div>
+              <label class="form-label">Start Date</label>
+              <input type="date" id="leaveStart" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">End Date</label>
+              <input type="date" id="leaveEnd" class="form-input" required>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group" style="margin-bottom:18px;">
-          <label class="form-label">Reason / Case Details</label>
-          <textarea id="leaveReason" class="form-textarea" placeholder="e.g. Laparoscopic surgery block in modular OT 1..." required></textarea>
-        </div>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label class="form-label">Reason / Case Details</label>
+            <textarea id="leaveReason" class="form-textarea" placeholder="e.g. Laparoscopic surgery block in modular OT 1..." required></textarea>
+          </div>
 
-        <button type="submit" class="btn btn-primary" style="width:100%;">
-          Submit Notice to Reception
-        </button>
-      </form>
+          <button type="submit" class="btn btn-primary" style="width:100%;">
+            Submit Notice to Reception
+          </button>
+        </form>
 
-      <div>
-        <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 12px 0;">
-          My Leave & OT Notices History
-        </h4>
-        <div id="doctorLeavesHistoryContainer">
-          <!-- Injected via JS -->
+        <div>
+          <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 12px 0;">
+            My Leave & OT Notices History
+          </h4>
+          <div id="doctorLeavesHistoryContainer">
+            <!-- Injected via JS -->
+          </div>
         </div>
       </div>
     </section>
@@ -657,13 +894,50 @@
 
     function switchDoctorTab(tab) {
       ['queue', 'rx', 'slots', 'leave'].forEach(t => {
-        document.getElementById(`panel-${t}`).style.display = t === tab ? 'block' : 'none';
-        document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
+        const panel = document.getElementById(`panel-${t}`);
+        if (panel) panel.style.display = t === tab ? 'block' : 'none';
+        const mobileTab = document.getElementById(`tab-btn-${t}`);
+        if (mobileTab) mobileTab.classList.toggle('active', t === tab);
+        const deskTab = document.getElementById(`desk-tab-btn-${t}`);
+        if (deskTab) deskTab.classList.toggle('active', t === tab);
       });
       if (tab === 'leave') renderDoctorLeavesHistory();
       if (tab === 'queue') renderDoctorQueue();
       if (tab === 'slots') renderDocSlotBlocker();
+      if (tab === 'rx') setupRxPanel();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setupRxPanel() {
+      if (!activeDoctor) return;
+      const allApts = HospitalStore.getAppointments();
+      const myApts = allApts.filter(a => a.doctorId === activeDoctor.id || a.dept === activeDoctor.dept);
+
+      const selector = document.getElementById('rxQueueSelector');
+      if (selector) {
+        selector.innerHTML = '<option value="">-- Choose Patient from Queue --</option>' + 
+          myApts.map(a => `<option value="${a.id}">${a.tokenNo} - ${a.patientName} (${a.status})</option>`).join('');
+      }
+
+      if (currentConsultingApt) {
+        populateRxForm(currentConsultingApt);
+      } else {
+        const inConsult = myApts.find(a => a.status === 'In Chamber' || a.status === 'Calling' || a.status === 'In Consultation') || myApts[0];
+        if (inConsult) {
+          openPrescriptionFor(inConsult.id);
+        } else {
+          document.getElementById('rxDisplayPatient').textContent = 'No patients currently in queue';
+          document.getElementById('rxAptId').value = '';
+          document.getElementById('rxUHID').value = '';
+          const container = document.getElementById('medicinesContainer');
+          if (container) container.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-secondary); font-size:0.8rem;">Select a patient above to write prescription.</div>';
+        }
+      }
+    }
+
+    function onRxQueueSelectChange(aptId) {
+      if (!aptId) return;
+      openPrescriptionFor(aptId);
     }
 
     function renderDoctorQueue() {
@@ -684,51 +958,212 @@
         return;
       }
 
-      container.innerHTML = myApts.map(apt => `
-        <div class="queue-patient-card ${apt.status === 'In Consultation' ? 'in-consultation' : ''}">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span class="token-chip">${apt.tokenNo}</span>
-            <span class="badge ${apt.status === 'In Consultation' ? 'badge-warning' : 'badge-neutral'}">${apt.status}</span>
+      // Group into Active (Calling/In Chamber), Waiting (In Waiting Room / Confirmed), Completed
+      const activeChamberApts = myApts.filter(a => a.status === 'Calling' || a.status === 'In Chamber' || a.status === 'In Consultation');
+      const waitingApts = myApts.filter(a => a.status === 'In Waiting Room' || a.status === 'Confirmed');
+      const completedApts = myApts.filter(a => a.status === 'Completed');
+
+      let html = '';
+
+      // 1. ACTIVE CALLS / IN CHAMBER (ROW DISPLAY)
+      if (activeChamberApts.length > 0) {
+        // EXACT REQUIREMENT: When doc calls two patients, display them in a row side-by-side
+        const cols = activeChamberApts.length === 2 ? '1fr 1fr' : (activeChamberApts.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))');
+        html += `
+          <div style="background:#f0fdfa; border:1.5px solid var(--secondary); border-radius:var(--radius-lg); padding:16px; margin-bottom:18px; box-shadow:var(--shadow-xs);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(22,140,140,0.18); padding-bottom:8px;">
+              <h4 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:700; color:var(--primary); margin:0; display:flex; align-items:center; gap:8px;">
+                <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--secondary);"></span>
+                Active Consultations in Chamber (${activeChamberApts.length})
+              </h4>
+              <span class="badge badge-teal" style="font-size:0.75rem;">
+                ${activeChamberApts.length === 2 ? '2 Patients Called (In Row)' : `${activeChamberApts.length} In Chamber`}
+              </span>
+            </div>
+
+            <!-- Displayed in a Row Side by Side -->
+            <div style="display:grid; grid-template-columns:${cols}; gap:12px;">
+              ${activeChamberApts.map(apt => {
+                const existingRx = HospitalStore.getPrescriptionByApt(apt.id);
+                const hasRx = existingRx && Array.isArray(existingRx.medicines) && existingRx.medicines.length > 0;
+                const isCalling = apt.status === 'Calling';
+
+                return `
+                  <div class="queue-patient-card ${isCalling ? 'calling' : 'in-chamber'}" style="margin:0; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="token-chip" style="font-size:0.95rem; padding:4px 12px; background:var(--primary);">${apt.tokenNo}</span>
+                        ${isCalling 
+                          ? '<span class="badge" style="background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; font-weight:700; font-size:0.75rem;">● Calling Patient...</span>'
+                          : '<span class="badge" style="background:#dcfce7; color:#15803d; border:1px solid #86efac; font-weight:700; font-size:0.75rem;">● Inside Chamber</span>'
+                        }
+                      </div>
+
+                      <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin:4px 0 2px 0;">${apt.patientName}</h4>
+                      <div style="font-size:0.8125rem; color:var(--text-secondary);">
+                        ${apt.age}Y / ${apt.gender} · UHID: <strong>${apt.uhid}</strong>
+                      </div>
+                      <div style="font-size:0.8rem; color:var(--primary); margin-top:6px; background:rgba(255,255,255,0.7); padding:5px 8px; border-radius:4px; border:1px solid var(--border-subtle);">
+                        <strong>Complaint:</strong> ${apt.symptoms || 'General OPD Consultation'}
+                      </div>
+                    </div>
+
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;">
+                      ${isCalling ? `
+                        <button class="btn btn-teal btn-sm" onclick="markPatientInChamber('${apt.id}')" style="flex:1.2; justify-content:center; background:var(--secondary); color:#ffffff; font-weight:700;" title="Click when patient enters the chamber">
+                          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                          In Chamber
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="callPatient('${apt.id}')" style="flex:0.8; justify-content:center;" title="Re-call chime">
+                          Re-Call
+                        </button>
+                      ` : `
+                        <div style="width:100%; font-size:0.75rem; color:#0d9488; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+                          <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          Patient is Inside Chamber
+                        </div>
+                      `}
+                      <button class="btn btn-primary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="flex:1; justify-content:center;">
+                        ${hasRx ? 'Edit Rx' : 'Write Rx'}
+                      </button>
+                      <button class="btn btn-success btn-sm" onclick="completeToken('${apt.id}')" style="flex:1; justify-content:center; background:var(--success); color:#ffffff;" title="Complete Token">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Complete
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. WAITING ROOM & SCHEDULED QUEUE
+      html += `
+        <div style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h4 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:700; color:var(--primary); margin:0;">
+              Waiting Room & Booked OPD (${waitingApts.length})
+            </h4>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">Patients in reception waiting lobby</span>
           </div>
 
-          <div style="margin-bottom:12px;">
-            <h4 style="font-family:var(--font-heading); font-size:1.15rem; font-weight:700; color:var(--primary); margin:0 0 2px 0;">${apt.patientName}</h4>
-            <div style="font-size:0.8125rem; color:var(--text-secondary);">
-              ${apt.age}Y / ${apt.gender} · Blood: ${apt.bloodGroup || 'N/A'} · UHID: <strong>${apt.uhid}</strong>
+          ${waitingApts.length === 0 ? `
+            <div style="padding:18px; background:#ffffff; border-radius:var(--radius-md); border:1px dashed var(--border-subtle); color:var(--text-secondary); text-align:center; font-size:0.85rem;">
+              No further waiting patients for your chamber.
             </div>
-            <div style="font-size:0.8125rem; color:var(--primary); margin-top:6px; background:var(--bg-section); padding:6px 10px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
-              <strong>Symptoms:</strong> ${apt.symptoms || 'General Checkup'}
-            </div>
-          </div>
+          ` : `
+            <div class="doctor-waiting-grid">
+              ${waitingApts.map(apt => {
+                const existingRx = HospitalStore.getPrescriptionByApt(apt.id);
+                const hasRx = existingRx && Array.isArray(existingRx.medicines) && existingRx.medicines.length > 0;
+                const isWaitingRoom = apt.status === 'In Waiting Room';
 
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-            ${apt.status !== 'Completed' ? `
-              <button class="btn btn-primary btn-sm" onclick="callNextPatient('${apt.id}')" style="flex:1; min-width:80px; justify-content:center;">
-                Call
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="flex:1; min-width:80px; justify-content:center;">
-                Write Rx
-              </button>
-              <button class="btn btn-success btn-sm" onclick="completeToken('${apt.id}')" style="flex:1; min-width:110px; justify-content:center; background:var(--success); color:#ffffff;" title="Complete Consultation Token">
-                <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Complete Token
-              </button>
-            ` : `
-              <button class="btn btn-secondary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="flex:1; justify-content:center;">
-                View / Edit Rx
-              </button>
-              <button class="btn btn-outline btn-sm" onclick="reopenToken('${apt.id}')" style="flex:1; justify-content:center; font-size:0.75rem;">
-                Re-open Token
-              </button>
-            `}
-          </div>
+                return `
+                  <div class="queue-patient-card" style="${isWaitingRoom ? 'border-left:5px solid #10b981; background:#f0fdf4;' : ''}">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="token-chip">${apt.tokenNo}</span>
+                        ${isWaitingRoom 
+                          ? '<span class="badge" style="background:#10b981; color:#ffffff; font-weight:700; font-size:0.7rem; padding:3px 8px; border-radius:999px;">● In Waiting Room (Available)</span>'
+                          : '<span class="badge badge-neutral" style="font-size:0.7rem;">Booked OPD</span>'
+                        }
+                        ${hasRx ? `<span class="badge badge-success" style="font-size:0.65rem; padding:2px 6px;">Rx Saved</span>` : ''}
+                      </div>
+                      <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">${apt.timeSlot}</span>
+                    </div>
+
+                    <div style="margin-bottom:8px;">
+                      <h4 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:2px 0;">${apt.patientName}</h4>
+                      <div style="font-size:0.8125rem; color:var(--text-secondary);">
+                        ${apt.age}Y / ${apt.gender} · Blood: ${apt.bloodGroup || 'N/A'} · UHID: <strong>${apt.uhid}</strong>
+                      </div>
+                      <div style="font-size:0.8rem; color:var(--primary); margin-top:4px;">
+                        <strong>Symptoms:</strong> ${apt.symptoms || 'General Checkup'}
+                      </div>
+                    </div>
+
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                      <button class="btn btn-primary btn-sm" onclick="callPatient('${apt.id}')" style="flex:1.4; justify-content:center; font-weight:700;">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                        Call to Chamber
+                      </button>
+                      <button class="btn btn-secondary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="flex:1; justify-content:center;">
+                        ${hasRx ? 'Edit Rx' : 'Write Rx'}
+                      </button>
+                      <button class="btn btn-secondary btn-sm" onclick="completeToken('${apt.id}')" style="flex:1; justify-content:center;">
+                        Complete
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
         </div>
-      `).join('');
+      `;
+
+      // 3. COMPLETED TOKENS
+      if (completedApts.length > 0) {
+        html += `
+          <div style="margin-top:16px; border-top:1px dashed var(--border-subtle); padding-top:14px;">
+            <h4 style="font-family:var(--font-heading); font-size:1rem; font-weight:700; color:var(--text-secondary); margin:0 0 10px 0;">
+              Completed Consultations (${completedApts.length})
+            </h4>
+            <div class="doctor-waiting-grid">
+              ${completedApts.map(apt => `
+                <div class="queue-patient-card" style="opacity:0.88; padding:12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <strong style="color:var(--primary); font-size:0.95rem;">${apt.tokenNo} - ${apt.patientName}</strong>
+                      <div style="font-size:0.75rem; color:var(--text-secondary);">${apt.age}Y/${apt.gender} · UHID: ${apt.uhid}</div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn btn-secondary btn-sm" onclick="openPrescriptionFor('${apt.id}')" style="padding:4px 8px; font-size:0.75rem;">
+                        View / Edit Rx
+                      </button>
+                      <button class="btn btn-outline btn-sm" onclick="reopenToken('${apt.id}')" style="padding:4px 8px; font-size:0.75rem;">
+                        Re-open
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
     }
 
-    function callNextPatient(aptId) {
-      HospitalStore.updateAppointment(aptId, { status: "In Consultation" });
-      showToast("Patient called into chamber", "success");
+    function callPatient(aptId) {
+      const now = Date.now();
+      HospitalStore.updateAppointment(aptId, { 
+        status: "Calling",
+        lastCalledAt: now
+      });
+      const apt = HospitalStore.getAppointmentById(aptId);
+      showToast(`Calling Token ${apt ? apt.tokenNo : ''} (${apt ? apt.patientName : ''}) into chamber!`, "info");
+
+      if ('speechSynthesis' in window && apt) {
+        try {
+          const docName = activeDoctor ? (activeDoctor.name || '').replace(/^Dr\.\s*/i, '') : '';
+          const utterance = new SpeechSynthesisUtterance(`Token number ${apt.tokenNo}, ${apt.patientName}. Doctor ${docName} is calling.`);
+          utterance.rate = 0.95;
+          window.speechSynthesis.speak(utterance);
+        } catch(e) {}
+      }
+      renderDoctorQueue();
+    }
+
+    const callNextPatient = callPatient;
+
+    function markPatientInChamber(aptId) {
+      HospitalStore.updateAppointment(aptId, { status: "In Chamber" });
+      const apt = HospitalStore.getAppointmentById(aptId);
+      showToast(`Token ${apt ? apt.tokenNo : ''} (${apt ? apt.patientName : ''}) is now In Chamber! Queue updated.`, "success");
       renderDoctorQueue();
     }
 
@@ -737,44 +1172,81 @@
       if (!apt) return;
 
       currentConsultingApt = apt;
-      document.getElementById('rxAptId').value = apt.id;
-      document.getElementById('rxUHID').value = apt.uhid;
-      document.getElementById('rxDisplayPatient').textContent = `${apt.patientName} (${apt.age}Y/${apt.gender}) · Token ${apt.tokenNo}`;
-      document.getElementById('rxDiagnosis').value = apt.symptoms || '';
+      populateRxForm(apt);
+      switchDoctorTab('rx');
+    }
 
+    function populateRxForm(apt) {
+      if (!apt) return;
+      document.getElementById('rxAptId').value = apt.id;
+      document.getElementById('rxUHID').value = apt.uhid || '';
+      document.getElementById('rxDisplayPatient').textContent = `${apt.patientName} (${apt.age}Y/${apt.gender}) · Token ${apt.tokenNo} · UHID: ${apt.uhid}`;
+
+      const sel = document.getElementById('rxQueueSelector');
+      if (sel) sel.value = apt.id;
+
+      // Retrieve existing prescription from HospitalStore
+      const existingRx = HospitalStore.getPrescriptionByApt(apt.id);
+
+      // Diagnosis
+      document.getElementById('rxDiagnosis').value = (existingRx && existingRx.diagnosis) ? existingRx.diagnosis : (apt.symptoms || '');
+
+      // Vitals
+      const vit = (existingRx && existingRx.vitals) ? existingRx.vitals : {};
+      document.getElementById('vitBP').value = vit.bp || '';
+      document.getElementById('vitPulse').value = vit.pulse || '';
+      document.getElementById('vitTemp').value = vit.temp || '';
+      document.getElementById('vitSpO2').value = vit.spo2 || '';
+      document.getElementById('vitWeight').value = vit.weight || '';
+      document.getElementById('vitSugar').value = vit.sugar || '';
+
+      // Lab Tests & Follow up
+      document.getElementById('rxTests').value = (existingRx && existingRx.investigations) ? existingRx.investigations : '';
+      document.getElementById('rxFollowUp').value = (existingRx && existingRx.followUp) ? existingRx.followUp : 'Review after 5 days or SOS';
+
+      // Medicines list
       const container = document.getElementById('medicinesContainer');
       container.innerHTML = '';
-      addMedicineRow({ name: "Tab. Paracetamol 650mg", dosage: "1-0-1", timing: "After Food", duration: "3 Days" });
 
-      switchDoctorTab('rx');
+      if (existingRx && Array.isArray(existingRx.medicines) && existingRx.medicines.length > 0) {
+        existingRx.medicines.forEach(med => addMedicineRow(med));
+      } else {
+        // Start with clean blank medicine row ready for input (no forced dummy medicines)
+        addMedicineRow({ name: "", dosage: "1-0-1", timing: "After Food", duration: "5 Days" });
+      }
     }
 
     function addMedicineRow(med = {}) {
       const container = document.getElementById('medicinesContainer');
-      const rowId = 'med-' + Date.now() + Math.random().toString().slice(2, 5);
+      const rowId = 'med-' + Date.now() + Math.random().toString().slice(2, 6);
 
       const div = document.createElement('div');
       div.className = 'medicine-adder-row';
       div.id = rowId;
       div.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-          <input type="text" class="form-input med-name" placeholder="Medicine / Syrup Name" value="${med.name || ''}" style="font-weight:600; padding:6px 10px; font-size:0.875rem;">
-          <button type="button" onclick="document.getElementById('${rowId}').remove()" style="background:none; border:none; color:var(--emergency); cursor:pointer; padding:0 8px; font-weight:700;">✕</button>
+        <div class="med-name-wrap" style="display:flex; justify-content:space-between; margin-bottom:4px; align-items:center;">
+          <input type="text" class="form-input med-name" placeholder="Medicine / Syrup / Tablet Name" value="${(med.name || '').replace(/"/g, '&quot;')}" style="font-weight:600; padding:7px 10px; font-size:0.875rem;" required>
+          <button type="button" class="mobile-only-remove" onclick="document.getElementById('${rowId}').remove()" style="background:none; border:none; color:var(--emergency); cursor:pointer; padding:0 8px; font-size:1.15rem; font-weight:700;" title="Remove this medicine">✕</button>
         </div>
-        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-          <select class="form-select med-dosage" style="width:85px; padding:6px; font-size:0.75rem;">
+        <div class="med-controls-wrap" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <select class="form-select med-dosage" style="flex:1; min-width:85px; padding:6px 8px; font-size:0.75rem;">
             <option value="1-0-1" ${med.dosage === '1-0-1' ? 'selected' : ''}>1-0-1</option>
             <option value="1-1-1" ${med.dosage === '1-1-1' ? 'selected' : ''}>1-1-1</option>
             <option value="1-0-0" ${med.dosage === '1-0-0' ? 'selected' : ''}>1-0-0</option>
             <option value="0-0-1" ${med.dosage === '0-0-1' ? 'selected' : ''}>0-0-1</option>
+            <option value="0-1-0" ${med.dosage === '0-1-0' ? 'selected' : ''}>0-1-0</option>
             <option value="SOS" ${med.dosage === 'SOS' ? 'selected' : ''}>SOS</option>
+            <option value="Once Daily (OD)" ${med.dosage === 'Once Daily (OD)' ? 'selected' : ''}>OD</option>
+            <option value="Twice Daily (BD)" ${med.dosage === 'Twice Daily (BD)' ? 'selected' : ''}>BD</option>
           </select>
-          <select class="form-select med-timing" style="width:105px; padding:6px; font-size:0.75rem;">
-            <option value="After Food">After Food</option>
-            <option value="Before Food">Before Food</option>
-            <option value="Bedtime">At Bedtime</option>
+          <select class="form-select med-timing" style="flex:1.2; min-width:100px; padding:6px 8px; font-size:0.75rem;">
+            <option value="After Food" ${(!med.timing || med.timing === 'After Food') ? 'selected' : ''}>After Food</option>
+            <option value="Before Food" ${med.timing === 'Before Food' ? 'selected' : ''}>Before Food</option>
+            <option value="Empty Stomach" ${med.timing === 'Empty Stomach' ? 'selected' : ''}>Empty Stomach</option>
+            <option value="Bedtime" ${med.timing === 'Bedtime' ? 'selected' : ''}>At Bedtime</option>
           </select>
-          <input type="text" class="form-input med-duration" placeholder="Duration" value="${med.duration || '5 Days'}" style="width:80px; padding:6px; font-size:0.75rem;">
+          <input type="text" class="form-input med-duration" placeholder="e.g. 5 Days" value="${(med.duration || '5 Days').replace(/"/g, '&quot;')}" style="flex:1; min-width:75px; padding:6px 8px; font-size:0.75rem;">
+          <button type="button" class="desk-only-remove" onclick="document.getElementById('${rowId}').remove()" style="background:none; border:none; color:var(--emergency); cursor:pointer; padding:2px 8px; font-size:1.15rem; font-weight:700;" title="Remove this medicine">✕</button>
         </div>
       `;
       container.appendChild(div);
@@ -786,53 +1258,69 @@
 
       const medicines = [];
       document.querySelectorAll('#medicinesContainer .medicine-adder-row').forEach(row => {
-        const name = row.querySelector('.med-name').value.trim();
+        const nameInput = row.querySelector('.med-name');
+        const name = nameInput ? nameInput.value.trim() : '';
         if (name) {
           medicines.push({
             name,
-            dosage: row.querySelector('.med-dosage').value,
-            timing: row.querySelector('.med-timing').value,
-            duration: row.querySelector('.med-duration').value
+            dosage: row.querySelector('.med-dosage') ? row.querySelector('.med-dosage').value : '1-0-1',
+            timing: row.querySelector('.med-timing') ? row.querySelector('.med-timing').value : 'After Food',
+            duration: row.querySelector('.med-duration') ? row.querySelector('.med-duration').value.trim() : '5 Days'
           });
         }
       });
 
+      const existingRx = aptId ? HospitalStore.getPrescriptionByApt(aptId) : null;
+
       return {
+        rxId: existingRx ? existingRx.rxId : undefined,
         appointmentId: aptId,
-        uhid: apt ? apt.uhid : 'NAH-2026-TEMP',
+        uhid: apt ? apt.uhid : (document.getElementById('rxUHID').value || 'NAH-2026-TEMP'),
         patientName: apt ? apt.patientName : 'Walk-In Patient',
         ageGender: apt ? `${apt.age} / ${apt.gender}` : '35 / M',
         doctorName: activeDoctor ? activeDoctor.name : 'Dr. Consultant',
-        doctorTitle: activeDoctor ? activeDoctor.title : 'Senior Consultant',
-        date: new Date().toISOString().slice(0, 10),
+        doctorTitle: activeDoctor ? (activeDoctor.title || activeDoctor.dept) : 'Senior Consultant',
+        date: (existingRx && existingRx.date) ? existingRx.date : new Date().toISOString().slice(0, 10),
         vitals: {
-          bp: document.getElementById('vitBP').value || '120/80 mmHg',
-          pulse: document.getElementById('vitPulse').value || '76 bpm',
-          temp: document.getElementById('vitTemp').value || '98.6°F',
-          weight: document.getElementById('vitWeight').value || '65 kg',
-          spo2: document.getElementById('vitSpO2').value || '99%'
+          bp: document.getElementById('vitBP').value.trim() || '120/80 mmHg',
+          pulse: document.getElementById('vitPulse').value.trim() || '76 bpm',
+          temp: document.getElementById('vitTemp').value.trim() || '98.6°F',
+          weight: document.getElementById('vitWeight').value.trim() || '65 kg',
+          spo2: document.getElementById('vitSpO2').value.trim() || '99%',
+          sugar: document.getElementById('vitSugar') ? document.getElementById('vitSugar').value.trim() : ''
         },
         diagnosis: document.getElementById('rxDiagnosis').value.trim(),
         medicines,
         investigations: document.getElementById('rxTests').value.trim(),
-        followUp: document.getElementById('rxFollowUp').value.trim()
+        followUp: document.getElementById('rxFollowUp').value.trim(),
+        updatedAt: new Date().toISOString()
       };
     }
 
     function handlePrescriptionSave(e) {
       if (e) e.preventDefault();
+      const aptId = document.getElementById('rxAptId').value;
+      if (!aptId) {
+        showToast("Please select a patient before saving prescription", "danger");
+        return;
+      }
       const payload = collectPrescriptionPayload();
       HospitalStore.savePrescription(payload);
-      showToast("Prescription saved and sent to patient portal", "success");
+      showToast("Prescription saved to Firebase RTDB & Patient Records!", "success");
+      renderDoctorQueue();
       switchDoctorTab('queue');
     }
 
     function handleSaveAndPrintNow() {
+      const aptId = document.getElementById('rxAptId').value;
+      if (!aptId) {
+        showToast("Please select a patient before printing prescription", "danger");
+        return;
+      }
       const payload = collectPrescriptionPayload();
-      HospitalStore.savePrescription(payload);
-      showToast("Printing prescription...", "success");
-      PrintEngine.printPrescription(payload, currentConsultingApt);
-      switchDoctorTab('queue');
+      const saved = HospitalStore.savePrescription(payload);
+      showToast("Prescription saved! Generating printout...", "success");
+      PrintEngine.printPrescription(saved || payload, currentConsultingApt);
     }
 
     function completeToken(aptId) {
@@ -842,18 +1330,21 @@
     }
 
     function reopenToken(aptId) {
-      HospitalStore.updateAppointment(aptId, { status: "In Consultation" });
-      showToast("Token re-opened into consultation", "info");
+      HospitalStore.updateAppointment(aptId, { status: "In Chamber" });
+      showToast("Token re-opened into chamber", "info");
       renderDoctorQueue();
     }
 
     function handleSaveAndCompleteNow() {
+      const aptId = document.getElementById('rxAptId').value;
+      if (!aptId) {
+        showToast("Please select a patient before completing token", "danger");
+        return;
+      }
       const payload = collectPrescriptionPayload();
       HospitalStore.savePrescription(payload);
-      if (payload.appointmentId) {
-        HospitalStore.updateAppointment(payload.appointmentId, { status: "Completed" });
-      }
-      showToast("Prescription saved and Token Completed!", "success");
+      HospitalStore.updateAppointment(aptId, { status: "Completed" });
+      showToast("Prescription saved & Token marked Completed!", "success");
       renderDoctorQueue();
       switchDoctorTab('queue');
     }

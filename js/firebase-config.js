@@ -227,67 +227,310 @@ window.HospitalAuth = {
   },
 
   // --------------------------------------------------------------------------
-  // 3. PATIENT AUTHENTICATION & GUEST FREEDOM
+  // 3. PATIENT AUTHENTICATION & MULTI-STORAGE (FIREBASE AUTH + RTDB)
   // --------------------------------------------------------------------------
-  registerPatient: async (arg1, arg2, arg3, arg4) => {
-    let name, email, phone, password;
-    if (typeof arg1 === 'object') {
-      name = arg1.name;
-      email = arg1.email || (arg1.mobile ? `${arg1.mobile}@patient.local` : '');
-      phone = arg1.mobile || arg1.phone;
-      password = arg1.password;
-    } else {
-      name = arg1;
-      email = arg2;
-      phone = arg3;
-      password = arg4;
+  registerPatient: async (payload) => {
+    let name = (payload.name || '').trim();
+    let phone = (payload.phone || payload.mobile || '').replace(/\D/g, '');
+    let email = (payload.email || '').trim().toLowerCase();
+    let password = (payload.password || '').trim();
+
+    if (!name) return { success: false, error: "Please enter your full name." };
+    if (!phone || phone.length !== 10) {
+      return { success: false, error: "Please enter a valid 10-digit mobile number." };
+    }
+    if (!password || password.length < 6) {
+      return { success: false, error: "Password must be at least 6 characters long." };
     }
 
-    const normEmail = (email || '').toLowerCase().trim();
-    if (!name || !phone || !password) {
-      return { success: false, error: "Please fill in all registration fields (Name, Mobile, Password)." };
-    }
+    let authUser = null;
 
-    const patient = {
-      uid: 'pat-' + Date.now(),
-      name,
-      email: normEmail || `${phone}@patient.local`,
-      phone,
-      mobile: phone,
-      password,
-      registeredAt: new Date().toISOString()
-    };
+    // CASE B: User provided BOTH email and phone number -> Use Firebase Authentication + RTDB
+    if (email) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return { success: false, error: "Please enter a valid email address." };
+      }
 
-    localStorage.setItem('nah_active_patient', JSON.stringify(patient));
-    return { success: true, patient };
-  },
-
-  loginPatient: async (emailOrPhone, password) => {
-    const val = (emailOrPhone || '').trim().toLowerCase();
-    
-    // Check locally saved patient
-    const saved = localStorage.getItem('nah_active_patient');
-    if (saved) {
-      const p = JSON.parse(saved);
-      if (((p.email && p.email.toLowerCase() === val) || (p.phone && p.phone === val) || (p.mobile && p.mobile === val)) && p.password === password) {
-        return { success: true, patient: p };
+      if (fbAuth) {
+        try {
+          const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
+          authUser = cred.user;
+          if (authUser && name) {
+            await authUser.updateProfile({ displayName: name }).catch(() => {});
+          }
+        } catch (authErr) {
+          if (authErr.code === 'auth/email-already-in-use') {
+            try {
+              const signCred = await fbAuth.signInWithEmailAndPassword(email, password);
+              authUser = signCred.user;
+            } catch (signErr) {
+              return { success: false, error: "This email is already registered with a different password. Please sign in or use Forgot Password." };
+            }
+          } else if (authErr.code === 'auth/weak-password') {
+            return { success: false, error: "Password is too weak. Please use at least 6 characters." };
+          } else {
+            console.warn("Firebase Auth Create Notice:", authErr.message);
+          }
+        }
       }
     }
 
-    // Fast login / registration for testing & convenience
-    if (password && password.length >= 4) {
-      const p = {
-        uid: 'pat-' + Date.now(),
-        name: val.split('@')[0],
-        email: val.includes('@') ? val : `${val}@patient.local`,
-        phone: !val.includes('@') ? val : '',
-        mobile: !val.includes('@') ? val : ''
-      };
-      localStorage.setItem('nah_active_patient', JSON.stringify(p));
-      return { success: true, patient: p };
+    // CASE A (Phone only) & CASE B (Both Email and Phone): Save details in RTDB and LocalStorage
+    const patient = {
+      uid: authUser ? authUser.uid : ('pat-' + Date.now()),
+      name,
+      phone,
+      mobile: phone,
+      email: email || '',
+      password, // Retained for phone/RTDB lookups
+      authMethod: email ? 'firebase_auth_and_rtdb' : 'rtdb_phone_only',
+      registeredAt: new Date().toISOString()
+    };
+
+    // Save in LocalStorage
+    localStorage.setItem('nah_active_patient', JSON.stringify(patient));
+    const registry = JSON.parse(localStorage.getItem('nah_all_patients') || '{}');
+    registry[phone] = patient;
+    if (email) registry[email] = patient;
+    localStorage.setItem('nah_all_patients', JSON.stringify(registry));
+
+    // Save in Firebase Realtime Database
+    if (fbDatabase) {
+      try {
+        await fbDatabase.ref(`patients/${phone}`).set(patient);
+        if (email) {
+          const emailKey = emailToKey(email);
+          await fbDatabase.ref(`patientsByEmail/${emailKey}`).set({
+            phone,
+            email,
+            name,
+            uid: patient.uid
+          });
+        }
+      } catch (dbErr) {
+        console.warn("RTDB patient save warning:", dbErr);
+      }
     }
 
-    return { success: false, error: "Invalid patient credentials." };
+    return { 
+      success: true, 
+      patient,
+      message: email 
+        ? "Account created with Firebase Authentication & Realtime Database!" 
+        : "Account created with phone in Realtime Database!" 
+    };
+  },
+
+  loginPatient: async (emailOrPhone, password) => {
+    const raw = (emailOrPhone || '').trim();
+    const isEmail = raw.includes('@');
+    const cleanPhone = raw.replace(/\D/g, '');
+    const cleanPass = (password || '').trim();
+
+    if (!raw || !cleanPass) {
+      return { success: false, error: "Please enter your email or 10-digit mobile number and password." };
+    }
+
+    // --- STRATEGY 1: IF INPUT IS AN EMAIL ---
+    if (isEmail) {
+      const email = raw.toLowerCase();
+
+      // 1A. Attempt Firebase Authentication
+      let authUser = null;
+      if (fbAuth) {
+        try {
+          const cred = await fbAuth.signInWithEmailAndPassword(email, cleanPass);
+          authUser = cred.user;
+        } catch (authErr) {
+          console.warn("Firebase Auth Login Notice:", authErr.message);
+        }
+      }
+
+      // 1B. Fetch profile from RTDB or LocalStorage
+      let patient = null;
+      if (fbDatabase) {
+        try {
+          const emailKey = emailToKey(email);
+          const emailSnap = await fbDatabase.ref(`patientsByEmail/${emailKey}`).once('value');
+          if (emailSnap.exists()) {
+            const emailData = emailSnap.val();
+            if (emailData && emailData.phone) {
+              const patSnap = await fbDatabase.ref(`patients/${emailData.phone}`).once('value');
+              if (patSnap.exists()) patient = patSnap.val();
+            }
+          }
+        } catch(e) {}
+      }
+
+      if (!patient) {
+        const registry = JSON.parse(localStorage.getItem('nah_all_patients') || '{}');
+        for (const k in registry) {
+          const p = registry[k];
+          if (p && p.email && p.email.toLowerCase() === email) {
+            patient = p;
+            break;
+          }
+        }
+      }
+
+      if (authUser) {
+        if (!patient) {
+          patient = {
+            uid: authUser.uid,
+            name: authUser.displayName || email.split('@')[0],
+            email: email,
+            phone: '',
+            mobile: '',
+            registeredAt: new Date().toISOString()
+          };
+        }
+        localStorage.setItem('nah_active_patient', JSON.stringify(patient));
+        return { success: true, patient };
+      }
+
+      if (patient && patient.password === cleanPass) {
+        localStorage.setItem('nah_active_patient', JSON.stringify(patient));
+        return { success: true, patient };
+      }
+
+      return { success: false, error: "Invalid email or password. You can click 'Forgot Password?' to reset it." };
+    }
+
+    // --- STRATEGY 2: IF INPUT IS A PHONE NUMBER ---
+    const phone = cleanPhone;
+    if (phone.length !== 10) {
+      return { success: false, error: "Please enter a valid 10-digit mobile number or registered email." };
+    }
+
+    let patient = null;
+
+    // 2A. Check Firebase Realtime Database
+    if (fbDatabase) {
+      try {
+        const snap = await fbDatabase.ref(`patients/${phone}`).once('value');
+        if (snap.exists()) {
+          patient = snap.val();
+        }
+      } catch(e) {}
+    }
+
+    // 2B. Check LocalStorage fallback
+    if (!patient) {
+      const registry = JSON.parse(localStorage.getItem('nah_all_patients') || '{}');
+      if (registry[phone]) patient = registry[phone];
+    }
+
+    if (patient) {
+      if (patient.password === cleanPass) {
+        if (patient.email && fbAuth) {
+          fbAuth.signInWithEmailAndPassword(patient.email, cleanPass).catch(() => {});
+        }
+        localStorage.setItem('nah_active_patient', JSON.stringify(patient));
+        return { success: true, patient };
+      } else {
+        return { success: false, error: "Incorrect password for mobile " + phone + ". Click 'Forgot Password?' to reset." };
+      }
+    }
+
+    return { success: false, error: "No account found with mobile " + phone + ". Please click 'Create Account' to sign up." };
+  },
+
+  sendPatientPasswordReset: async (emailOrPhone, optionalNewPass) => {
+    const raw = (emailOrPhone || '').trim();
+    if (!raw) return { success: false, error: "Please enter your registered email or 10-digit mobile number." };
+
+    const isEmail = raw.includes('@');
+    const cleanPhone = raw.replace(/\D/g, '');
+
+    // 1. IF EMAIL WAS ENTERED: Use official Firebase Auth secure password reset
+    if (isEmail) {
+      const email = raw.toLowerCase();
+      if (fbAuth) {
+        try {
+          await fbAuth.sendPasswordResetEmail(email);
+          return {
+            success: true,
+            method: 'firebase_email',
+            message: `Official Firebase password reset email sent to ${email}! Please check your inbox and follow the secure link.`
+          };
+        } catch (authErr) {
+          if (authErr.code === 'auth/user-not-found') {
+            return { success: false, error: "No account found with this email in Firebase Authentication." };
+          }
+          return { success: false, error: authErr.message || "Failed to send reset email." };
+        }
+      }
+      return { success: false, error: "Firebase Authentication service not available." };
+    }
+
+    // 2. IF PHONE WAS ENTERED: Look up in RTDB
+    const phone = cleanPhone;
+    if (phone.length !== 10) {
+      return { success: false, error: "Please enter a valid 10-digit mobile number or registered email." };
+    }
+
+    let patient = null;
+    if (fbDatabase) {
+      try {
+        const snap = await fbDatabase.ref(`patients/${phone}`).once('value');
+        if (snap.exists()) patient = snap.val();
+      } catch(e) {}
+    }
+    if (!patient) {
+      const registry = JSON.parse(localStorage.getItem('nah_all_patients') || '{}');
+      if (registry[phone]) patient = registry[phone];
+    }
+
+    if (!patient) {
+      return { success: false, error: "No account found with mobile number " + phone + "." };
+    }
+
+    // If patient has an email, send Firebase Auth reset email!
+    if (patient.email && patient.email.includes('@') && !patient.email.endsWith('@patient.local')) {
+      if (fbAuth) {
+        try {
+          await fbAuth.sendPasswordResetEmail(patient.email);
+          const masked = patient.email.replace(/^(.)(.*)(@.*)$/, (_, a, b, c) => a + '*'.repeat(Math.max(1, b.length)) + c);
+          return {
+            success: true,
+            method: 'firebase_email',
+            message: `Official Firebase password reset link sent to your registered email (${masked})!`
+          };
+        } catch(e) {}
+      }
+    }
+
+    // If phone-only account and new password was provided:
+    if (optionalNewPass && optionalNewPass.length >= 6) {
+      patient.password = optionalNewPass;
+      patient.lastResetAt = new Date().toISOString();
+      const registry = JSON.parse(localStorage.getItem('nah_all_patients') || '{}');
+      registry[phone] = patient;
+      localStorage.setItem('nah_all_patients', JSON.stringify(registry));
+      if (fbDatabase) {
+        try {
+          await fbDatabase.ref(`patients/${phone}`).update({
+            password: optionalNewPass,
+            lastResetAt: new Date().toISOString()
+          });
+        } catch(e) {}
+      }
+      return {
+        success: true,
+        method: 'rtdb_phone',
+        message: "Password updated successfully in hospital database. You can now sign in."
+      };
+    }
+
+    return {
+      success: true,
+      needNewPass: true,
+      message: "Mobile verified for " + (patient.name || 'Patient') + ". Please set your new password below."
+    };
+  },
+
+  resetPatientPassword: async (emailOrPhone, newPassword) => {
+    return window.HospitalAuth.sendPatientPasswordReset(emailOrPhone, newPassword);
   },
 
   setGuestPatient: (name, phone) => {

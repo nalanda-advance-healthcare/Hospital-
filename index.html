@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nalanda Advance Healthcare Hospital · Multispecialty & Surgical Care</title>
-  <meta name="description" content="Nalanda Advance Healthcare Hospital Pvt Ltd – Advanced Daycare Laparoscopy, 24/7 Trauma Emergency, Pediatrics & Cashless Mediclaims in Bihar Sharif, Nalanda." />
+  <meta name="description" content="Nalanda Advance Healthcare Hospital Pvt Ltd – Advanced Daycare Laparoscopy, 24/7 Trauma Emergency, Pediatrics & Multispecialty Care in Bihar Sharif, Nalanda." />
 
   <!-- Favicons -->
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -66,7 +66,7 @@
   <div class="announcement-bar no-print">
     <div class="container inner">
       <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-      <span data-bind="settings.announcement">24/7 Trauma Emergency & Critical Care · Ayushman Bharat (PM-JAY) & Cashless TPA Empanelled</span>
+      <span data-bind="settings.announcement">24/7 Trauma Emergency & Critical Care · Advanced Daycare Laparoscopy & Multispecialty Care</span>
     </div>
   </div>
 
@@ -94,7 +94,7 @@
         <a href="#doctorsSection">Doctors</a>
         <a href="#proceduresSection">Treatments</a>
         <a href="#facilitiesSection">Facilities</a>
-        <a href="#tpaSection">Cashless TPA</a>
+        <a href="#tpaSection">Insurance</a>
         <a href="testimonials.html">Testimonials</a>
         <a href="#contactSection">Contact</a>
       </nav>
@@ -103,13 +103,32 @@
       <div class="nav-actions">
         <button type="button" class="btn btn-secondary btn-sm" onclick="openPatientAuthModal()" id="patientNavAuthBtn">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Patient Sign In
+          <span class="desktop-only-text">Patient Sign In</span>
         </button>
         <a href="booking.html" class="btn btn-teal btn-sm">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Book Appointment
+          <span>Book OPD</span>
         </a>
+        <button type="button" class="mobile-menu-toggle" onclick="toggleMobileNavMenu()" aria-label="Toggle navigation menu">
+          <svg class="icon icon-md" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
       </div>
+    </div>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div id="mobileNavDrawer" class="mobile-nav-drawer no-print">
+      <ul class="mobile-nav-links">
+        <li><a href="index.html" class="active" onclick="toggleMobileNavMenu()">Home</a></li>
+        <li><a href="#doctorsSection" onclick="toggleMobileNavMenu()">Our Specialist Doctors</a></li>
+        <li><a href="#proceduresSection" onclick="toggleMobileNavMenu()">Surgeries & Treatments</a></li>
+        <li><a href="#facilitiesSection" onclick="toggleMobileNavMenu()">Hospital Facilities</a></li>
+        <li><a href="#tpaSection" onclick="toggleMobileNavMenu()">Cashless TPA & Insurance</a></li>
+        <li><a href="testimonials.html">Patient Testimonials</a></li>
+        <li><a href="#contactSection" onclick="toggleMobileNavMenu()">Contact & Emergency Location</a></li>
+        <li><a href="booking.html" style="color:var(--secondary); font-weight:700;">Book OPD Token</a></li>
+        <li><a href="doctor.html" style="color:var(--primary); font-weight:700;">Doctor Chamber Portal</a></li>
+        <li><a href="admin.html" style="color:var(--primary); font-weight:700;">Hospital Admin & Reception Desk</a></li>
+      </ul>
     </div>
   </header>
 
@@ -151,7 +170,7 @@
           </div>
           <div class="hero-feature-item">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            Cashless TPA Approved
+            Modular OT & ICU
           </div>
           <div class="hero-feature-item">
             <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -268,17 +287,17 @@
   </section>
 
   <!-- ========================================================================
-       CASHLESS TPA EMPANELMENTS
+       HEALTH INSURANCE & MEDICLAIM
        ======================================================================== -->
   <section class="section section-alt" id="tpaSection">
     <div class="container">
       <div class="section-header">
         <span class="section-tag">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Insurance Partners
+          Insurance Support
         </span>
-        <h2 class="section-title">Cashless Mediclaim & Ayushman Bharat</h2>
-        <p class="section-desc">Direct tie-ups with leading health insurance TPAs for hassle-free cashless hospitalization.</p>
+        <h2 class="section-title">Insurance & Mediclaim Assistance</h2>
+        <p class="section-desc">Hassle-free documentation and claim support for leading health insurance providers.</p>
       </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:16px;">
@@ -301,10 +320,6 @@
         <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
           <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           Niva Bupa
-        </div>
-        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Ayushman Bharat (PM-JAY)
         </div>
       </div>
     </div>
@@ -336,7 +351,7 @@
             </div>
             <div>
               <strong style="color:var(--primary); display:block; margin-bottom:2px;">Official Desk Email:</strong>
-              <a href="mailto:nalandahospital@gmail.com" style="color:var(--secondary); font-weight:600;">nalandahospital@gmail.com</a>
+              <a href="mailto:nalandahospital@gmail.com" data-bind="settings.email" style="color:var(--secondary); font-weight:600;">nalandahospital@gmail.com</a>
             </div>
           </div>
 
@@ -391,7 +406,7 @@
             <li><a href="booking.html">Book OPD Appointment</a></li>
             <li><a href="booking.html#reportsTab">My Reports & Digital Rx</a></li>
             <li><a href="#proceduresSection">Surgical Procedures</a></li>
-            <li><a href="#tpaSection">Cashless Mediclaim</a></li>
+            <li><a href="#tpaSection">Insurance & Mediclaim</a></li>
             <li><a href="testimonials.html">Patient Testimonials</a></li>
           </ul>
         </div>
@@ -400,7 +415,7 @@
           <h4 class="footer-heading">Emergency & Help</h4>
           <ul class="footer-links">
             <li><a href="tel:+919155764409" style="color:#fda29b; font-weight:700;">Emergency: +91 91557 64409</a></li>
-            <li><a href="mailto:nalandahospital@gmail.com">nalandahospital@gmail.com</a></li>
+            <li><a href="mailto:nalandahospital@gmail.com" data-bind="settings.email">nalandahospital@gmail.com</a></li>
             <li><a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">Police Line, Bihar Sharif</a></li>
           </ul>
         </div>
@@ -485,7 +500,7 @@
       const html = `
         <div>
           <!-- Tab Switcher -->
-          <div style="display:flex; background:var(--bg-section); border-radius:var(--radius-md); padding:4px; margin-bottom:20px;">
+          <div id="authTabContainer" style="display:flex; background:var(--bg-section); border-radius:var(--radius-md); padding:4px; margin-bottom:20px;">
             <button type="button" id="btnAuthTabLogin" onclick="toggleAuthTab('login')" class="btn btn-sm" style="flex:1; background:var(--primary); color:#ffffff;">Sign In</button>
             <button type="button" id="btnAuthTabSignup" onclick="toggleAuthTab('signup')" class="btn btn-sm" style="flex:1; background:transparent; color:var(--text-primary);">Create Account</button>
           </div>
@@ -498,7 +513,10 @@
                 <input type="text" id="pLoginEmail" class="form-input" placeholder="Enter registered email or mobile" required>
               </div>
               <div class="form-group">
-                <label class="form-label">Password</label>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <label class="form-label" style="margin:0;">Password <span class="req">*</span></label>
+                  <a href="javascript:void(0)" onclick="toggleAuthTab('forgot')" style="font-size:0.75rem; color:var(--secondary); font-weight:600; text-decoration:none;">Forgot Password?</a>
+                </div>
                 <input type="password" id="pLoginPass" class="form-input" placeholder="Enter your password" required>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px;">Sign In to Account</button>
@@ -517,10 +535,49 @@
                 <input type="tel" id="pRegPhone" class="form-input" placeholder="e.g. 9876543210" pattern="[6-9][0-9]{9}" required>
               </div>
               <div class="form-group">
+                <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                  <label class="form-label" style="margin:0;">Email Address</label>
+                  <span style="font-size:0.75rem; color:var(--secondary); font-weight:600;">Optional</span>
+                </div>
+                <input type="email" id="pRegEmail" class="form-input" placeholder="e.g. name@example.com">
+                <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:3px;">
+                  Optional: Enables Firebase Authentication & secure password recovery emails.
+                </span>
+              </div>
+              <div class="form-group">
                 <label class="form-label">Password <span class="req">*</span></label>
                 <input type="password" id="pRegPass" class="form-input" placeholder="Minimum 6 characters" minlength="6" required>
               </div>
               <button type="submit" class="btn btn-teal" style="width:100%; margin-top:6px;">Create Patient Account</button>
+            </form>
+          </div>
+
+          <!-- Forgot Password Form -->
+          <div id="authForgotBox" style="display:none;">
+            <form onsubmit="handlePatientForgotSubmit(event)">
+              <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.45;">
+                Enter your registered <strong>Email Address</strong> (for secure Firebase reset link) or <strong>10-digit Mobile Number</strong>.
+              </p>
+              <div class="form-group">
+                <label class="form-label">Registered Mobile or Email <span class="req">*</span></label>
+                <input type="text" id="pForgotEmail" class="form-input" placeholder="e.g. name@example.com or 9876543210" required>
+              </div>
+              <div id="pForgotPhonePassGroup" style="display:none;">
+                <div class="form-group">
+                  <label class="form-label">New Password <span class="req">*</span></label>
+                  <input type="password" id="pForgotPass" class="form-input" placeholder="Minimum 6 characters" minlength="6">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Confirm New Password <span class="req">*</span></label>
+                  <input type="password" id="pForgotConfirm" class="form-input" placeholder="Re-enter new password" minlength="6">
+                </div>
+              </div>
+              <button type="submit" id="btnForgotSubmitIndex" class="btn btn-primary" style="width:100%; margin-top:6px;">Send Reset Link / Verify</button>
+              <div style="text-align:center; margin-top:12px;">
+                <a href="javascript:void(0)" onclick="toggleAuthTab('login')" style="font-size:0.8125rem; color:var(--secondary); font-weight:600; text-decoration:none;">
+                  ← Back to Sign In
+                </a>
+              </div>
             </form>
           </div>
 
@@ -539,10 +596,27 @@
     function toggleAuthTab(tab) {
       document.getElementById('authLoginBox').style.display = tab === 'login' ? 'block' : 'none';
       document.getElementById('authSignupBox').style.display = tab === 'signup' ? 'block' : 'none';
-      document.getElementById('btnAuthTabLogin').style.background = tab === 'login' ? 'var(--primary)' : 'transparent';
-      document.getElementById('btnAuthTabLogin').style.color = tab === 'login' ? '#ffffff' : 'var(--text-primary)';
-      document.getElementById('btnAuthTabSignup').style.background = tab === 'signup' ? 'var(--primary)' : 'transparent';
-      document.getElementById('btnAuthTabSignup').style.color = tab === 'signup' ? '#ffffff' : 'var(--text-primary)';
+      const forgotBox = document.getElementById('authForgotBox');
+      if (forgotBox) forgotBox.style.display = tab === 'forgot' ? 'block' : 'none';
+
+      const tabContainer = document.getElementById('authTabContainer');
+      if (tabContainer) tabContainer.style.display = tab === 'forgot' ? 'none' : 'flex';
+
+      const phoneGroup = document.getElementById('pForgotPhonePassGroup');
+      if (phoneGroup && tab === 'forgot') phoneGroup.style.display = 'none';
+      const forgotBtn = document.getElementById('btnForgotSubmitIndex');
+      if (forgotBtn && tab === 'forgot') forgotBtn.textContent = 'Send Reset Link / Verify';
+
+      const loginBtn = document.getElementById('btnAuthTabLogin');
+      const signupBtn = document.getElementById('btnAuthTabSignup');
+      if (loginBtn) {
+        loginBtn.style.background = tab === 'login' ? 'var(--primary)' : 'transparent';
+        loginBtn.style.color = tab === 'login' ? '#ffffff' : 'var(--text-primary)';
+      }
+      if (signupBtn) {
+        signupBtn.style.background = tab === 'signup' ? 'var(--primary)' : 'transparent';
+        signupBtn.style.color = tab === 'signup' ? '#ffffff' : 'var(--text-primary)';
+      }
     }
 
     async function handlePatientLoginSubmit(e) {
@@ -564,15 +638,70 @@
       e.preventDefault();
       const name = document.getElementById('pRegName').value.trim();
       const phone = document.getElementById('pRegPhone').value.trim();
+      const email = document.getElementById('pRegEmail') ? document.getElementById('pRegEmail').value.trim() : '';
       const pass = document.getElementById('pRegPass').value.trim();
 
-      const res = await HospitalAuth.registerPatient({ name, mobile: phone, password: pass });
+      const res = await HospitalAuth.registerPatient({ name, mobile: phone, email, password: pass });
       if (res.success) {
-        showToast("Account created successfully! You are now signed in.", "success");
+        showToast(res.message || "Account created successfully! You are now signed in.", "success");
         closeModal();
         updatePatientNavState();
       } else {
         showToast(res.error || "Registration failed", "danger");
+      }
+    }
+
+    async function handlePatientForgotSubmit(e) {
+      e.preventDefault();
+      const val = document.getElementById('pForgotEmail').value.trim();
+      if (!val) {
+        showToast("Please enter your registered email or 10-digit mobile number.", "danger");
+        return;
+      }
+
+      const isEmail = val.includes('@');
+      const phoneGroup = document.getElementById('pForgotPhonePassGroup');
+      const isPhoneGroupVisible = phoneGroup && phoneGroup.style.display !== 'none';
+
+      if (isEmail || !isPhoneGroupVisible) {
+        const res = await HospitalAuth.sendPatientPasswordReset(val);
+        if (res.success) {
+          if (res.method === 'firebase_email') {
+            showToast(res.message || "Official Firebase password reset email sent!", "success");
+            setTimeout(() => {
+              toggleAuthTab('login');
+            }, 2500);
+          } else {
+            if (phoneGroup) phoneGroup.style.display = 'block';
+            const btn = document.getElementById('btnForgotSubmitIndex');
+            if (btn) btn.textContent = 'Save New Password in Database';
+            showToast("Mobile verified. Please enter your new password below.", "info");
+          }
+        } else {
+          showToast(res.error || "Password reset failed", "danger");
+        }
+        return;
+      }
+
+      const pass = document.getElementById('pForgotPass').value.trim();
+      const confirm = document.getElementById('pForgotConfirm').value.trim();
+
+      if (!pass || pass.length < 6) {
+        showToast("Password must be at least 6 characters.", "danger");
+        return;
+      }
+      if (pass !== confirm) {
+        showToast("Passwords do not match. Please re-enter.", "danger");
+        return;
+      }
+
+      const res = await HospitalAuth.sendPatientPasswordReset(val, pass);
+      if (res.success) {
+        showToast(res.message || "Password updated successfully! You are now signed in.", "success");
+        closeModal();
+        updatePatientNavState();
+      } else {
+        showToast(res.error || "Password reset failed", "danger");
       }
     }
 
