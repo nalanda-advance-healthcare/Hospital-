@@ -1,6 +1,6 @@
 /**
  * NALANDA ADVANCE HEALTHCARE HOSPITAL - MULTI-ROLE FIREBASE ENGINE
- * 1. Admin/Reception: Default mohitk43131@gmail.com (Pass: moh45678) with RTDB verification
+ * 1. Admin/Reception: Secured via Firebase Authentication and Realtime Database authorization
  * 2. Doctor: Account created by Admin with initial password; Doctor can change password later
  * 3. Patient: Account Sign-Up/Login or Freedom to use Guest Mode with Anti-Spam Protection
  */
@@ -23,7 +23,6 @@ let fbGoogleProvider = null;
 let isFirebaseReady = false;
 
 const PRIMARY_ADMIN_EMAIL = "mohitk43131@gmail.com";
-const PRIMARY_ADMIN_PASS = "moh45678";
 
 try {
   if (typeof firebase !== 'undefined') {
@@ -37,7 +36,7 @@ try {
     fbGoogleProvider = new firebase.auth.GoogleAuthProvider();
     isFirebaseReady = true;
 
-    // Seed default admin in Realtime Database on start
+    // Seed default admin authorization in Realtime Database
     ensurePrimaryAdminInRTDB();
   }
 } catch (err) {
@@ -70,10 +69,11 @@ window.HospitalAuth = {
   getPrimaryAdminEmail: () => PRIMARY_ADMIN_EMAIL,
 
   // --------------------------------------------------------------------------
-  // 1. ADMIN AUTHENTICATION & MANAGEMENT
+  // 1. ADMIN AUTHENTICATION & MANAGEMENT (FIREBASE AUTH + RTDB)
   // --------------------------------------------------------------------------
   isAuthorizedAdminEmail: async (email) => {
     const normalized = (email || '').toLowerCase().trim();
+    if (!normalized || !normalized.includes('@')) return false;
     if (normalized === PRIMARY_ADMIN_EMAIL.toLowerCase()) return true;
 
     const cachedAdmins = JSON.parse(localStorage.getItem('nah_authorized_admins') || '[]');
@@ -111,10 +111,29 @@ window.HospitalAuth = {
     return list;
   },
 
-  addAdminEmail: async (email) => {
+  addAdminUser: async ({ email, password, role }) => {
     email = (email || '').toLowerCase().trim();
-    if (!email || !email.includes('@')) return { success: false, error: "Invalid email" };
+    password = (password || '').trim();
+    role = role || "Administrator / Reception";
 
+    if (!email || !email.includes('@')) return { success: false, error: "Please enter a valid administrator email address." };
+    if (!password || password.length < 6) return { success: false, error: "Password must be at least 6 characters long." };
+
+    let authUser = null;
+    if (fbAuth) {
+      try {
+        const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
+        authUser = cred.user;
+      } catch (authErr) {
+        if (authErr.code === 'auth/email-already-in-use') {
+          console.warn("User already exists in Firebase Auth; ensuring RTDB authorization.");
+        } else {
+          return { success: false, error: authErr.message || "Failed to create Firebase Authentication account." };
+        }
+      }
+    }
+
+    const key = emailToKey(email);
     const local = JSON.parse(localStorage.getItem('nah_authorized_admins') || '[]');
     if (!local.includes(email)) {
       local.push(email);
@@ -123,33 +142,127 @@ window.HospitalAuth = {
 
     if (fbDatabase) {
       try {
-        const key = emailToKey(email);
         await fbDatabase.ref(`admins/${key}`).set({
           email,
-          role: "Administrator / Reception",
+          role,
+          uid: authUser ? authUser.uid : null,
           addedAt: new Date().toISOString()
         });
-      } catch (e) {}
+      } catch (e) {
+        console.warn("RTDB admin authorization notice:", e);
+      }
     }
     return { success: true, email };
   },
 
+  addAdminEmail: async (email, password, role) => {
+    return window.HospitalAuth.addAdminUser({ email, password: password || "admin123", role });
+  },
+
+  removeAdminEmail: async (email) => {
+    email = (email || '').toLowerCase().trim();
+    if (!email || email === PRIMARY_ADMIN_EMAIL.toLowerCase()) {
+      return { success: false, error: "Primary administrator access cannot be removed." };
+    }
+
+    let local = JSON.parse(localStorage.getItem('nah_authorized_admins') || '[]');
+    local = local.filter(e => e !== email);
+    localStorage.setItem('nah_authorized_admins', JSON.stringify(local));
+
+    if (fbDatabase) {
+      try {
+        const key = emailToKey(email);
+        await fbDatabase.ref(`admins/${key}`).remove();
+      } catch (e) {}
+    }
+    return { success: true };
+  },
+
   loginAdminWithEmail: async (email, password) => {
     const norm = (email || '').toLowerCase().trim();
-    if (norm === PRIMARY_ADMIN_EMAIL.toLowerCase() && password === PRIMARY_ADMIN_PASS) {
-      const user = { email: PRIMARY_ADMIN_EMAIL, role: "Super Admin", displayName: "Mohit (Super Admin)" };
-      localStorage.setItem('nah_active_admin', JSON.stringify(user));
-      return { success: true, user };
+    const cleanPass = (password || '').trim();
+
+    if (!norm || !cleanPass) {
+      return { success: false, error: "Please enter your administrator email and password." };
     }
 
+    // 1. Verify authorization in Realtime Database / Authorized list
     const isAuth = await window.HospitalAuth.isAuthorizedAdminEmail(norm);
     if (!isAuth) {
-      return { success: false, error: "Access Denied: Email is not authorized as an administrator." };
+      return { success: false, error: "Access Denied: This email is not authorized as a hospital administrator." };
     }
 
-    const user = { email: norm, role: "Administrator / Reception", displayName: norm.split('@')[0] };
+    // 2. Authenticate securely with Firebase Authentication
+    let authUser = null;
+    if (fbAuth) {
+      try {
+        const cred = await fbAuth.signInWithEmailAndPassword(norm, cleanPass);
+        authUser = cred.user;
+      } catch (err) {
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          return { success: false, error: "Incorrect administrator password. Please check your credentials." };
+        } else if (err.code === 'auth/user-not-found') {
+          // If authorized admin was added to RTDB, initialize their Firebase Auth credential with this password
+          try {
+            const newCred = await fbAuth.createUserWithEmailAndPassword(norm, cleanPass);
+            authUser = newCred.user;
+          } catch (initErr) {
+            return { success: false, error: "Administrator account setup required: " + (initErr.message || "Failed to initialize credentials.") };
+          }
+        } else if (err.code === 'auth/too-many-requests') {
+          return { success: false, error: "Access temporarily blocked due to multiple failed login attempts. Please try again later." };
+        } else {
+          return { success: false, error: err.message || "Authentication service failed." };
+        }
+      }
+    }
+
+    const user = {
+      uid: authUser ? authUser.uid : ('admin-' + Date.now()),
+      email: norm,
+      role: (norm === PRIMARY_ADMIN_EMAIL.toLowerCase()) ? "Super Admin" : "Administrator",
+      displayName: (authUser && authUser.displayName) ? authUser.displayName : norm.split('@')[0],
+      loggedInAt: new Date().toISOString()
+    };
+
     localStorage.setItem('nah_active_admin', JSON.stringify(user));
     return { success: true, user };
+  },
+
+  loginAdminWithGoogle: async () => {
+    if (!fbAuth || !fbGoogleProvider) {
+      return { success: false, error: "Firebase Authentication with Google is unavailable." };
+    }
+    try {
+      const result = await fbAuth.signInWithPopup(fbGoogleProvider);
+      const user = result.user;
+      const email = (user && user.email) ? user.email.toLowerCase().trim() : '';
+      if (!email) {
+        return { success: false, error: "Unable to retrieve email from Google Account." };
+      }
+
+      const isAuth = await window.HospitalAuth.isAuthorizedAdminEmail(email);
+      if (!isAuth) {
+        await fbAuth.signOut().catch(() => {});
+        return { success: false, error: "Access Denied: Google account (" + email + ") is not authorized as an administrator." };
+      }
+
+      const adminSession = {
+        uid: user.uid,
+        email,
+        role: (email === PRIMARY_ADMIN_EMAIL.toLowerCase()) ? "Super Admin" : "Administrator",
+        displayName: user.displayName || email.split('@')[0],
+        photoURL: user.photoURL || null,
+        loggedInAt: new Date().toISOString()
+      };
+      localStorage.setItem('nah_active_admin', JSON.stringify(adminSession));
+      return { success: true, user: adminSession };
+    } catch (err) {
+      if (err.code === 'auth/popup-closed-by-user') {
+        return { success: false, error: "Google sign-in was cancelled." };
+      }
+      return { success: false, error: err.message || "Google sign-in failed." };
+    }
   },
 
   getCurrentAdmin: () => {
@@ -158,6 +271,9 @@ window.HospitalAuth = {
   },
 
   logoutAdmin: async () => {
+    if (fbAuth) {
+      await fbAuth.signOut().catch(() => {});
+    }
     localStorage.removeItem('nah_active_admin');
     return { success: true };
   },
