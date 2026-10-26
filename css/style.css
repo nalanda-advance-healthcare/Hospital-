@@ -318,6 +318,23 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+  transition: var(--transition-fast);
+}
+
+.brand-emblem.has-custom-logo {
+  background-color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  padding: 2px;
+}
+
+.brand-emblem img,
+.brand-emblem .dynamic-hospital-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+  display: block;
 }
 
 .brand-emblem svg {

@@ -16,7 +16,9 @@ const INITIAL_HOSPITAL_DATA = {
     mapsUrl: "https://maps.app.goo.gl/fKTir4ggG2cFCvSx6",
     announcement: "24/7 Trauma Emergency Hospital · Advanced Daycare Surgery & Multispecialty Care",
     heroTitle: "ADVANCED SURGICAL & MEDICAL HEALTHCARE",
-    heroSub: "Experience world-class surgical care, modular laminar OTs, and compassionate inpatient healing at the heart of Nalanda."
+    heroSub: "Experience world-class surgical care, modular laminar OTs, and compassionate inpatient healing at the heart of Nalanda.",
+    theme: "navy-teal",
+    logoUrl: ""
   },
   admins: ["mohitk43131@gmail.com"],
   doctors: [],

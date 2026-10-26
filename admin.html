@@ -234,7 +234,7 @@
   <!-- AUTH SCREEN: Secure Administrative Authentication -->
   <div id="authScreen" class="no-print" style="padding: 20px;">
     <div style="max-width:440px; margin:60px auto; background:#ffffff; padding:36px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); box-shadow:var(--shadow-modal); text-align:center;">
-      <div style="width:48px; height:48px; background:var(--accent-soft); color:var(--primary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto;">
+      <div class="brand-emblem" style="width:52px; height:52px; background:var(--accent-soft); color:var(--primary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto;">
         <svg class="icon icon-xl" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
       </div>
 
@@ -288,7 +288,7 @@
     <aside class="admin-sidebar no-print">
       <div>
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1);">
-          <div style="width:36px; height:36px; background:var(--secondary); color:#ffffff; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <div class="brand-emblem" style="width:36px; height:36px; background:var(--secondary); color:#ffffff; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
             <svg class="icon icon-md" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </div>
           <div>
@@ -759,59 +759,141 @@
           </h2>
         </div>
 
-        <div style="background:#ffffff; padding:28px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); max-width:760px; box-shadow:var(--shadow-xs);">
+        <div style="background:#ffffff; padding:28px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); max-width:860px; box-shadow:var(--shadow-xs);">
           <form id="settingsForm" onsubmit="handleSettingsSave(event)">
-            <div class="form-group">
-              <label class="form-label">Hospital Name</label>
-              <input type="text" id="setHospitalName" class="form-input" required>
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">Tagline</label>
-              <input type="text" id="setTagline" class="form-input" required>
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
-              <div class="form-group" style="margin:0;">
-                <label class="form-label">Emergency Helpline</label>
-                <input type="text" id="setEmergencyPhone" class="form-input" required>
+            <!-- 1. MULTIPLE THEME SELECTOR -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div>
+                  <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
+                    Hospital Color Theme & Aesthetic
+                  </h3>
+                  <p style="font-size:0.8125rem; color:var(--text-secondary); margin:0;">
+                    Select a curated healthcare theme preset. Changes live across patient portal, admin desk, doctor chambers, and TV screens.
+                  </p>
+                </div>
               </div>
-              <div class="form-group" style="margin:0;">
-                <label class="form-label">Registration Number</label>
-                <input type="text" id="setRegNo" class="form-input" required>
+
+              <input type="hidden" id="setSelectedTheme" value="navy-teal">
+              <div id="themeCardsGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px;">
+                <!-- Dynamically populated by renderThemePickerUI() -->
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Official Hospital Email Address</label>
-              <input type="email" id="setHospitalEmail" class="form-input" placeholder="e.g. nalandahospital@gmail.com" required>
-              <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:4px;">
-                Displayed on appointment slips, digital prescriptions, patient portal, and public contact sections.
-              </span>
+            <!-- 2. HOSPITAL LOGO MANAGER -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                <div>
+                  <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
+                    Hospital Logo & Brand Emblem
+                  </h3>
+                  <p style="font-size:0.8125rem; color:var(--text-secondary); margin:0;">
+                    Upload custom hospital logo or provide an image URL. Displayed on top navigation, reception slips, and digital prescriptions.
+                  </p>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="clearHospitalLogo()" style="font-size:0.75rem;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  Reset to Clinical Emblem
+                </button>
+              </div>
+
+              <div style="background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px; margin-bottom:16px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                  <div>
+                    <label class="form-label" style="font-size:0.8125rem;">Upload Logo from Device</label>
+                    <input type="file" id="logoFileInput" accept="image/*" class="form-input" onchange="handleLogoFileSelect(event)" style="padding:7px; font-size:0.8125rem; background:#ffffff;">
+                    <span style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                      Supports PNG, JPG, SVG, WebP. Auto-optimized for instant cloud sync & clarity.
+                    </span>
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size:0.8125rem;">Or Direct Image Web URL</label>
+                    <input type="text" id="setLogoUrl" class="form-input" placeholder="https://example.com/logo.png" oninput="handleLogoUrlInput(this.value)" style="background:#ffffff;">
+                    <span style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                      Direct image link or hosted cloud URL.
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Live Dual Preview Box -->
+                <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap; background:#ffffff; padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+                  <div style="font-size:0.8125rem; font-weight:700; color:var(--primary); margin-right:4px;">Live Preview:</div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="logoPreviewLight" style="width:44px; height:44px; background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; overflow:hidden; padding:2px;">
+                      <!-- Injected via JS -->
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">Light (Public Header & Print Slips)</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="logoPreviewDark" style="width:44px; height:44px; background:var(--primary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; overflow:hidden; padding:2px; color:#ffffff;">
+                      <!-- Injected via JS -->
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">Dark (Admin Sidebar & Doctor Chamber)</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Hospital Address</label>
-              <input type="text" id="setAddress" class="form-input" required>
+            <!-- 3. HOSPITAL GENERAL INFORMATION -->
+            <div style="margin-bottom:20px;">
+              <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 14px 0;">
+                Hospital Identity & Facility Details
+              </h3>
+
+              <div class="form-group">
+                <label class="form-label">Hospital Legal Name <span class="req">*</span></label>
+                <input type="text" id="setHospitalName" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Tagline & Subheading <span class="req">*</span></label>
+                <input type="text" id="setTagline" class="form-input" required>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Emergency Helpline <span class="req">*</span></label>
+                  <input type="text" id="setEmergencyPhone" class="form-input" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Registration / Licensure Number <span class="req">*</span></label>
+                  <input type="text" id="setRegNo" class="form-input" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Official Hospital Email Address <span class="req">*</span></label>
+                <input type="email" id="setHospitalEmail" class="form-input" placeholder="e.g. nalandahospital@gmail.com" required>
+                <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                  Displayed on appointment slips, digital prescriptions, patient portal, and public contact sections.
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Hospital Physical Address <span class="req">*</span></label>
+                <input type="text" id="setAddress" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Live Announcement Ticker Text <span class="req">*</span></label>
+                <input type="text" id="setAnnouncement" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Homepage Hero Main Title <span class="req">*</span></label>
+                <input type="text" id="setHeroTitle" class="form-input" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom:20px;">
+                <label class="form-label">Homepage Hero Subtitle <span class="req">*</span></label>
+                <textarea id="setHeroSub" class="form-textarea" required></textarea>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Announcement Ticker Text</label>
-              <input type="text" id="setAnnouncement" class="form-input" required>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Hero Title</label>
-              <input type="text" id="setHeroTitle" class="form-input" required>
-            </div>
-
-            <div class="form-group" style="margin-bottom:20px;">
-              <label class="form-label">Hero Subtitle</label>
-              <textarea id="setHeroSub" class="form-textarea" required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-              Broadcast Changes Live
+            <button type="submit" class="btn btn-primary" style="padding:12px 24px;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              Save & Broadcast CMS Live
             </button>
           </form>
         </div>
@@ -859,11 +941,11 @@
   <div id="tvDisplayModal">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:14px; margin-bottom:20px;">
       <div style="display:flex; align-items:center; gap:14px;">
-        <div style="width:40px; height:40px; background:var(--secondary); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;">
+        <div class="brand-emblem" style="width:44px; height:44px; background:var(--secondary); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;">
           <svg class="icon icon-md" style="color:#ffffff;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </div>
         <div>
-          <h1 style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:#ffffff; margin:0;">
+          <h1 data-bind="settings.hospitalName" style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:#ffffff; margin:0;">
             Nalanda Advance Healthcare
           </h1>
           <span style="color:var(--secondary); font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;">
@@ -2558,11 +2640,125 @@
     }
 
     // ------------------------------------------------------------------------
-    // SETTINGS CMS
+    // SETTINGS CMS: MULTI-THEME & HOSPITAL LOGO ENGINE
     // ------------------------------------------------------------------------
+    let currentSettingsTheme = 'navy-teal';
+    let currentSettingsLogoUrl = '';
+
+    function renderThemePickerUI(activeThemeKey) {
+      currentSettingsTheme = activeThemeKey || 'navy-teal';
+      const container = document.getElementById('themeCardsGrid');
+      if (!container || !window.HOSPITAL_THEMES) return;
+
+      container.innerHTML = Object.values(window.HOSPITAL_THEMES).map(t => {
+        const isSelected = t.id === currentSettingsTheme;
+        return `
+          <div class="theme-select-card" onclick="selectTheme('${t.id}')"
+            style="cursor:pointer; border:2px solid ${isSelected ? 'var(--secondary)' : 'var(--border-subtle)'}; border-radius:var(--radius-md); padding:12px; background:${isSelected ? 'var(--secondary-light)' : '#ffffff'}; transition:all 0.2s ease; position:relative; box-shadow:${isSelected ? 'var(--shadow-xs)' : 'none'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:700; font-size:0.875rem; color:var(--text-primary); line-height:1.2;">${t.name}</span>
+              ${isSelected ? `<span style="font-size:0.6875rem; font-weight:700; text-transform:uppercase; padding:2px 8px; border-radius:12px; background:var(--secondary); color:#ffffff;">Active</span>` : `<span style="font-size:0.6875rem; font-weight:600; text-transform:uppercase; padding:2px 8px; border-radius:12px; background:var(--bg-section); color:var(--text-secondary);">${t.badge}</span>`}
+            </div>
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+              <div style="width:28px; height:22px; border-radius:4px; background:${t.primary}; border:1px solid rgba(0,0,0,0.12);" title="Primary"></div>
+              <div style="width:28px; height:22px; border-radius:4px; background:${t.secondary}; border:1px solid rgba(0,0,0,0.12);" title="Secondary Accent"></div>
+              <div style="width:28px; height:22px; border-radius:4px; background:${t.secondaryLight}; border:1px solid rgba(0,0,0,0.12);" title="Light Tint"></div>
+              <div style="width:28px; height:22px; border-radius:4px; background:${t.accentSoft}; border:1px solid rgba(0,0,0,0.12);" title="Soft Background"></div>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin:0; line-height:1.35;">${t.description}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectTheme(themeId) {
+      currentSettingsTheme = themeId;
+      document.getElementById('setSelectedTheme').value = themeId;
+      renderThemePickerUI(themeId);
+      if (window.applyHospitalTheme) {
+        window.applyHospitalTheme(themeId);
+      }
+      showToast(`Switched preview theme to: ${window.HOSPITAL_THEMES[themeId]?.name || themeId}`, "info");
+    }
+
+    function updateLogoPreviewUI(logoUrl) {
+      const pLight = document.getElementById('logoPreviewLight');
+      const pDark = document.getElementById('logoPreviewDark');
+      const valid = logoUrl && typeof logoUrl === 'string' && logoUrl.trim().length > 0;
+
+      if (pLight) {
+        if (valid) {
+          pLight.innerHTML = `<img src="${window.escapeHtml(logoUrl.trim())}" alt="Logo Light" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+        } else {
+          pLight.innerHTML = `<svg viewBox="0 0 24 24" class="icon" style="width:22px; height:22px; stroke:var(--secondary); stroke-width:2.2; fill:none;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+        }
+      }
+
+      if (pDark) {
+        if (valid) {
+          pDark.innerHTML = `<img src="${window.escapeHtml(logoUrl.trim())}" alt="Logo Dark" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+        } else {
+          pDark.innerHTML = `<svg viewBox="0 0 24 24" class="icon" style="width:22px; height:22px; stroke:#ffffff; stroke-width:2.2; fill:none;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+        }
+      }
+    }
+
+    function handleLogoUrlInput(url) {
+      currentSettingsLogoUrl = url.trim();
+      updateLogoPreviewUI(currentSettingsLogoUrl);
+    }
+
+    function handleLogoFileSelect(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 256;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL('image/png');
+          currentSettingsLogoUrl = compressedDataUrl;
+          document.getElementById('setLogoUrl').value = compressedDataUrl;
+          updateLogoPreviewUI(compressedDataUrl);
+          showToast("Hospital logo loaded and optimized for cloud sync!", "success");
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearHospitalLogo() {
+      currentSettingsLogoUrl = '';
+      document.getElementById('setLogoUrl').value = '';
+      const fileInput = document.getElementById('logoFileInput');
+      if (fileInput) fileInput.value = '';
+      updateLogoPreviewUI('');
+      if (window.applyHospitalLogo) window.applyHospitalLogo('');
+      showToast("Reset to default clinical medical emblem.", "info");
+    }
+
     function loadSettingsForm() {
-      const s = HospitalStore.getSettings();
-      if (!s) return;
+      const s = HospitalStore.getSettings() || {};
 
       document.getElementById('setHospitalName').value = s.hospitalName || 'Nalanda Advance Healthcare Hospital';
       document.getElementById('setTagline').value = s.tagline || 'Leading Healthcare & Multi-Specialty Surgical Excellence';
@@ -2573,11 +2769,23 @@
       document.getElementById('setAnnouncement').value = s.announcement || '24/7 Trauma Emergency Hospital · Advanced Daycare Surgery & Multispecialty Care';
       document.getElementById('setHeroTitle').value = s.heroTitle || 'World-Class Healthcare In Nalanda';
       document.getElementById('setHeroSub').value = s.heroSub || s.heroSubtitle || 'Advanced laparoscopic surgery, pediatric ICU, and personalized medicine.';
+
+      // Load Theme & Logo
+      const activeTheme = s.theme || 'navy-teal';
+      document.getElementById('setSelectedTheme').value = activeTheme;
+      renderThemePickerUI(activeTheme);
+
+      currentSettingsLogoUrl = s.logoUrl || '';
+      document.getElementById('setLogoUrl').value = currentSettingsLogoUrl;
+      updateLogoPreviewUI(currentSettingsLogoUrl);
     }
 
     function handleSettingsSave(e) {
       e.preventDefault();
       const email = document.getElementById('setHospitalEmail').value.trim();
+      const theme = document.getElementById('setSelectedTheme').value || 'navy-teal';
+      const logoUrl = (document.getElementById('setLogoUrl').value || '').trim();
+
       const updated = {
         hospitalName: document.getElementById('setHospitalName').value.trim(),
         tagline: document.getElementById('setTagline').value.trim(),
@@ -2589,10 +2797,16 @@
         announcement: document.getElementById('setAnnouncement').value.trim(),
         heroTitle: document.getElementById('setHeroTitle').value.trim(),
         heroSubtitle: document.getElementById('setHeroSub').value.trim(),
-        heroSub: document.getElementById('setHeroSub').value.trim()
+        heroSub: document.getElementById('setHeroSub').value.trim(),
+        theme: theme,
+        logoUrl: logoUrl
       };
+
       HospitalStore.updateSettings(updated);
-      showToast("Hospital CMS updated and broadcast live!", "success");
+      if (window.applyHospitalTheme) window.applyHospitalTheme(theme);
+      if (window.applyHospitalLogo) window.applyHospitalLogo(logoUrl);
+
+      showToast("Hospital CMS settings, theme, and logo updated and broadcast live!", "success");
     }
 
     // ------------------------------------------------------------------------
