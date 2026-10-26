@@ -189,7 +189,7 @@ window.HospitalAuth = {
     // 1. Verify authorization in Realtime Database / Authorized list
     const isAuth = await window.HospitalAuth.isAuthorizedAdminEmail(norm);
     if (!isAuth) {
-      return { success: false, error: "Access Denied: This email is not authorized as a hospital administrator." };
+      return { success: false, error: "Access Denied: This email (" + norm + ") is not authorized as a hospital administrator." };
     }
 
     // 2. Authenticate securely with Firebase Authentication
@@ -199,20 +199,51 @@ window.HospitalAuth = {
         const cred = await fbAuth.signInWithEmailAndPassword(norm, cleanPass);
         authUser = cred.user;
       } catch (err) {
-        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-          return { success: false, error: "Incorrect administrator password. Please check your credentials." };
-        } else if (err.code === 'auth/user-not-found') {
-          // If authorized admin was added to RTDB, initialize their Firebase Auth credential with this password
+        console.warn("Admin Firebase Auth login notice:", err.code, err.message);
+
+        // Handle case where user is authorized admin but hasn't had their Firebase Auth account seeded yet
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
           try {
             const newCred = await fbAuth.createUserWithEmailAndPassword(norm, cleanPass);
             authUser = newCred.user;
-          } catch (initErr) {
-            return { success: false, error: "Administrator account setup required: " + (initErr.message || "Failed to initialize credentials.") };
+          } catch (createErr) {
+            if (createErr.code === 'auth/email-already-in-use') {
+              return { 
+                success: false, 
+                error: "Incorrect password for administrator " + norm + ". Please check your credentials or click 'Forgot Password?' to reset it." 
+              };
+            } else if (createErr.code === 'auth/operation-not-allowed') {
+              return { 
+                success: false, 
+                error: "Firebase Email/Password provider is disabled in Firebase Console. Please enable it under Firebase Console -> Authentication -> Sign-in method." 
+              };
+            } else if (createErr.code === 'auth/weak-password') {
+              return { 
+                success: false, 
+                error: "Administrator password must be at least 6 characters long." 
+              };
+            } else {
+              return { 
+                success: false, 
+                error: "Authentication failed: " + (createErr.message || err.message) 
+              };
+            }
           }
+        } else if (err.code === 'auth/wrong-password') {
+          return { 
+            success: false, 
+            error: "Incorrect administrator password. Please check your credentials or click 'Forgot Password?'." 
+          };
         } else if (err.code === 'auth/too-many-requests') {
-          return { success: false, error: "Access temporarily blocked due to multiple failed login attempts. Please try again later." };
+          return { 
+            success: false, 
+            error: "Access temporarily blocked due to multiple failed login attempts. Please try again later or reset password." 
+          };
         } else {
-          return { success: false, error: err.message || "Authentication service failed." };
+          return { 
+            success: false, 
+            error: "Authentication error (" + (err.code || 'fail') + "): " + (err.message || "Failed to sign in.") 
+          };
         }
       }
     }
@@ -227,6 +258,32 @@ window.HospitalAuth = {
 
     localStorage.setItem('nah_active_admin', JSON.stringify(user));
     return { success: true, user };
+  },
+
+  sendAdminPasswordReset: async (email) => {
+    const norm = (email || '').toLowerCase().trim();
+    if (!norm || !norm.includes('@')) {
+      return { success: false, error: "Please enter a valid administrator email address." };
+    }
+    const isAuth = await window.HospitalAuth.isAuthorizedAdminEmail(norm);
+    if (!isAuth) {
+      return { success: false, error: "This email is not authorized as a hospital administrator." };
+    }
+    if (!fbAuth) {
+      return { success: false, error: "Firebase Authentication service is unavailable." };
+    }
+    try {
+      await fbAuth.sendPasswordResetEmail(norm);
+      return { 
+        success: true, 
+        message: "Password reset instructions have been emailed to " + norm + ". Please check your inbox and spam folder." 
+      };
+    } catch (err) {
+      return { 
+        success: false, 
+        error: "Reset failed (" + (err.code || 'error') + "): " + (err.message || "Unable to send reset email.") 
+      };
+    }
   },
 
   loginAdminWithGoogle: async () => {

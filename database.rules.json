@@ -5,15 +5,15 @@
     "admins": {
       ".read": true,
       "$adminKey": {
-        ".write": "(auth != null && auth.token.email != null && (auth.token.email === 'mohitk43131@gmail.com' || root.child('admins').child(auth.token.email.replace('\\.', '_').replace('@', '_')).exists())) || (!data.exists() && newData.child('email').val() === 'mohitk43131@gmail.com')",
-        ".validate": "newData.hasChildren(['email', 'role']) && newData.child('email').isString() && newData.child('role').isString()"
+        ".write": "auth != null || (!data.exists() && newData.child('email').val() === 'mohitk43131@gmail.com')",
+        ".validate": "!newData.exists() || (newData.hasChildren(['email', 'role']) && newData.child('email').isString() && newData.child('role').isString())"
       }
     },
     "hospitalData": {
       ".read": true,
       ".write": "newData.exists() && newData.hasChildren(['settings', 'doctors', 'beds', 'appointments'])",
       "settings": {
-        ".validate": "newData.hasChildren(['hospitalName', 'emergencyPhone']) && newData.child('hospitalName').isString() && newData.child('emergencyPhone').isString() && (!newData.hasChild('email') || newData.child('email').isString()) && (!newData.hasChild('footerCopyright') || newData.child('footerCopyright').isString()) && (!newData.hasChild('footerAddress') || newData.child('footerAddress').isString()) && (!newData.hasChild('tpaTitle') || newData.child('tpaTitle').isString()) && (!newData.hasChild('contactTitle') || newData.child('contactTitle').isString())"
+        ".validate": "newData.hasChildren(['hospitalName', 'emergencyPhone']) && newData.child('hospitalName').isString() && newData.child('emergencyPhone').isString()"
       },
       "doctors": {
         "$docIndex": {
@@ -44,11 +44,10 @@
       }
     },
     "patients": {
-      ".read": "auth != null && auth.token.email != null && (auth.token.email === 'mohitk43131@gmail.com' || root.child('admins').child(auth.token.email.replace('\\.', '_').replace('@', '_')).exists())",
+      ".read": true,
       "$phone": {
-        ".read": "true",
         ".write": "$phone.matches(/^[6-9][0-9]{9}$/)",
-        ".validate": "newData.hasChildren(['phone', 'name']) && newData.child('phone').val() === $phone && newData.child('name').isString() && newData.child('name').val().length <= 100 && (!newData.hasChild('password') || (newData.child('password').isString() && newData.child('password').val().length >= 4))"
+        ".validate": "!newData.exists() || (newData.hasChildren(['phone', 'name']) && newData.child('phone').val() === $phone && newData.child('name').isString() && newData.child('name').val().length <= 100 && (!newData.hasChild('password') || (newData.child('password').isString() && newData.child('password').val().length >= 4)))"
       }
     },
     "patientsByEmail": {
