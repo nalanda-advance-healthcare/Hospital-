@@ -187,23 +187,108 @@ function bindRealtimeHeaderSettings() {
     if (s.theme) window.applyHospitalTheme(s.theme);
     window.applyHospitalLogo(s.logoUrl || '');
 
-    // Text bindings
-    document.querySelectorAll('[data-bind="settings.hospitalName"]').forEach(el => el.textContent = s.hospitalName);
-    document.querySelectorAll('[data-bind="settings.tagline"]').forEach(el => el.textContent = s.tagline);
-    document.querySelectorAll('[data-bind="settings.emergencyPhone"]').forEach(el => {
-      el.textContent = s.emergencyPhone;
-      if (el.tagName === 'A') el.href = `tel:${(s.emergencyPhone || '').replace(/\s+/g, '')}`;
-    });
-    document.querySelectorAll('[data-bind="settings.email"]').forEach(el => {
-      if (s.email) {
+    // Text & Contact bindings
+    if (s.hospitalName) {
+      document.querySelectorAll('[data-bind="settings.hospitalName"]').forEach(el => el.textContent = s.hospitalName);
+    }
+    if (s.tagline) {
+      document.querySelectorAll('[data-bind="settings.tagline"]').forEach(el => el.textContent = s.tagline);
+    }
+    if (s.regNo) {
+      document.querySelectorAll('[data-bind="settings.regNo"]').forEach(el => el.textContent = s.regNo);
+    }
+    if (s.emergencyPhone) {
+      document.querySelectorAll('[data-bind="settings.emergencyPhone"]').forEach(el => {
+        el.textContent = s.emergencyPhone;
+        if (el.tagName === 'A') el.href = `tel:${(s.emergencyPhone || '').replace(/\s+/g, '')}`;
+      });
+    }
+    if (s.receptionPhone) {
+      document.querySelectorAll('[data-bind="settings.receptionPhone"]').forEach(el => {
+        el.textContent = s.receptionPhone;
+        if (el.tagName === 'A') el.href = `tel:${(s.receptionPhone || '').replace(/\s+/g, '')}`;
+      });
+    }
+    if (s.whatsappPhone || s.emergencyPhone) {
+      const cleanWa = (s.whatsappPhone || s.emergencyPhone || '').replace(/\D/g, '');
+      document.querySelectorAll('a[data-bind="settings.whatsappPhone"]').forEach(el => {
+        el.href = `https://wa.me/${cleanWa}`;
+      });
+    }
+    if (s.email) {
+      document.querySelectorAll('[data-bind="settings.email"]').forEach(el => {
         el.textContent = s.email;
         if (el.tagName === 'A') el.href = `mailto:${s.email}`;
-      }
-    });
-    document.querySelectorAll('[data-bind="settings.address"]').forEach(el => el.textContent = s.address);
-    document.querySelectorAll('[data-bind="settings.announcement"]').forEach(el => el.textContent = s.announcement);
-    document.querySelectorAll('[data-bind="settings.heroTitle"]').forEach(el => el.textContent = s.heroTitle);
-    document.querySelectorAll('[data-bind="settings.heroSub"]').forEach(el => el.textContent = s.heroSub);
+      });
+    }
+    if (s.address) {
+      document.querySelectorAll('[data-bind="settings.address"]').forEach(el => el.textContent = s.address);
+    }
+    if (s.announcement) {
+      document.querySelectorAll('[data-bind="settings.announcement"]').forEach(el => el.textContent = s.announcement);
+    }
+    if (s.opdTimings) {
+      document.querySelectorAll('[data-bind="settings.opdTimings"]').forEach(el => el.textContent = s.opdTimings);
+    }
+
+    // Hero Section bindings
+    if (s.heroBadge) {
+      document.querySelectorAll('[data-bind="settings.heroBadge"]').forEach(el => el.textContent = s.heroBadge);
+    }
+    if (s.heroTitle) {
+      document.querySelectorAll('[data-bind="settings.heroTitle"]').forEach(el => el.textContent = s.heroTitle);
+    }
+    if (s.heroSub) {
+      document.querySelectorAll('[data-bind="settings.heroSub"]').forEach(el => el.textContent = s.heroSub);
+    }
+    if (s.heroHighlight1) {
+      document.querySelectorAll('[data-bind="settings.heroHighlight1"]').forEach(el => el.textContent = s.heroHighlight1);
+    }
+    if (s.heroHighlight2) {
+      document.querySelectorAll('[data-bind="settings.heroHighlight2"]').forEach(el => el.textContent = s.heroHighlight2);
+    }
+    if (s.heroHighlight3) {
+      document.querySelectorAll('[data-bind="settings.heroHighlight3"]').forEach(el => el.textContent = s.heroHighlight3);
+    }
+    if (s.heroImageUrl) {
+      document.querySelectorAll('img[data-bind="settings.heroImageUrl"]').forEach(el => {
+        if (el.getAttribute('src') !== s.heroImageUrl) el.src = s.heroImageUrl;
+      });
+    }
+    if (s.heroCardTitle) {
+      document.querySelectorAll('[data-bind="settings.heroCardTitle"]').forEach(el => el.textContent = s.heroCardTitle);
+    }
+    if (s.heroCardSub) {
+      document.querySelectorAll('[data-bind="settings.heroCardSub"]').forEach(el => el.textContent = s.heroCardSub);
+    }
+
+    // Facilities Section bindings
+    if (s.facility1Badge) document.querySelectorAll('[data-bind="settings.facility1Badge"]').forEach(el => el.textContent = s.facility1Badge);
+    if (s.facility1Title) document.querySelectorAll('[data-bind="settings.facility1Title"]').forEach(el => el.textContent = s.facility1Title);
+    if (s.facility1Desc) document.querySelectorAll('[data-bind="settings.facility1Desc"]').forEach(el => el.textContent = s.facility1Desc);
+    if (s.facility1Img) {
+      document.querySelectorAll('img[data-bind="settings.facility1Img"]').forEach(el => {
+        if (el.getAttribute('src') !== s.facility1Img) el.src = s.facility1Img;
+      });
+    }
+
+    if (s.facility2Badge) document.querySelectorAll('[data-bind="settings.facility2Badge"]').forEach(el => el.textContent = s.facility2Badge);
+    if (s.facility2Title) document.querySelectorAll('[data-bind="settings.facility2Title"]').forEach(el => el.textContent = s.facility2Title);
+    if (s.facility2Desc) document.querySelectorAll('[data-bind="settings.facility2Desc"]').forEach(el => el.textContent = s.facility2Desc);
+    if (s.facility2Img) {
+      document.querySelectorAll('img[data-bind="settings.facility2Img"]').forEach(el => {
+        if (el.getAttribute('src') !== s.facility2Img) el.src = s.facility2Img;
+      });
+    }
+
+    if (s.facility3Badge) document.querySelectorAll('[data-bind="settings.facility3Badge"]').forEach(el => el.textContent = s.facility3Badge);
+    if (s.facility3Title) document.querySelectorAll('[data-bind="settings.facility3Title"]').forEach(el => el.textContent = s.facility3Title);
+    if (s.facility3Desc) document.querySelectorAll('[data-bind="settings.facility3Desc"]').forEach(el => el.textContent = s.facility3Desc);
+    if (s.facility3Img) {
+      document.querySelectorAll('img[data-bind="settings.facility3Img"]').forEach(el => {
+        if (el.getAttribute('src') !== s.facility3Img) el.src = s.facility3Img;
+      });
+    }
 
     // Insurance & Mediclaim bindings
     document.querySelectorAll('[data-bind="settings.tpaTitle"]').forEach(el => {
@@ -237,7 +322,10 @@ function bindRealtimeHeaderSettings() {
       }
     }
 
-    // Footer Copyright & Location bindings
+    // Footer & Location bindings
+    if (s.footerAbout) {
+      document.querySelectorAll('[data-bind="settings.footerAbout"]').forEach(el => el.textContent = s.footerAbout);
+    }
     document.querySelectorAll('[data-bind="settings.footerCopyright"]').forEach(el => {
       el.textContent = s.footerCopyright || '© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.';
     });

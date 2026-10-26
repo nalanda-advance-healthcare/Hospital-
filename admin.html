@@ -842,7 +842,8 @@
             </div>
 
             <!-- 3. HOSPITAL GENERAL INFORMATION -->
-            <div style="margin-bottom:20px;">
+            <!-- 3. HOSPITAL GENERAL INFORMATION & CONTACTS -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle);">
               <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 14px 0;">
                 Hospital Identity & Facility Details
               </h3>
@@ -859,12 +860,23 @@
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
                 <div class="form-group" style="margin:0;">
-                  <label class="form-label">Emergency Helpline <span class="req">*</span></label>
+                  <label class="form-label">Emergency Helpline Phone <span class="req">*</span></label>
                   <input type="text" id="setEmergencyPhone" class="form-input" required>
                 </div>
                 <div class="form-group" style="margin:0;">
                   <label class="form-label">Registration / Licensure Number <span class="req">*</span></label>
                   <input type="text" id="setRegNo" class="form-input" required>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Reception / OPD Desk Phone</label>
+                  <input type="text" id="setReceptionPhone" class="form-input" placeholder="+91 91557 64409">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Official WhatsApp Helpline</label>
+                  <input type="text" id="setWhatsappPhone" class="form-input" placeholder="+91 91557 64409">
                 </div>
               </div>
 
@@ -882,23 +894,147 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label">Live Announcement Ticker Text <span class="req">*</span></label>
-                <input type="text" id="setAnnouncement" class="form-input" required>
+                <label class="form-label">OPD Consultation Timings Line</label>
+                <input type="text" id="setOpdTimings" class="form-input" placeholder="Morning OPD: 10:00 AM – 02:00 PM | Evening OPD: 04:00 PM – 07:00 PM | Emergency: Open 24/7">
               </div>
 
               <div class="form-group">
-                <label class="form-label">Homepage Hero Main Title <span class="req">*</span></label>
-                <input type="text" id="setHeroTitle" class="form-input" required>
-              </div>
-
-              <div class="form-group" style="margin-bottom:20px;">
-                <label class="form-label">Homepage Hero Subtitle <span class="req">*</span></label>
-                <textarea id="setHeroSub" class="form-textarea" required></textarea>
+                <label class="form-label">Live Announcement Ticker Text <span class="req">*</span></label>
+                <input type="text" id="setAnnouncement" class="form-input" required>
               </div>
             </div>
 
-            <!-- 4. INSURANCE & MEDICLAIM ASSISTANCE CMS -->
-            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle); border-top:1px solid var(--border-subtle); padding-top:20px;">
+            <!-- 4. HOMEPAGE HERO SECTION CMS -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle);">
+              <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 14px 0;">
+                Homepage Hero Banner CMS
+              </h3>
+
+              <div class="form-group">
+                <label class="form-label">Hero Badge / Institution Tag</label>
+                <input type="text" id="setHeroBadge" class="form-input" placeholder="Nalanda's Premier Multispecialty Healthcare Institution">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Hero Main Title <span class="req">*</span></label>
+                <input type="text" id="setHeroTitle" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Hero Description Subtitle <span class="req">*</span></label>
+                <textarea id="setHeroSub" class="form-textarea" style="min-height:70px;" required></textarea>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Hero Trust Tag 1</label>
+                  <input type="text" id="setHeroHighlight1" class="form-input" placeholder="24/7 Critical Trauma">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Hero Trust Tag 2</label>
+                  <input type="text" id="setHeroHighlight2" class="form-input" placeholder="Modular OT & ICU">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Hero Trust Tag 3</label>
+                  <input type="text" id="setHeroHighlight3" class="form-input" placeholder="Daycare Discharge">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Hero Main Image (File Path or Image URL)</label>
+                <input type="text" id="setHeroImageUrl" class="form-input" placeholder="IMG_20250615_114632.jpg">
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Hero Image Overlay Card Title</label>
+                  <input type="text" id="setHeroCardTitle" class="form-input" placeholder="24/7 Trauma Emergency">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Hero Image Overlay Card Subtitle</label>
+                  <input type="text" id="setHeroCardSub" class="form-input" placeholder="Immediate resuscitation, ICU support & surgical triage">
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. HOSPITAL FACILITIES SHOWCASE CMS -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle);">
+              <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 14px 0;">
+                Hospital Facilities Showcase CMS (Homepage Cards)
+              </h3>
+
+              <!-- Facility 1 -->
+              <div style="background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:16px; margin-bottom:14px;">
+                <strong style="color:var(--primary); font-size:0.9rem; display:block; margin-bottom:10px;">Facility Card 1</strong>
+                <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:10px;">
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Badge Tag</label>
+                    <input type="text" id="setFacility1Badge" class="form-input" placeholder="OT Wing">
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Facility Title</label>
+                    <input type="text" id="setFacility1Title" class="form-input" placeholder="Modular Laminar OT">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label">Description</label>
+                  <textarea id="setFacility1Desc" class="form-textarea" style="min-height:55px;" placeholder="Ultra-clean positive pressure operation theatres..."></textarea>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Image URL or Path</label>
+                  <input type="text" id="setFacility1Img" class="form-input" placeholder="IMG_20250615_114959.jpg">
+                </div>
+              </div>
+
+              <!-- Facility 2 -->
+              <div style="background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:16px; margin-bottom:14px;">
+                <strong style="color:var(--primary); font-size:0.9rem; display:block; margin-bottom:10px;">Facility Card 2</strong>
+                <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:10px;">
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Badge Tag</label>
+                    <input type="text" id="setFacility2Badge" class="form-input" placeholder="Critical Care">
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Facility Title</label>
+                    <input type="text" id="setFacility2Title" class="form-input" placeholder="24/7 Trauma Emergency">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label">Description</label>
+                  <textarea id="setFacility2Desc" class="form-textarea" style="min-height:55px;" placeholder="Round-the-clock emergency triage, defibrillators..."></textarea>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Image URL or Path</label>
+                  <input type="text" id="setFacility2Img" class="form-input" placeholder="IMG_20250615_115528.jpg">
+                </div>
+              </div>
+
+              <!-- Facility 3 -->
+              <div style="background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:16px;">
+                <strong style="color:var(--primary); font-size:0.9rem; display:block; margin-bottom:10px;">Facility Card 3</strong>
+                <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:10px;">
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Badge Tag</label>
+                    <input type="text" id="setFacility3Badge" class="form-input" placeholder="Recovery">
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Facility Title</label>
+                    <input type="text" id="setFacility3Title" class="form-input" placeholder="Inpatient Daycare Suites">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label">Description</label>
+                  <textarea id="setFacility3Desc" class="form-textarea" style="min-height:55px;" placeholder="Air-conditioned private and daycare recovery suites..."></textarea>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Image URL or Path</label>
+                  <input type="text" id="setFacility3Img" class="form-input" placeholder="IMG_20250615_114936.jpg">
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. INSURANCE & MEDICLAIM ASSISTANCE CMS -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle);">
               <div style="margin-bottom:14px;">
                 <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
                   Insurance & Mediclaim Assistance CMS
@@ -927,15 +1063,20 @@
               </div>
             </div>
 
-            <!-- 5. FOOTER, LOCATION & "GET IN TOUCH" EDITOR -->
+            <!-- 7. FOOTER, LOCATION & "GET IN TOUCH" EDITOR -->
             <div style="margin-bottom:28px; padding-bottom:20px;">
               <div style="margin-bottom:14px;">
                 <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
                   Footer Notice, Location & "Get in Touch" Editor
                 </h3>
                 <p style="font-size:0.8125rem; color:var(--text-secondary); margin:0;">
-                  Configure footer copyright rights notice, footer location line, and interactive Google Maps embed.
+                  Configure footer about description, copyright rights notice, footer location line, and interactive Google Maps embed.
                 </p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Footer About Hospital Paragraph</label>
+                <textarea id="setFooterAbout" class="form-textarea" style="min-height:60px;" placeholder="Dedicated to ethical, transparent, and high-quality surgical and inpatient healthcare for families across the region."></textarea>
               </div>
 
               <div class="form-group">
@@ -2978,12 +3119,40 @@
       document.getElementById('setHospitalName').value = s.hospitalName || 'Nalanda Advance Healthcare Hospital';
       document.getElementById('setTagline').value = s.tagline || 'Leading Healthcare & Multi-Specialty Surgical Excellence';
       document.getElementById('setEmergencyPhone').value = s.emergencyPhone || '+91 91557 64409';
+      document.getElementById('setReceptionPhone').value = s.receptionPhone || '+91 91557 64409';
+      document.getElementById('setWhatsappPhone').value = s.whatsappPhone || '+91 91557 64409';
       document.getElementById('setHospitalEmail').value = s.email || 'nalandahospital@gmail.com';
       document.getElementById('setRegNo').value = s.regNo || s.registrationNo || 'REG-BR-NAL-2023-8942';
       document.getElementById('setAddress').value = s.address || 'Bihar Sharif Police Line, Near Flyover, Nalanda, Bihar - 803101';
+      document.getElementById('setOpdTimings').value = s.opdTimings || 'Morning OPD: 10:00 AM – 02:00 PM | Evening OPD: 04:00 PM – 07:00 PM | Emergency: Open 24/7';
       document.getElementById('setAnnouncement').value = s.announcement || '24/7 Trauma Emergency Hospital · Advanced Daycare Surgery & Multispecialty Care';
-      document.getElementById('setHeroTitle').value = s.heroTitle || 'World-Class Healthcare In Nalanda';
-      document.getElementById('setHeroSub').value = s.heroSub || s.heroSubtitle || 'Advanced laparoscopic surgery, pediatric ICU, and personalized medicine.';
+
+      // Load Hero Section CMS
+      document.getElementById('setHeroBadge').value = s.heroBadge || "Nalanda's Premier Multispecialty Healthcare Institution";
+      document.getElementById('setHeroTitle').value = s.heroTitle || 'Advanced Medical Care, Compassionate Healing';
+      document.getElementById('setHeroSub').value = s.heroSub || s.heroSubtitle || 'Combining cutting-edge laparoscopic technology with human-centered care...';
+      document.getElementById('setHeroHighlight1').value = s.heroHighlight1 || '24/7 Critical Trauma';
+      document.getElementById('setHeroHighlight2').value = s.heroHighlight2 || 'Modular OT & ICU';
+      document.getElementById('setHeroHighlight3').value = s.heroHighlight3 || 'Daycare Discharge';
+      document.getElementById('setHeroImageUrl').value = s.heroImageUrl || 'IMG_20250615_114632.jpg';
+      document.getElementById('setHeroCardTitle').value = s.heroCardTitle || '24/7 Trauma Emergency';
+      document.getElementById('setHeroCardSub').value = s.heroCardSub || 'Immediate resuscitation, ICU support & surgical triage';
+
+      // Load Facilities Showcase CMS
+      document.getElementById('setFacility1Badge').value = s.facility1Badge || 'OT Wing';
+      document.getElementById('setFacility1Title').value = s.facility1Title || 'Modular Laminar OT';
+      document.getElementById('setFacility1Desc').value = s.facility1Desc || 'Ultra-clean positive pressure operation theatres equipped with HD laparoscopic vision towers...';
+      document.getElementById('setFacility1Img').value = s.facility1Img || 'IMG_20250615_114959.jpg';
+
+      document.getElementById('setFacility2Badge').value = s.facility2Badge || 'Critical Care';
+      document.getElementById('setFacility2Title').value = s.facility2Title || '24/7 Trauma Emergency';
+      document.getElementById('setFacility2Desc').value = s.facility2Desc || 'Round-the-clock emergency triage, defibrillators, multi-parameter cardiac monitors...';
+      document.getElementById('setFacility2Img').value = s.facility2Img || 'IMG_20250615_115528.jpg';
+
+      document.getElementById('setFacility3Badge').value = s.facility3Badge || 'Recovery';
+      document.getElementById('setFacility3Title').value = s.facility3Title || 'Inpatient Daycare Suites';
+      document.getElementById('setFacility3Desc').value = s.facility3Desc || 'Air-conditioned private and daycare recovery suites designed for smooth, same-day postoperative discharge.';
+      document.getElementById('setFacility3Img').value = s.facility3Img || 'IMG_20250615_114936.jpg';
 
       // Load Insurance & Mediclaim CMS
       document.getElementById('setTpaTitle').value = s.tpaTitle || 'Insurance & Mediclaim Assistance';
@@ -2991,6 +3160,7 @@
       document.getElementById('setTpaPartners').value = s.tpaPartners !== undefined ? s.tpaPartners : 'Star Health, Care Health, HDFC ERGO, ICICI Lombard, Niva Bupa';
 
       // Load Footer & Location Editor
+      document.getElementById('setFooterAbout').value = s.footerAbout || 'Dedicated to ethical, transparent, and high-quality surgical and inpatient healthcare for families across Nalanda and Bihar.';
       document.getElementById('setFooterCopyright').value = s.footerCopyright || '© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.';
       document.getElementById('setFooterAddress').value = s.footerAddress || 'Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar';
       document.getElementById('setContactTitle').value = s.contactTitle || 'Get in Touch';
@@ -3017,19 +3187,42 @@
         hospitalName: document.getElementById('setHospitalName').value.trim(),
         tagline: document.getElementById('setTagline').value.trim(),
         emergencyPhone: document.getElementById('setEmergencyPhone').value.trim(),
+        receptionPhone: document.getElementById('setReceptionPhone').value.trim(),
+        whatsappPhone: document.getElementById('setWhatsappPhone').value.trim(),
         email: email,
         registrationNo: document.getElementById('setRegNo').value.trim(),
         regNo: document.getElementById('setRegNo').value.trim(),
         address: document.getElementById('setAddress').value.trim(),
+        opdTimings: document.getElementById('setOpdTimings').value.trim(),
         announcement: document.getElementById('setAnnouncement').value.trim(),
+        heroBadge: document.getElementById('setHeroBadge').value.trim(),
         heroTitle: document.getElementById('setHeroTitle').value.trim(),
         heroSubtitle: document.getElementById('setHeroSub').value.trim(),
         heroSub: document.getElementById('setHeroSub').value.trim(),
+        heroHighlight1: document.getElementById('setHeroHighlight1').value.trim(),
+        heroHighlight2: document.getElementById('setHeroHighlight2').value.trim(),
+        heroHighlight3: document.getElementById('setHeroHighlight3').value.trim(),
+        heroImageUrl: document.getElementById('setHeroImageUrl').value.trim(),
+        heroCardTitle: document.getElementById('setHeroCardTitle').value.trim(),
+        heroCardSub: document.getElementById('setHeroCardSub').value.trim(),
+        facility1Badge: document.getElementById('setFacility1Badge').value.trim(),
+        facility1Title: document.getElementById('setFacility1Title').value.trim(),
+        facility1Desc: document.getElementById('setFacility1Desc').value.trim(),
+        facility1Img: document.getElementById('setFacility1Img').value.trim(),
+        facility2Badge: document.getElementById('setFacility2Badge').value.trim(),
+        facility2Title: document.getElementById('setFacility2Title').value.trim(),
+        facility2Desc: document.getElementById('setFacility2Desc').value.trim(),
+        facility2Img: document.getElementById('setFacility2Img').value.trim(),
+        facility3Badge: document.getElementById('setFacility3Badge').value.trim(),
+        facility3Title: document.getElementById('setFacility3Title').value.trim(),
+        facility3Desc: document.getElementById('setFacility3Desc').value.trim(),
+        facility3Img: document.getElementById('setFacility3Img').value.trim(),
         theme: theme,
         logoUrl: logoUrl,
         tpaTitle: document.getElementById('setTpaTitle').value.trim(),
         tpaSubtitle: document.getElementById('setTpaSubtitle').value.trim(),
         tpaPartners: document.getElementById('setTpaPartners').value.trim(),
+        footerAbout: document.getElementById('setFooterAbout').value.trim(),
         footerCopyright: document.getElementById('setFooterCopyright').value.trim(),
         footerAddress: document.getElementById('setFooterAddress').value.trim(),
         contactTitle: document.getElementById('setContactTitle').value.trim(),
@@ -3041,7 +3234,7 @@
       if (window.applyHospitalTheme) window.applyHospitalTheme(theme);
       if (window.applyHospitalLogo) window.applyHospitalLogo(logoUrl);
 
-      showToast("Hospital CMS settings, theme, logo, insurance, and footer updated live!", "success");
+      showToast("Hospital CMS settings, themes, facilities, and website content updated live!", "success");
     }
 
     // ------------------------------------------------------------------------

@@ -152,9 +152,9 @@ window.PrintEngine = {
                 DIGITAL<br>VERIFIED<br>SLIP
               </div>
               <div>
-                <strong>Nalanda Digital OPD Portal</strong><br>
+                <strong>${settings.hospitalName || 'Hospital'} Digital OPD</strong><br>
                 Prescription ID: ${rx.rxId || 'RX-2026-LIVE'}<br>
-                Scan or verify at booking.nalandahospital.com
+                Digital Verified Clinical Record
               </div>
             </div>
 
@@ -239,7 +239,7 @@ window.PrintEngine = {
         <div class="thermal-center" style="font-size:10px; margin-top:6px;">
           * Please proceed to Waiting Area 2.<br>
           * Keep this slip handy for your consultation.<br>
-          Thank you for trusting Nalanda Healthcare!
+          Thank you for trusting ${(settings && settings.hospitalName) ? settings.hospitalName : 'our hospital'}!
         </div>
       </div>
     `;
@@ -280,9 +280,12 @@ window.PrintEngine = {
     tempContainer.innerHTML = htmlContent;
     document.body.appendChild(tempContainer);
 
+    const s = (typeof HospitalStore !== 'undefined' && HospitalStore.getSettings) ? HospitalStore.getSettings() : {};
+    const defaultDocName = (s.hospitalName || 'Hospital').replace(/[^a-zA-Z0-9]/g, '-') + '-Document.pdf';
+
     const opt = {
       margin:       [6, 6, 6, 6],
-      filename:     filename || 'Nalanda-Hospital-Document.pdf',
+      filename:     filename || defaultDocName,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }

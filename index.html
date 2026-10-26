@@ -138,13 +138,13 @@
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <div class="hero-badge">
+        <div class="hero-badge" data-bind="settings.heroBadge">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
           Nalanda's Premier Multispecialty Healthcare Institution
         </div>
 
-        <h1 class="hero-title">
-          Advanced Medical Care, <span>Compassionate</span> Healing
+        <h1 class="hero-title" data-bind="settings.heroTitle">
+          Advanced Medical Care, Compassionate Healing
         </h1>
 
         <p class="hero-desc" data-bind="settings.heroSub">
@@ -166,29 +166,29 @@
         <div class="hero-features-row">
           <div class="hero-feature-item">
             <svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-            24/7 Critical Trauma
+            <span data-bind="settings.heroHighlight1">24/7 Critical Trauma</span>
           </div>
           <div class="hero-feature-item">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            Modular OT & ICU
+            <span data-bind="settings.heroHighlight2">Modular OT & ICU</span>
           </div>
           <div class="hero-feature-item">
             <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            Daycare Discharge
+            <span data-bind="settings.heroHighlight3">Daycare Discharge</span>
           </div>
         </div>
       </div>
 
       <!-- Image Column -->
       <div class="hero-image-frame">
-        <img src="IMG_20250615_114632.jpg" alt="Hospital Building Entrance" onerror="this.src='ppt.jpg'">
+        <img src="IMG_20250615_114632.jpg" data-bind="settings.heroImageUrl" alt="Hospital Building Entrance" onerror="this.src='ppt.jpg'">
         <div class="hero-overlay-card">
           <div class="hero-overlay-icon">
             <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
           </div>
           <div>
-            <h4 style="font-family:var(--font-heading); font-size:1rem; font-weight:700; color:var(--primary); margin:0;">24/7 Trauma Emergency</h4>
-            <p style="font-size:0.8125rem; color:var(--text-secondary); margin:2px 0 0 0;">Immediate resuscitation, ICU support & surgical triage</p>
+            <h4 data-bind="settings.heroCardTitle" style="font-family:var(--font-heading); font-size:1rem; font-weight:700; color:var(--primary); margin:0;">24/7 Trauma Emergency</h4>
+            <p data-bind="settings.heroCardSub" style="font-size:0.8125rem; color:var(--text-secondary); margin:2px 0 0 0;">Immediate resuscitation, ICU support & surgical triage</p>
           </div>
         </div>
       </div>
@@ -252,34 +252,34 @@
       <div class="grid-3">
         <div class="card">
           <div class="card-img-wrap">
-            <img src="IMG_20250615_114959.jpg" alt="Modular Laparoscopic OT" onerror="this.src='ppt.jpg'">
+            <img src="IMG_20250615_114959.jpg" data-bind="settings.facility1Img" alt="Modular Laparoscopic OT" onerror="this.src='ppt.jpg'">
           </div>
           <div class="card-body">
-            <span class="badge badge-neutral" style="align-self:flex-start; margin-bottom:8px;">OT Wing</span>
-            <h3>Modular Laminar OT</h3>
-            <p>Ultra-clean positive pressure operation theatres equipped with HD laparoscopic vision towers and advanced anesthesia monitoring.</p>
+            <span class="badge badge-neutral" data-bind="settings.facility1Badge" style="align-self:flex-start; margin-bottom:8px;">OT Wing</span>
+            <h3 data-bind="settings.facility1Title">Modular Laminar OT</h3>
+            <p data-bind="settings.facility1Desc">Ultra-clean positive pressure operation theatres equipped with HD laparoscopic vision towers and advanced anesthesia monitoring.</p>
           </div>
         </div>
 
         <div class="card">
           <div class="card-img-wrap">
-            <img src="IMG_20250615_115528.jpg" alt="Emergency Life Support" onerror="this.src='ppt.jpg'">
+            <img src="IMG_20250615_115528.jpg" data-bind="settings.facility2Img" alt="Emergency Life Support" onerror="this.src='ppt.jpg'">
           </div>
           <div class="card-body">
-            <span class="badge badge-danger" style="align-self:flex-start; margin-bottom:8px;">Critical Care</span>
-            <h3>24/7 Trauma Emergency</h3>
-            <p>Round-the-clock emergency triage, defibrillators, multi-parameter cardiac monitors, and ACLS-trained medical officers.</p>
+            <span class="badge badge-danger" data-bind="settings.facility2Badge" style="align-self:flex-start; margin-bottom:8px;">Critical Care</span>
+            <h3 data-bind="settings.facility2Title">24/7 Trauma Emergency</h3>
+            <p data-bind="settings.facility2Desc">Round-the-clock emergency triage, defibrillators, multi-parameter cardiac monitors, and ACLS-trained medical officers.</p>
           </div>
         </div>
 
         <div class="card">
           <div class="card-img-wrap">
-            <img src="IMG_20250615_114936.jpg" alt="Consultation Chambers & Daycare" onerror="this.src='ppt.jpg'">
+            <img src="IMG_20250615_114936.jpg" data-bind="settings.facility3Img" alt="Consultation Chambers & Daycare" onerror="this.src='ppt.jpg'">
           </div>
           <div class="card-body">
-            <span class="badge badge-success" style="align-self:flex-start; margin-bottom:8px;">Recovery</span>
-            <h3>Inpatient Daycare Suites</h3>
-            <p>Air-conditioned private and daycare recovery suites designed for smooth, same-day postoperative discharge.</p>
+            <span class="badge badge-success" data-bind="settings.facility3Badge" style="align-self:flex-start; margin-bottom:8px;">Recovery</span>
+            <h3 data-bind="settings.facility3Title">Inpatient Daycare Suites</h3>
+            <p data-bind="settings.facility3Desc">Air-conditioned private and daycare recovery suites designed for smooth, same-day postoperative discharge.</p>
           </div>
         </div>
       </div>
@@ -341,7 +341,7 @@
               <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
               Book Appointment
             </a>
-            <a href="https://wa.me/919155764409" target="_blank" class="btn btn-teal" style="flex:1;">
+            <a href="https://wa.me/919155764409" data-bind="settings.whatsappPhone" target="_blank" class="btn btn-teal" style="flex:1;">
               <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               WhatsApp Us
             </a>
@@ -379,11 +379,11 @@
             </div>
             <h4 class="footer-heading" data-bind="settings.hospitalName" style="margin:0;">Nalanda Advance Healthcare</h4>
           </div>
-          <p style="font-size:0.875rem; line-height:1.6; color:#98a2b3; margin-bottom:16px;">
+          <p data-bind="settings.footerAbout" style="font-size:0.875rem; line-height:1.6; color:#98a2b3; margin-bottom:16px;">
             Dedicated to ethical, transparent, and high-quality surgical and inpatient healthcare for families across Nalanda and Bihar.
           </p>
           <div style="font-size:0.8125rem; color:#667085;">
-            Reg. No: BR-NAL-2024-HOSP-0842
+            Reg. No: <span data-bind="settings.regNo">BR-NAL-2024-HOSP-0842</span>
           </div>
         </div>
 
