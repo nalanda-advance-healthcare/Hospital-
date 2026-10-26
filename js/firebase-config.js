@@ -674,6 +674,52 @@ window.HospitalAuth = {
     return { success: true };
   },
 
+  updatePatientProfile: async ({ name, email }) => {
+    const current = window.HospitalAuth.getCurrentPatient();
+    if (!current || current.isGuest) {
+      return { success: false, error: "Please sign in to update your profile." };
+    }
+    const cleanName = (name || '').trim();
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanName) {
+      return { success: false, error: "Full Name cannot be empty." };
+    }
+    const phone = current.phone || current.mobile;
+    if (!phone) {
+      return { success: false, error: "Patient mobile number missing." };
+    }
+
+    const updated = {
+      ...current,
+      name: cleanName,
+      email: cleanEmail || current.email || ''
+    };
+
+    localStorage.setItem('nah_active_patient', JSON.stringify(updated));
+
+    if (fbDatabase) {
+      try {
+        await fbDatabase.ref(`patients/${phone}`).update({
+          name: cleanName,
+          email: cleanEmail || '',
+          updatedAt: new Date().toISOString()
+        });
+
+        if (cleanEmail) {
+          const emailKey = cleanEmail.replace(/[@.]/g, '_');
+          await fbDatabase.ref(`patientsByEmail/${emailKey}`).set({
+            phone: phone,
+            email: cleanEmail
+          });
+        }
+      } catch (e) {
+        console.warn("RTDB patient profile update notice:", e);
+      }
+    }
+
+    return { success: true, patient: updated };
+  },
+
   // --------------------------------------------------------------------------
   // 4. SPAM GUEST PROTECTION ENGINE
   // --------------------------------------------------------------------------

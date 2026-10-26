@@ -891,6 +891,80 @@
               </div>
             </div>
 
+            <!-- 4. INSURANCE & MEDICLAIM ASSISTANCE CMS -->
+            <div style="margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border-subtle); border-top:1px solid var(--border-subtle); padding-top:20px;">
+              <div style="margin-bottom:14px;">
+                <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
+                  Insurance & Mediclaim Assistance CMS
+                </h3>
+                <p style="font-size:0.8125rem; color:var(--text-secondary); margin:0;">
+                  Edit the public Insurance & Mediclaim section. Set your custom headline, description, and empaneled insurance/TPA partners.
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Section Heading</label>
+                <input type="text" id="setTpaTitle" class="form-input" placeholder="Insurance & Mediclaim Assistance" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Section Subtitle / Claim Support Description</label>
+                <textarea id="setTpaSubtitle" class="form-textarea" style="min-height:60px;" placeholder="Hassle-free documentation and claim support for leading health insurance providers." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Empaneled Insurance & TPA Partners (Comma or Line Separated)</label>
+                <textarea id="setTpaPartners" class="form-textarea" style="min-height:80px;" placeholder="Star Health, Care Health, HDFC ERGO, ICICI Lombard, Niva Bupa"></textarea>
+                <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                  Enter insurance companies or TPAs separated by commas. Each item automatically generates a clean clinical partner badge on the homepage.
+                </span>
+              </div>
+            </div>
+
+            <!-- 5. FOOTER, LOCATION & "GET IN TOUCH" EDITOR -->
+            <div style="margin-bottom:28px; padding-bottom:20px;">
+              <div style="margin-bottom:14px;">
+                <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:700; color:var(--primary); margin:0 0 4px 0;">
+                  Footer Notice, Location & "Get in Touch" Editor
+                </h3>
+                <p style="font-size:0.8125rem; color:var(--text-secondary); margin:0;">
+                  Configure footer copyright rights notice, footer location line, and interactive Google Maps embed.
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Footer Copyright Notice</label>
+                <input type="text" id="setFooterCopyright" class="form-input" placeholder="© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved." required>
+                <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                  Displayed at the bottom of all hospital web pages.
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Footer Location & City Line</label>
+                <input type="text" id="setFooterAddress" class="form-input" placeholder="Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar" required>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Contact Badge Title</label>
+                  <input type="text" id="setContactTitle" class="form-input" placeholder="Get in Touch" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Google Maps Directions Link</label>
+                  <input type="url" id="setMapsUrl" class="form-input" placeholder="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Google Map Iframe Embed URL</label>
+                <input type="url" id="setMapsEmbedUrl" class="form-input" placeholder="https://maps.google.com/maps?q=Bihar+Sharif+Police+Line+Nalanda+Bihar&output=embed">
+                <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-top:4px;">
+                  Used for interactive location map shown in the Contact section.
+                </span>
+              </div>
+            </div>
+
             <button type="submit" class="btn btn-primary" style="padding:12px 24px;">
               <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
               Save & Broadcast CMS Live
@@ -2770,6 +2844,18 @@
       document.getElementById('setHeroTitle').value = s.heroTitle || 'World-Class Healthcare In Nalanda';
       document.getElementById('setHeroSub').value = s.heroSub || s.heroSubtitle || 'Advanced laparoscopic surgery, pediatric ICU, and personalized medicine.';
 
+      // Load Insurance & Mediclaim CMS
+      document.getElementById('setTpaTitle').value = s.tpaTitle || 'Insurance & Mediclaim Assistance';
+      document.getElementById('setTpaSubtitle').value = s.tpaSubtitle || 'Hassle-free documentation and claim support for leading health insurance providers.';
+      document.getElementById('setTpaPartners').value = s.tpaPartners !== undefined ? s.tpaPartners : 'Star Health, Care Health, HDFC ERGO, ICICI Lombard, Niva Bupa';
+
+      // Load Footer & Location Editor
+      document.getElementById('setFooterCopyright').value = s.footerCopyright || '© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.';
+      document.getElementById('setFooterAddress').value = s.footerAddress || 'Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar';
+      document.getElementById('setContactTitle').value = s.contactTitle || 'Get in Touch';
+      document.getElementById('setMapsUrl').value = s.mapsUrl || 'https://maps.app.goo.gl/fKTir4ggG2cFCvSx6';
+      document.getElementById('setMapsEmbedUrl').value = s.mapsEmbedUrl || 'https://maps.google.com/maps?q=Bihar+Sharif+Police+Line+Nalanda+Bihar&output=embed';
+
       // Load Theme & Logo
       const activeTheme = s.theme || 'navy-teal';
       document.getElementById('setSelectedTheme').value = activeTheme;
@@ -2799,14 +2885,22 @@
         heroSubtitle: document.getElementById('setHeroSub').value.trim(),
         heroSub: document.getElementById('setHeroSub').value.trim(),
         theme: theme,
-        logoUrl: logoUrl
+        logoUrl: logoUrl,
+        tpaTitle: document.getElementById('setTpaTitle').value.trim(),
+        tpaSubtitle: document.getElementById('setTpaSubtitle').value.trim(),
+        tpaPartners: document.getElementById('setTpaPartners').value.trim(),
+        footerCopyright: document.getElementById('setFooterCopyright').value.trim(),
+        footerAddress: document.getElementById('setFooterAddress').value.trim(),
+        contactTitle: document.getElementById('setContactTitle').value.trim(),
+        mapsUrl: document.getElementById('setMapsUrl').value.trim(),
+        mapsEmbedUrl: document.getElementById('setMapsEmbedUrl').value.trim()
       };
 
       HospitalStore.updateSettings(updated);
       if (window.applyHospitalTheme) window.applyHospitalTheme(theme);
       if (window.applyHospitalLogo) window.applyHospitalLogo(logoUrl);
 
-      showToast("Hospital CMS settings, theme, and logo updated and broadcast live!", "success");
+      showToast("Hospital CMS settings, theme, logo, insurance, and footer updated live!", "success");
     }
 
     // ------------------------------------------------------------------------

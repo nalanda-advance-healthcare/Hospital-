@@ -296,31 +296,12 @@
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           Insurance Support
         </span>
-        <h2 class="section-title">Insurance & Mediclaim Assistance</h2>
-        <p class="section-desc">Hassle-free documentation and claim support for leading health insurance providers.</p>
+        <h2 class="section-title" data-bind="settings.tpaTitle">Insurance & Mediclaim Assistance</h2>
+        <p class="section-desc" data-bind="settings.tpaSubtitle">Hassle-free documentation and claim support for leading health insurance providers.</p>
       </div>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:16px;">
-        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Star Health
-        </div>
-        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Care Health
-        </div>
-        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          HDFC ERGO
-        </div>
-        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          ICICI Lombard
-        </div>
-        <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Niva Bupa
-        </div>
+      <div id="dynamicTpaGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:16px;">
+        <!-- Dynamic TPA badges rendered via HospitalStore -->
       </div>
     </div>
   </section>
@@ -334,9 +315,9 @@
         <div style="background:var(--bg-section); padding:36px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle);">
           <span class="section-tag">
             <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            Get in Touch
+            <span data-bind="settings.contactTitle">Get in Touch</span>
           </span>
-          <h3 style="font-family:var(--font-heading); font-size:1.5rem; font-weight:700; color:var(--primary); margin-bottom:16px;">
+          <h3 data-bind="settings.hospitalName" style="font-family:var(--font-heading); font-size:1.5rem; font-weight:700; color:var(--primary); margin-bottom:16px;">
             Nalanda Advance Healthcare Hospital
           </h3>
           
@@ -370,6 +351,7 @@
         <!-- Google Map Embed -->
         <div style="border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-subtle); height:380px; box-shadow:var(--shadow-sm);">
           <iframe
+            data-bind="settings.mapsEmbedUrl"
             src="https://maps.google.com/maps?q=Bihar+Sharif+Police+Line+Nalanda+Bihar&output=embed"
             width="100%"
             height="100%"
@@ -421,14 +403,14 @@
           <ul class="footer-links">
             <li><a href="tel:+919155764409" style="color:#fda29b; font-weight:700;">Emergency: +91 91557 64409</a></li>
             <li><a href="mailto:nalandahospital@gmail.com" data-bind="settings.email">nalandahospital@gmail.com</a></li>
-            <li><a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank">Police Line, Bihar Sharif</a></li>
+            <li><a href="https://maps.app.goo.gl/fKTir4ggG2cFCvSx6" target="_blank" data-bind="settings.mapsUrl">Police Line, Bihar Sharif</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="footer-heading">Patient Portal</h4>
           <p style="font-size:0.84rem; color:#98a2b3; margin-bottom:14px;">Sign in to view your prescriptions, or book as a guest with zero registration required.</p>
-          <button type="button" class="btn btn-teal btn-sm" onclick="openPatientAuthModal()" style="width:100%;">
+          <button type="button" class="btn btn-teal btn-sm" onclick="openPatientAuthModal()" style="width:100%;" id="patientFooterAuthBtn">
             <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             Patient Sign In / Register
           </button>
@@ -436,8 +418,8 @@
       </div>
 
       <div class="footer-bottom">
-        <div>© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.</div>
-        <div>Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar</div>
+        <div data-bind="settings.footerCopyright">© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.</div>
+        <div data-bind="settings.footerAddress">Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar</div>
       </div>
     </div>
   </footer>
@@ -460,14 +442,29 @@
     });
 
     function updatePatientNavState() {
-      const patient = HospitalAuth.getCurrentPatient();
-      const topBtn = document.getElementById('patientTopAuthBtn');
-      const navBtn = document.getElementById('patientNavAuthBtn');
+      if (window.updateGlobalPatientNavState) {
+        window.updateGlobalPatientNavState();
+      }
+    }
 
-      if (patient && !patient.isGuest) {
-        const text = patient.name.split(' ')[0] || 'My Account';
-        if (topBtn) topBtn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${text}`;
-        if (navBtn) navBtn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${text}`;
+    function toggleEditPatientProfile(isEditing) {
+      const viewCard = document.getElementById('patientProfileViewCard');
+      const editCard = document.getElementById('patientProfileEditCard');
+      if (viewCard) viewCard.style.display = isEditing ? 'none' : 'block';
+      if (editCard) editCard.style.display = isEditing ? 'block' : 'none';
+    }
+
+    async function handleSavePatientProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById('editProfileName').value.trim();
+      const email = document.getElementById('editProfileEmail').value.trim();
+      const res = await HospitalAuth.updatePatientProfile({ name, email });
+      if (res.success) {
+        showToast("Patient profile updated successfully!", "success");
+        openPatientAuthModal();
+        updatePatientNavState();
+      } else {
+        showToast(res.error || "Failed to update profile", "danger");
       }
     }
 
@@ -475,13 +472,55 @@
       const patient = HospitalAuth.getCurrentPatient();
 
       if (patient && !patient.isGuest) {
+        const phone = patient.mobile || patient.phone || 'N/A';
+        const email = patient.email || 'Not provided';
         const html = `
-          <div style="text-align:center; padding:10px 0;">
-            <div style="width:48px; height:48px; background:var(--accent-soft); color:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
-              <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <div style="text-align:center; padding:6px 0;">
+            <div style="width:52px; height:52px; background:var(--accent-soft); color:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px auto;">
+              <svg class="icon icon-xl" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
-            <h3 style="font-family:var(--font-heading); font-size:1.25rem; font-weight:700; color:var(--primary); margin-bottom:4px;">${patient.name}</h3>
-            <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:20px;">${patient.email || patient.phone || ''}</p>
+            <h3 style="font-family:var(--font-heading); font-size:1.3rem; font-weight:700; color:var(--primary); margin:0 0 2px 0;">${window.escapeHtml(patient.name)}</h3>
+            <span style="display:inline-block; font-size:0.75rem; font-weight:700; background:var(--secondary-light); color:var(--secondary); padding:2px 10px; border-radius:12px; margin-bottom:14px;">
+              Active Verified Patient
+            </span>
+
+            <!-- Read-only Profile Card -->
+            <div id="patientProfileViewCard" style="background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; text-align:left; margin-bottom:16px; font-size:0.84rem;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+                <span style="color:var(--text-secondary);">Registered Mobile:</span>
+                <strong style="color:var(--primary); font-family:monospace; font-size:0.9rem;">${window.escapeHtml(phone)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+                <span style="color:var(--text-secondary);">Email Address:</span>
+                <strong style="color:var(--primary);">${window.escapeHtml(email)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Need to modify your details?</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditPatientProfile(true)" style="padding:4px 10px; font-size:0.75rem;">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                  Edit Profile
+                </button>
+              </div>
+            </div>
+
+            <!-- Editable Profile Card (Hidden by default) -->
+            <div id="patientProfileEditCard" style="display:none; background:var(--bg-section); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:14px; text-align:left; margin-bottom:16px;">
+              <form onsubmit="handleSavePatientProfile(event)">
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label" style="font-size:0.8rem;">Full Patient Name</label>
+                  <input type="text" id="editProfileName" class="form-input" value="${window.escapeHtml(patient.name || '')}" required>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label" style="font-size:0.8rem;">Email Address</label>
+                  <input type="email" id="editProfileEmail" class="form-input" value="${window.escapeHtml(patient.email || '')}" placeholder="name@example.com">
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button type="submit" class="btn btn-primary btn-sm" style="flex:1;">Save Changes</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditPatientProfile(false)" style="flex:1;">Cancel</button>
+                </div>
+              </form>
+            </div>
+
             <div style="display:flex; flex-direction:column; gap:10px;">
               <a href="booking.html#reportsTab" class="btn btn-primary" onclick="closeModal()">
                 <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
@@ -498,7 +537,7 @@
             </div>
           </div>
         `;
-        openModal("Patient Account", html);
+        openModal("Patient Profile", html);
         return;
       }
 

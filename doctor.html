@@ -1146,15 +1146,6 @@
       });
       const apt = HospitalStore.getAppointmentById(aptId);
       showToast(`Calling Token ${apt ? apt.tokenNo : ''} (${apt ? apt.patientName : ''}) into chamber!`, "info");
-
-      if ('speechSynthesis' in window && apt) {
-        try {
-          const docName = activeDoctor ? (activeDoctor.name || '').replace(/^Dr\.\s*/i, '') : '';
-          const utterance = new SpeechSynthesisUtterance(`Token number ${apt.tokenNo}, ${apt.patientName}. Doctor ${docName} is calling.`);
-          utterance.rate = 0.95;
-          window.speechSynthesis.speak(utterance);
-        } catch(e) {}
-      }
       renderDoctorQueue();
     }
 

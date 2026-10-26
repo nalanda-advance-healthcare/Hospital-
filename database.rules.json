@@ -13,7 +13,7 @@
       ".read": true,
       ".write": "newData.exists() && newData.hasChildren(['settings', 'doctors', 'beds', 'appointments'])",
       "settings": {
-        ".validate": "newData.hasChildren(['hospitalName', 'emergencyPhone']) && newData.child('hospitalName').isString() && newData.child('emergencyPhone').isString()"
+        ".validate": "newData.hasChildren(['hospitalName', 'emergencyPhone']) && newData.child('hospitalName').isString() && newData.child('emergencyPhone').isString() && (!newData.hasChild('email') || newData.child('email').isString()) && (!newData.hasChild('footerCopyright') || newData.child('footerCopyright').isString()) && (!newData.hasChild('footerAddress') || newData.child('footerAddress').isString()) && (!newData.hasChild('tpaTitle') || newData.child('tpaTitle').isString()) && (!newData.hasChild('contactTitle') || newData.child('contactTitle').isString())"
       },
       "doctors": {
         "$docIndex": {
@@ -55,7 +55,7 @@
       ".read": true,
       "$emailKey": {
         ".write": "newData.exists()",
-        ".validate": "newData.hasChildren(['phone', 'email']) && newData.child('phone').isString() && newData.child('email').isString()"
+        ".validate": "newData.hasChildren(['phone', 'email']) && newData.child('phone').isString() && newData.child('email').isString() && newData.child('phone').val().matches(/^[6-9][0-9]{9}$/)"
       }
     }
   }

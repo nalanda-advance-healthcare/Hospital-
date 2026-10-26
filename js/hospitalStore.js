@@ -18,7 +18,14 @@ const INITIAL_HOSPITAL_DATA = {
     heroTitle: "ADVANCED SURGICAL & MEDICAL HEALTHCARE",
     heroSub: "Experience world-class surgical care, modular laminar OTs, and compassionate inpatient healing at the heart of Nalanda.",
     theme: "navy-teal",
-    logoUrl: ""
+    logoUrl: "",
+    tpaTitle: "Insurance & Mediclaim Assistance",
+    tpaSubtitle: "Hassle-free documentation and claim support for leading health insurance providers.",
+    tpaPartners: "Star Health, Care Health, HDFC ERGO, ICICI Lombard, Niva Bupa",
+    footerCopyright: "© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.",
+    footerAddress: "Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar",
+    contactTitle: "Get in Touch",
+    mapsEmbedUrl: "https://maps.google.com/maps?q=Bihar+Sharif+Police+Line+Nalanda+Bihar&output=embed"
   },
   admins: ["mohitk43131@gmail.com"],
   doctors: [],

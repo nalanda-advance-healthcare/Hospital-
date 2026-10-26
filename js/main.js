@@ -204,11 +204,112 @@ function bindRealtimeHeaderSettings() {
     document.querySelectorAll('[data-bind="settings.announcement"]').forEach(el => el.textContent = s.announcement);
     document.querySelectorAll('[data-bind="settings.heroTitle"]').forEach(el => el.textContent = s.heroTitle);
     document.querySelectorAll('[data-bind="settings.heroSub"]').forEach(el => el.textContent = s.heroSub);
+
+    // Insurance & Mediclaim bindings
+    document.querySelectorAll('[data-bind="settings.tpaTitle"]').forEach(el => {
+      el.textContent = s.tpaTitle || 'Insurance & Mediclaim Assistance';
+    });
+    document.querySelectorAll('[data-bind="settings.tpaSubtitle"]').forEach(el => {
+      el.textContent = s.tpaSubtitle || 'Hassle-free documentation and claim support for leading health insurance providers.';
+    });
+
+    const tpaContainer = document.getElementById('dynamicTpaGrid');
+    if (tpaContainer) {
+      const rawPartners = s.tpaPartners !== undefined ? s.tpaPartners : 'Star Health, Care Health, HDFC ERGO, ICICI Lombard, Niva Bupa';
+      const partners = rawPartners
+        .split(/[,;\n]/)
+        .map(p => p.trim())
+        .filter(p => p.length > 0);
+
+      if (partners.length > 0) {
+        tpaContainer.innerHTML = partners.map(partner => `
+          <div style="background:#fff; border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 14px; text-align:center; font-weight:700; color:var(--primary); font-size:0.875rem; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:var(--shadow-xs);">
+            <svg class="icon icon-sm" style="color:var(--secondary);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>${window.escapeHtml(partner)}</span>
+          </div>
+        `).join('');
+      } else {
+        tpaContainer.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding:20px; color:var(--text-secondary); font-size:0.875rem;">
+            Please contact our TPA and billing desk for current insurance empanelment details.
+          </div>
+        `;
+      }
+    }
+
+    // Footer Copyright & Location bindings
+    document.querySelectorAll('[data-bind="settings.footerCopyright"]').forEach(el => {
+      el.textContent = s.footerCopyright || '© 2026 Nalanda Advance Healthcare Hospital Pvt Ltd. All rights reserved.';
+    });
+    document.querySelectorAll('[data-bind="settings.footerAddress"]').forEach(el => {
+      el.textContent = s.footerAddress || 'Police Line, Near Flyover, Bihar Sharif, Nalanda, Bihar';
+    });
+    document.querySelectorAll('[data-bind="settings.contactTitle"]').forEach(el => {
+      el.textContent = s.contactTitle || 'Get in Touch';
+    });
+
+    if (s.mapsUrl) {
+      document.querySelectorAll('a[data-bind="settings.mapsUrl"]').forEach(el => el.href = s.mapsUrl);
+    }
+    if (s.mapsEmbedUrl) {
+      document.querySelectorAll('iframe[data-bind="settings.mapsEmbedUrl"]').forEach(el => {
+        if (el.src !== s.mapsEmbedUrl) el.src = s.mapsEmbedUrl;
+      });
+    }
+
+    // Update patient auth nav state
+    window.updateGlobalPatientNavState();
   };
 
   updateUI(HospitalStore.getData());
   HospitalStore.subscribe(updateUI);
 }
+
+// Global Patient Nav State Synchronizer
+window.updateGlobalPatientNavState = function() {
+  if (!window.HospitalAuth) return;
+  const patient = HospitalAuth.getCurrentPatient();
+  const topBtns = document.querySelectorAll('#patientTopAuthBtn, .patient-top-auth-btn');
+  const navBtns = document.querySelectorAll('#patientNavAuthBtn, .patient-nav-auth-btn');
+  const footerBtns = document.querySelectorAll('#patientFooterAuthBtn, .patient-footer-auth-btn');
+
+  if (patient && !patient.isGuest) {
+    const displayName = patient.name ? patient.name.split(' ')[0] : 'Patient';
+    topBtns.forEach(btn => {
+      btn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> View Profile (${window.escapeHtml(displayName)})`;
+      btn.setAttribute('title', 'View Profile: ' + patient.name);
+    });
+    navBtns.forEach(btn => {
+      btn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span class="desktop-only-text">View Profile</span>`;
+      btn.classList.remove('btn-secondary');
+      btn.classList.add('btn-primary');
+      btn.setAttribute('title', 'View Profile: ' + patient.name);
+    });
+    footerBtns.forEach(btn => {
+      btn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> View Profile (${window.escapeHtml(displayName)})`;
+    });
+  } else {
+    topBtns.forEach(btn => {
+      btn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Patient Portal`;
+      btn.removeAttribute('title');
+    });
+    navBtns.forEach(btn => {
+      btn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span class="desktop-only-text">Patient Sign In</span>`;
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-secondary');
+      btn.removeAttribute('title');
+    });
+    footerBtns.forEach(btn => {
+      btn.innerHTML = `<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Patient Sign In / Register`;
+    });
+  }
+};
+
+window.addEventListener('storage', (e) => {
+  if (e.key === 'nah_active_patient' || e.key === 'nah_guest_session') {
+    window.updateGlobalPatientNavState();
+  }
+});
 
 // --------------------------------------------------------------------------
 // 5. TOAST NOTIFICATIONS (WITH CLEAN SVG ICONS, NO EMOJIS)
